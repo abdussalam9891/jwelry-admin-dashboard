@@ -1,0 +1,17 @@
+Next Priority
+
+Build these next in order:
+
+API client
+
+Auth sync with backend
+
+Product table
+
+Product create form
+
+Image upload system
+
+Order management
+
+Dashboard analytics

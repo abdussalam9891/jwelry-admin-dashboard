@@ -1,0 +1,66 @@
+import {
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+
+import AdminLayout from "../layouts/AdminLayout";
+
+import ProtectedRoute from "./ProtectedRoute";
+
+import Dashboard from "../pages/Dashboard";
+import Products from "../pages/Products";
+import Orders from "../pages/Orders";
+import Login from "../pages/Login";
+
+export default function AppRoutes() {
+  return (
+   <Routes>
+
+  {/*  Root redirect */}
+  <Route
+    path="/"
+    element={
+      <Navigate
+        to="/admin"
+        replace
+      />
+    }
+  />
+
+  {/*  Login */}
+  <Route
+    path="/login"
+    element={<Login />}
+  />
+
+  {/*  Admin protected routes */}
+  <Route
+    path="/admin"
+    element={
+      <ProtectedRoute>
+        <AdminLayout />
+      </ProtectedRoute>
+    }
+  >
+
+    <Route
+      index
+      element={<Dashboard />}
+    />
+
+    <Route
+      path="products"
+      element={<Products />}
+    />
+
+    <Route
+      path="orders"
+      element={<Orders />}
+    />
+
+  </Route>
+
+</Routes>
+  );
+}
