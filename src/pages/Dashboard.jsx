@@ -1,5 +1,5 @@
  import {
-  DollarSign,
+  IndianRupee,
   ShoppingCart,
   Users,
   Package,
@@ -201,7 +201,7 @@ export default function Dashboard() {
                 text-green-700
               "
             >
-              <DollarSign size={22} />
+              <IndianRupee size={22} />
             </div>
 
           </div>
