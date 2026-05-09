@@ -27,7 +27,7 @@ export default function ProtectedRoute({
 
         const res =
           await api.get(
-            "/v1/auth/me"
+            "/auth/me"
           );
 
         const user =

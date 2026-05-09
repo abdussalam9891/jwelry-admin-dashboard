@@ -1,52 +1,92 @@
 import { NavLink } from "react-router-dom";
+
 import logo from "../assets/icon/logo.png";
 
-import { LayoutDashboard, Package, ShoppingCart, Users, X } from "lucide-react";
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  Users,
+  Settings,
+  LogOut,
+  ChevronRight,
+  X,
+} from "lucide-react";
 
-const links = [
+const navSections = [
   {
-    label: "Dashboard",
-    path: "/admin",
-    icon: LayoutDashboard,
+    title: "Overview",
+
+    links: [
+      {
+        label: "Dashboard",
+        path: "/admin",
+        icon: LayoutDashboard,
+      },
+    ],
   },
 
   {
-    label: "Products",
-    path: "/admin/products",
-    icon: Package,
+    title: "Commerce",
+
+    links: [
+      {
+        label: "Products",
+        path: "/admin/products",
+        icon: Package,
+      },
+
+      {
+        label: "Orders",
+        path: "/admin/orders",
+        icon: ShoppingCart,
+        badge: 12,
+      },
+    ],
   },
 
   {
-    label: "Orders",
-    path: "/admin/orders",
-    icon: ShoppingCart,
-  },
+    title: "Customers",
 
-  {
-    label: "Customers",
-    path: "/admin/customers",
-    icon: Users,
+    links: [
+      {
+        label: "Customers",
+        path: "/admin/customers",
+        icon: Users,
+      },
+    ],
   },
 ];
 
-export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
+export default function Sidebar({
+  sidebarOpen,
+  setSidebarOpen,
+}) {
   return (
     <>
       {/* overlay */}
+
       <div
         onClick={() => setSidebarOpen(false)}
         className={`
           fixed
           inset-0
           bg-black/40
+          backdrop-blur-sm
           z-40
-          transition-opacity
+          transition-all
           duration-300
           md:hidden
 
-          ${sidebarOpen ? "opacity-100 visible" : "opacity-0 invisible"}
+          ${
+            sidebarOpen
+              ? "opacity-100 visible"
+              : "opacity-0 invisible"
+          }
         `}
       />
+
+      {/* sidebar */}
 
       <aside
         className={`
@@ -56,13 +96,14 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           z-50
 
           h-screen
-          w-[260px]
+          w-[280px]
 
-          bg-white
+          bg-[#FCFCFD]
           border-r
-          border-black/5
+          border-black/[0.06]
 
-          p-5
+          px-4
+          py-5
 
           flex
           flex-col
@@ -70,9 +111,15 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           transition-transform
           duration-300
 
+          shadow-[0_0_40px_rgba(0,0,0,0.03)]
+
           md:translate-x-0
 
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          ${
+            sidebarOpen
+              ? "translate-x-0"
+              : "-translate-x-full"
+          }
         `}
       >
         {/* top */}
@@ -85,60 +132,44 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             mb-10
           "
         >
+          {/* brand */}
+
           <div
             className="
-     flex
-      items-center
-       gap-3
-       px-1
-  "
+              flex
+              items-center
+              gap-3
+              px-1
+            "
           >
-            {/* logo */}
-            <div
-              className="
-      h-11
-      flex
-      items-center
-      justify-center
-      shrink-0
-    "
-            >
-              <img
-                src={logo}
-                alt="Gemora"
-                className="
-        h-10
-        w-auto
-        object-contain
-      "
-              />
-            </div>
+
 
             {/* text */}
+
             <div
               className="
-      flex
-      flex-col
-      leading-tight
-    "
+                flex
+                flex-col
+                leading-tight
+              "
             >
               <span
                 className="
-        text-[13px]
-        font-semibold
-        tracking-wide
-        text-[#1A1A1A]
-      "
+                  text-[14px]
+                  font-semibold
+                  tracking-wide
+                  text-[#1A1A1A]
+                "
               >
-                Operations
+                Gemora
               </span>
 
               <span
                 className="
-        text-[11px]
-        text-black/45
-        mt-0.5
-      "
+                  text-[11px]
+                  text-black/45
+                  mt-0.5
+                "
               >
                 Admin Dashboard
               </span>
@@ -146,70 +177,369 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           </div>
 
           {/* mobile close */}
+
           <button
             onClick={() => setSidebarOpen(false)}
             className="
               md:hidden
+
+              h-9
+              w-9
+
+              rounded-xl
+
+              bg-black/[0.04]
+
+              flex
+              items-center
+              justify-center
+
               text-black/60
             "
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        {/* nav */}
-        <nav
+        {/* navigation */}
+
+        <div
           className="
-            flex
-            flex-col
-            gap-2
+            flex-1
+            overflow-y-auto
+            pr-1
           "
         >
-          {links.map((link) => {
-            const Icon = link.icon;
+          {navSections.map((section) => (
+            <div
+              key={section.title}
+              className="mb-7"
+            >
+              {/* section title */}
 
-            return (
-              <NavLink
-                key={link.path}
-                to={link.path}
-                end
-                onClick={() => setSidebarOpen(false)}
-                className={({ isActive }) => `
-                  flex
-                  items-center
-                  gap-3
-
+              <p
+                className="
                   px-4
-                  py-3
+                  mb-3
 
-                  rounded-2xl
+                  text-[11px]
+                  font-semibold
+                  uppercase
+                  tracking-[0.12em]
 
-                  text-sm
-                  font-medium
-
-                  transition-all
-                  duration-200
-
-                  ${
-                    isActive
-                      ? `
-                        bg-[#6B1A2A]
-                        text-white
-                      `
-                      : `
-                        text-black/70
-                        hover:bg-black/[0.04]
-                      `
-                  }
-                `}
+                  text-black/35
+                "
               >
-                <Icon size={18} />
+                {section.title}
+              </p>
 
-                {link.label}
-              </NavLink>
-            );
-          })}
-        </nav>
+              {/* links */}
+
+              <div
+                className="
+                  flex
+                  flex-col
+                  gap-1.5
+                "
+              >
+                {section.links.map((link) => {
+                  const Icon = link.icon;
+
+                  return (
+                    <NavLink
+                      key={link.path}
+                      to={link.path}
+                      end={link.path === "/admin"}
+                      onClick={() =>
+                        setSidebarOpen(false)
+                      }
+                      className={({ isActive }) => `
+                        relative
+                        overflow-hidden
+
+                        flex
+                        items-center
+                        gap-3
+
+                        px-4
+                        py-2
+
+                        rounded-xl
+
+                        text-sm
+                        font-medium
+
+                        transition-all
+                        duration-200
+
+                        ${
+                          isActive
+                            ? `
+                              bg-[#6B1A2A]/10
+                              text-[#6B1A2A]
+
+                              border
+                              border-[#6B1A2A]/10
+
+                              shadow-sm
+                            `
+                            : `
+                              text-black/70
+
+                              hover:bg-black/[0.04]
+                              hover:text-black
+                            `
+                        }
+                      `}
+                    >
+                      {({ isActive }) => (
+                        <>
+                          {/* active indicator */}
+
+                          {isActive && (
+                            <div
+                              className="
+                                absolute
+                                left-0
+                                top-2
+                                bottom-2
+
+                                w-1
+
+                                rounded-r-full
+
+                                bg-[#6B1A2A]
+                              "
+                            />
+                          )}
+
+                          {/* icon */}
+
+                          <Icon
+                            size={18}
+                            className="shrink-0"
+                          />
+
+                          {/* label */}
+
+                          <span className="flex-1">
+                            {link.label}
+                          </span>
+
+                          {/* badge */}
+
+                          {link.badge && (
+                            <span
+                              className="
+                                text-[11px]
+                                font-semibold
+
+                                bg-[#6B1A2A]
+                                text-white
+
+                                px-2
+                                py-0.5
+
+                                rounded-full
+                              "
+                            >
+                              {link.badge}
+                            </span>
+                          )}
+
+                          {/* arrow */}
+
+                          {!link.badge && (
+                            <ChevronRight
+                              size={15}
+                              className="
+                                opacity-40
+                              "
+                            />
+                          )}
+                        </>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* footer */}
+
+        <div
+          className="
+            pt-5
+            mt-3
+
+            border-t
+            border-black/5
+          "
+        >
+          {/* settings */}
+
+          <NavLink
+            to="/admin/settings"
+            className="
+              flex
+              items-center
+              gap-3
+
+              px-4
+              py-2
+
+              rounded-xl
+
+              text-sm
+              font-medium
+              text-black/70
+
+              hover:bg-black/[0.04]
+              hover:text-black
+
+              transition-all
+            "
+          >
+            <Settings size={18} />
+
+            Settings
+          </NavLink>
+
+          {/* logout */}
+
+          <button
+            className="
+              w-full
+
+              flex
+              items-center
+              gap-3
+
+              px-4
+              py-2
+
+              rounded-xl
+
+              text-sm
+              font-medium
+
+              text-red-500
+
+              hover:bg-red-50
+
+              transition-all
+            "
+          >
+            <LogOut size={18} />
+
+            Logout
+          </button>
+
+          {/* admin card */}
+
+          <div
+            className="
+              mt-5
+
+              rounded-2xl
+
+              bg-white
+
+              border
+              border-black/5
+
+              p-4
+
+              shadow-sm
+            "
+          >
+            <div
+              className="
+                flex
+                items-center
+                gap-3
+              "
+            >
+              {/* avatar */}
+
+              <div
+                className="
+                  relative
+                  shrink-0
+                "
+              >
+                <div
+                  className="
+                    h-11
+                    w-11
+
+                    rounded-full
+
+                    bg-[#6B1A2A]
+
+                    flex
+                    items-center
+                    justify-center
+
+                    text-white
+                    font-semibold
+                    text-sm
+                  "
+                >
+                  A
+                </div>
+
+                {/* online dot */}
+
+                <div
+                  className="
+                    absolute
+                    bottom-0
+                    right-0
+
+                    h-3
+                    w-3
+
+                    rounded-full
+
+                    bg-green-500
+
+                    border-2
+                    border-white
+                  "
+                />
+              </div>
+
+              {/* info */}
+
+              <div className="min-w-0">
+                <p
+                  className="
+                    text-sm
+                    font-semibold
+                    text-black
+
+                    truncate
+                  "
+                >
+                  Abdus
+                </p>
+
+                <p
+                  className="
+                    text-xs
+                    text-black/45
+                    mt-0.5
+                  "
+                >
+                  Super Admin
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </aside>
     </>
   );

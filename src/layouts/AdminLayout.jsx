@@ -29,11 +29,13 @@ export default function AdminLayout() {
 
       <div
         className="
-          flex-1
-          flex
-          flex-col
-          min-w-0
-        "
+    flex-1
+    flex
+    flex-col
+    min-w-0
+
+    md:ml-[280px]
+  "
       >
 
         <Topbar
