@@ -1,761 +1,1092 @@
- import {
-  IndianRupee,
-  ShoppingCart,
-  Users,
-  Package,
-  AlertTriangle,
-  TrendingUp,
-  TrendingDown,
-} from "lucide-react";
+import { AlertTriangle, IndianRupee, ShoppingCart, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getDashboardData } from "../services/dashboardService";
+
+
+
+import {
+
+  ResponsiveContainer,
+
+  BarChart,
+
+  Bar,
+
+  XAxis,
+
+  YAxis,
+
+  Tooltip,
+
+  CartesianGrid,
+
+} from "recharts";
 
 export default function Dashboard() {
+  const [dashboardData, setDashboardData] = useState({
+    metrics: {
+      totalRevenue: 0,
+
+      totalOrders: 0,
+
+      pendingOrders: 0,
+
+      totalCustomers: 0,
+
+      totalProducts: 0,
+
+      lowStockProducts: 0,
+    },
+
+    recentOrders: [],
+
+    recentCustomers: [],
+
+    lowStockProducts: [],
+  });
+
+  const [range, setRange] =
+  useState("12m");
+
+  const [loading, setLoading] = useState(false);
+  const { metrics } = dashboardData;
+
+useEffect(() => {
+
+  const fetchDashboard =
+    async () => {
+
+      try {
+
+        setLoading(true);
+
+        const data =
+          await getDashboardData(
+            range
+          );
+
+        setDashboardData(
+          data
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+    };
+
+  fetchDashboard();
+
+}, [range]);
 
   return (
-
     <div className="space-y-6">
-
       {/* HERO */}
       <div
         className="
-          rounded-3xl
-          border
-          border-black/5
+    relative
+    overflow-hidden
 
-          bg-gradient-to-br
-          from-[#111111]
-          to-[#1C1C1C]
+    rounded-[32px]
 
-          p-8
-          text-white
+    border
+    border-[#E9E3E5]
 
-          shadow-xl
-        "
+    bg-gradient-to-br
+    from-white
+    via-[#FCFAFB]
+    to-[#F8EEF1]
+
+    p-8
+
+    shadow-[0_10px_40px_rgba(0,0,0,0.04)]
+  "
       >
+        {/* glow */}
+        <div
+          className="
+      absolute
+      -right-24
+      -top-24
+
+      h-72
+      w-72
+
+      rounded-full
+
+      bg-[#6B1A2A]/10
+
+      blur-3xl
+    "
+        />
 
         <div
           className="
-            flex
-            flex-col
-            gap-6
+      relative
+      z-10
 
-            lg:flex-row
-            lg:items-center
-            lg:justify-between
-          "
+      flex
+      flex-col
+      gap-8
+
+      lg:flex-row
+      lg:items-center
+      lg:justify-between
+    "
         >
-
+          {/* LEFT */}
           <div>
+            <div
+              className="
+          inline-flex
+          items-center
+          gap-2
 
-            <p className="text-sm text-white/60">
-              Welcome back
-            </p>
+          rounded-full
+
+          border
+          border-[#E7D7DC]
+
+          bg-white/80
+
+          px-4
+          py-2
+
+          text-xs
+          font-medium
+
+          text-[#6B1A2A]
+
+          backdrop-blur-xl
+        "
+            >
+              Gemora Admin Suite
+            </div>
 
             <h1
               className="
-                mt-2
-                text-4xl
-                font-bold
-                tracking-tight
-              "
+          mt-5
+
+          max-w-2xl
+
+          text-4xl
+          font-bold
+          tracking-tight
+
+          text-[#111111]
+
+          md:text-5xl
+        "
             >
-              Store Performance
+              Monitor your store performance in real time.
             </h1>
 
             <p
               className="
-                mt-3
-                max-w-2xl
-                text-sm
-                leading-relaxed
-                text-white/70
-              "
-            >
-              Monitor revenue, inventory,
-              customer activity and order
-              operations across your store.
-            </p>
+          mt-4
 
+          max-w-2xl
+
+          text-[15px]
+          leading-relaxed
+
+          text-[#6D7175]
+        "
+            >
+              Track revenue, inventory, fulfillment operations and customer
+              activity across your ecommerce ecosystem.
+            </p>
           </div>
 
+          {/* RIGHT */}
           <div
             className="
-              flex
-              items-center
-              gap-4
-            "
+        flex
+        items-center
+        gap-4
+      "
           >
-
             <button
               className="
-                rounded-xl
-                bg-white
-                px-5
-                py-3
+          rounded-2xl
 
-                text-sm
-                font-semibold
-                text-black
+          bg-[#6B1A2A]
 
-                transition
-                hover:opacity-90
-              "
+          px-5
+          py-3
+
+          text-sm
+          font-semibold
+          text-white
+
+          shadow-lg
+          shadow-[#6B1A2A]/20
+
+          transition
+          hover:opacity-90
+        "
             >
               Export Report
             </button>
 
             <button
               className="
-                rounded-xl
-                border
-                border-white/10
+          rounded-2xl
 
-                bg-white/5
+          border
+          border-black/10
 
-                px-5
-                py-3
+          bg-white/70
 
-                text-sm
-                font-semibold
-                text-white
+          px-5
+          py-3
 
-                backdrop-blur-xl
+          text-sm
+          font-semibold
 
-                transition
-                hover:bg-white/10
-              "
+          text-[#111]
+
+          backdrop-blur-xl
+
+          transition
+          hover:bg-white
+        "
             >
               View Analytics
             </button>
-
           </div>
-
         </div>
-
       </div>
 
       {/* KPI CARDS */}
       <div
         className="
-          grid
-          grid-cols-1
-          gap-4
+    grid
+    grid-cols-1
+    gap-5
 
-          md:grid-cols-2
-          xl:grid-cols-4
-        "
+    md:grid-cols-2
+    xl:grid-cols-4
+  "
       >
-
-        {/* Revenue */}
+        {/* REVENUE */}
         <div
           className="
-            rounded-3xl
-            border
-            border-black/5
+      relative
+      overflow-hidden
 
-            bg-white
-            p-6
+      rounded-[28px]
 
-            shadow-sm
-          "
+      border
+      border-[#ECE7E9]
+
+      bg-white
+
+      p-6
+
+      shadow-sm
+      transition
+
+      hover:-translate-y-1
+      hover:shadow-xl
+      hover:shadow-black/[0.03]
+    "
         >
-
           <div
             className="
-              flex
-              items-start
-              justify-between
-            "
-          >
+        absolute
+        right-0
+        top-0
 
-            <div>
+        h-28
+        w-28
 
-              <p className="text-sm text-[#6D7175]">
-                Total Revenue
-              </p>
+        rounded-full
 
-              <h2
-                className="
-                  mt-3
-                  text-4xl
-                  font-bold
-                  tracking-tight
-                "
-              >
-                ₹4.2L
-              </h2>
+        bg-[#F8EEF1]
 
-            </div>
+        blur-2xl
+      "
+          />
 
+          <div className="relative z-10">
             <div
               className="
-                flex
-                h-12
-                w-12
-
-                items-center
-                justify-center
-
-                rounded-2xl
-
-                bg-green-100
-                text-green-700
-              "
+          flex
+          items-start
+          justify-between
+        "
             >
-              <IndianRupee size={22} />
-            </div>
+              <div>
+                <p
+                  className="
+              text-xs
+              font-medium
+              uppercase
+              tracking-wide
 
-          </div>
-
-          <div
-            className="
-              mt-6
-              flex
-              items-center
-              gap-2
+              text-[#9CA3AF]
             "
-          >
+                >
+                  Total Revenue
+                </p>
 
-            <TrendingUp
-              size={16}
-              className="text-green-600"
-            />
+                <h2
+                  className="
+              mt-4
 
-            <span
-              className="
-                text-sm
-                font-medium
-                text-green-600
-              "
-            >
-              +18.4%
-            </span>
+              text-4xl
+              font-bold
+              tracking-tight
 
-            <span
-              className="
-                text-sm
-                text-[#6D7175]
-              "
-            >
-              this month
-            </span>
+              text-[#111111]
+            "
+                >
+                  {loading
+                    ? "..."
+                    : `₹${metrics.totalRevenue?.toLocaleString()}`}
+                </h2>
+              </div>
 
+              <div
+                className="
+            flex
+            h-12
+            w-12
+
+            items-center
+            justify-center
+
+            rounded-2xl
+
+            bg-[#F8EEF1]
+
+            text-[#6B1A2A]
+          "
+              >
+                <IndianRupee size={22} />
+              </div>
+            </div>
           </div>
-
         </div>
 
-        {/* Orders */}
+        {/* ORDERS */}
         <div
           className="
-            rounded-3xl
-            border
-            border-black/5
+      relative
+      overflow-hidden
 
-            bg-white
-            p-6
+      rounded-[28px]
 
-            shadow-sm
-          "
+      border
+      border-[#ECE7E9]
+
+      bg-white
+
+      p-6
+
+      shadow-sm
+      transition
+
+      hover:-translate-y-1
+      hover:shadow-xl
+      hover:shadow-black/[0.03]
+    "
         >
-
           <div
             className="
-              flex
-              items-start
-              justify-between
-            "
-          >
+        absolute
+        right-0
+        top-0
 
-            <div>
+        h-28
+        w-28
 
-              <p className="text-sm text-[#6D7175]">
-                Orders
-              </p>
+        rounded-full
 
-              <h2
-                className="
-                  mt-3
-                  text-4xl
-                  font-bold
-                  tracking-tight
-                "
-              >
-                184
-              </h2>
+        bg-[#F8EEF1]
 
-            </div>
+        blur-2xl
+      "
+          />
 
+          <div className="relative z-10">
             <div
               className="
-                flex
-                h-12
-                w-12
-
-                items-center
-                justify-center
-
-                rounded-2xl
-
-                bg-blue-100
-                text-blue-700
-              "
+          flex
+          items-start
+          justify-between
+        "
             >
-              <ShoppingCart size={22} />
-            </div>
+              <div>
+                <p
+                  className="
+              text-xs
+              font-medium
+              uppercase
+              tracking-wide
 
-          </div>
-
-          <div
-            className="
-              mt-6
-              flex
-              items-center
-              gap-2
+              text-[#9CA3AF]
             "
-          >
+                >
+                  Orders
+                </p>
 
-            <TrendingUp
-              size={16}
-              className="text-green-600"
-            />
+                <h2
+                  className="
+              mt-4
 
-            <span
-              className="
-                text-sm
-                font-medium
-                text-green-600
-              "
-            >
-              +12.2%
-            </span>
+              text-4xl
+              font-bold
+              tracking-tight
 
-            <span
-              className="
-                text-sm
-                text-[#6D7175]
-              "
-            >
-              from last week
-            </span>
+              text-[#111111]
+            "
+                >
+                  {loading ? "..." : metrics.totalOrders}
+                </h2>
+              </div>
 
+              <div
+                className="
+            flex
+            h-12
+            w-12
+
+            items-center
+            justify-center
+
+            rounded-2xl
+
+            bg-[#F8EEF1]
+
+            text-[#6B1A2A]
+          "
+              >
+                <ShoppingCart size={20} />
+              </div>
+            </div>
           </div>
-
         </div>
 
-        {/* Customers */}
+        {/* CUSTOMERS */}
         <div
           className="
-            rounded-3xl
-            border
-            border-black/5
+      relative
+      overflow-hidden
 
-            bg-white
-            p-6
+      rounded-[28px]
 
-            shadow-sm
-          "
+      border
+      border-[#ECE7E9]
+
+      bg-white
+
+      p-6
+
+      shadow-sm
+      transition
+
+      hover:-translate-y-1
+      hover:shadow-xl
+      hover:shadow-black/[0.03]
+    "
         >
-
           <div
             className="
-              flex
-              items-start
-              justify-between
-            "
-          >
+        absolute
+        right-0
+        top-0
 
-            <div>
+        h-28
+        w-28
 
-              <p className="text-sm text-[#6D7175]">
-                Customers
-              </p>
+        rounded-full
 
-              <h2
-                className="
-                  mt-3
-                  text-4xl
-                  font-bold
-                  tracking-tight
-                "
-              >
-                42
-              </h2>
+        bg-[#F8EEF1]
 
-            </div>
+        blur-2xl
+      "
+          />
 
+          <div className="relative z-10">
             <div
               className="
-                flex
-                h-12
-                w-12
-
-                items-center
-                justify-center
-
-                rounded-2xl
-
-                bg-purple-100
-                text-purple-700
-              "
+          flex
+          items-start
+          justify-between
+        "
             >
-              <Users size={22} />
-            </div>
+              <div>
+                <p
+                  className="
+              text-xs
+              font-medium
+              uppercase
+              tracking-wide
 
-          </div>
-
-          <div
-            className="
-              mt-6
-              flex
-              items-center
-              gap-2
+              text-[#9CA3AF]
             "
-          >
+                >
+                  Customers
+                </p>
 
-            <TrendingUp
-              size={16}
-              className="text-green-600"
-            />
+                <h2
+                  className="
+              mt-4
 
-            <span
-              className="
-                text-sm
-                font-medium
-                text-green-600
-              "
-            >
-              +8.7%
-            </span>
+              text-4xl
+              font-bold
+              tracking-tight
 
-            <span
-              className="
-                text-sm
-                text-[#6D7175]
-              "
-            >
-              active users
-            </span>
+              text-[#111111]
+            "
+                >
+                  {loading ? "..." : metrics.totalCustomers}
+                </h2>
+              </div>
 
+              <div
+                className="
+            flex
+            h-12
+            w-12
+
+            items-center
+            justify-center
+
+            rounded-2xl
+
+            bg-[#F8EEF1]
+
+            text-[#6B1A2A]
+          "
+              >
+                <Users size={20} />
+              </div>
+            </div>
           </div>
-
         </div>
 
-        {/* Low Stock */}
+        {/* LOW STOCK */}
         <div
           className="
-            rounded-3xl
-            border
-            border-black/5
+      relative
+      overflow-hidden
 
-            bg-white
-            p-6
+      rounded-[28px]
 
-            shadow-sm
-          "
+      border
+      border-[#ECE7E9]
+
+      bg-white
+
+      p-6
+
+      shadow-sm
+      transition
+
+      hover:-translate-y-1
+      hover:shadow-xl
+      hover:shadow-black/[0.03]
+    "
         >
-
           <div
             className="
-              flex
-              items-start
-              justify-between
-            "
-          >
+        absolute
+        right-0
+        top-0
 
-            <div>
+        h-28
+        w-28
 
-              <p className="text-sm text-[#6D7175]">
-                Low Stock
-              </p>
+        rounded-full
 
-              <h2
-                className="
-                  mt-3
-                  text-4xl
-                  font-bold
-                  tracking-tight
-                "
-              >
-                5
-              </h2>
+        bg-[#F8EEF1]
 
-            </div>
+        blur-2xl
+      "
+          />
 
+          <div className="relative z-10">
             <div
               className="
-                flex
-                h-12
-                w-12
-
-                items-center
-                justify-center
-
-                rounded-2xl
-
-                bg-red-100
-                text-red-700
-              "
+          flex
+          items-start
+          justify-between
+        "
             >
-              <AlertTriangle size={22} />
+              <div>
+                <p
+                  className="
+              text-xs
+              font-medium
+              uppercase
+              tracking-wide
+
+              text-[#9CA3AF]
+            "
+                >
+                  Low Stock
+                </p>
+
+                <h2
+                  className="
+              mt-4
+
+              text-4xl
+              font-bold
+              tracking-tight
+
+              text-[#111111]
+            "
+                >
+                  {loading ? "..." : metrics.lowStockProducts}
+                </h2>
+              </div>
+
+              <div
+                className="
+            flex
+            h-12
+            w-12
+
+            items-center
+            justify-center
+
+            rounded-2xl
+
+            bg-[#F8EEF1]
+
+            text-[#6B1A2A]
+          "
+              >
+                <AlertTriangle size={20} />
+              </div>
             </div>
 
-          </div>
-
-          <div
-            className="
-              mt-6
-              flex
-              items-center
-              gap-2
-            "
-          >
-
-            <TrendingDown
-              size={16}
-              className="text-red-600"
-            />
-
-            <span
+            {/* only alert kept */}
+            <div
               className="
-                text-sm
-                font-medium
-                text-red-600
-              "
+          mt-6
+          inline-flex
+          items-center
+
+          rounded-full
+
+          bg-[#FFF5E8]
+
+          px-3
+          py-1
+
+          text-xs
+          font-semibold
+
+          text-[#D97706]
+        "
             >
               Needs attention
-            </span>
-
+            </div>
           </div>
-
         </div>
+      </div>
+
+{/* GRID */}
+<div
+  className="
+    grid
+    grid-cols-1
+    gap-6
+
+    xl:grid-cols-3
+  "
+>
+
+  {/* REVENUE CHART */}
+  <div
+    className="
+      xl:col-span-2
+
+      rounded-3xl
+      border
+      border-black/5
+
+      bg-white
+      p-6
+
+      shadow-sm
+    "
+  >
+
+    <div
+      className="
+        flex
+        items-center
+        justify-between
+      "
+    >
+
+      <div>
+
+        <h2
+          className="
+            text-lg
+            font-semibold
+            text-[#1A1A1A]
+          "
+        >
+          Revenue Overview
+        </h2>
+
+        <p
+          className="
+            mt-1
+            text-sm
+            text-[#6D7175]
+          "
+        >
+          Monthly sales performance
+        </p>
 
       </div>
 
-      {/* GRID */}
+    <select
+
+  value={range}
+
+  onChange={(e) =>
+    setRange(e.target.value)
+  }
+
+  className="
+    rounded-xl
+    border
+    border-black/10
+
+    bg-[#F6F6F7]
+
+    px-4
+    py-2
+
+    text-sm
+    outline-none
+  "
+>
+
+  <option value="7d">
+    Last 7 Days
+  </option>
+
+  <option value="15d">
+    Last 15 Days
+  </option>
+
+  <option value="1m">
+    Last 1 Month
+  </option>
+
+  <option value="3m">
+    Last 3 Months
+  </option>
+
+  <option value="6m">
+    Last 6 Months
+  </option>
+
+  <option value="12m">
+    Last 12 Months
+  </option>
+
+</select>
+
+    </div>
+
+    {/* CHART */}
+  <div className="mt-8 h-[320px]">
+
+  <ResponsiveContainer
+    width="100%"
+    height="100%"
+  >
+
+    <BarChart
+      data={
+        dashboardData.monthlyRevenue || []
+      }
+
+      margin={{
+        top: 10,
+        right: 10,
+        left: -20,
+        bottom: 0,
+      }}
+    >
+
+      <CartesianGrid
+        strokeDasharray="3 3"
+        vertical={false}
+        stroke="#F1ECEE"
+      />
+
+      <XAxis
+        dataKey="_id.month"
+
+        axisLine={false}
+        tickLine={false}
+
+        tick={{
+          fill: "#6D7175",
+          fontSize: 12,
+        }}
+
+        tickFormatter={(value) => {
+
+          const months = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
+
+          return months[value - 1];
+
+        }}
+      />
+
+      <YAxis
+        axisLine={false}
+        tickLine={false}
+
+        tick={{
+          fill: "#6D7175",
+          fontSize: 12,
+        }}
+
+        tickFormatter={(value) =>
+          `₹${value / 1000}k`
+        }
+      />
+
+      <Tooltip
+
+        contentStyle={{
+
+          borderRadius: "16px",
+
+          border:
+            "1px solid #ECE7E9",
+
+          background:
+            "#FFFFFF",
+
+          boxShadow:
+            "0 10px 30px rgba(0,0,0,0.06)",
+
+        }}
+
+        formatter={(value) => [
+
+          `₹${value.toLocaleString()}`,
+
+          "Revenue",
+
+        ]}
+
+        labelFormatter={(label) => {
+
+          const months = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ];
+
+          return months[label - 1];
+
+        }}
+      />
+
+      <Bar
+        dataKey="revenue"
+
+        radius={[14,14,0,0]}
+
+        fill="#6B1A2A"
+
+        maxBarSize={56}
+      />
+
+    </BarChart>
+
+  </ResponsiveContainer>
+
+</div>
+
+  </div>
+
+  {/* QUICK INSIGHTS */}
+  <div
+    className="
+      rounded-3xl
+      border
+      border-black/5
+
+      bg-white
+      p-6
+
+      shadow-sm
+    "
+  >
+
+    <h2
+      className="
+        text-lg
+        font-semibold
+        text-[#1A1A1A]
+      "
+    >
+      Quick Insights
+    </h2>
+
+    <div className="mt-6 space-y-5">
+
+      {/* TOTAL PRODUCTS */}
       <div
         className="
-          grid
-          grid-cols-1
-          gap-6
-
-          xl:grid-cols-3
+          rounded-2xl
+          bg-[#F6F6F7]
+          p-4
         "
       >
 
-        {/* SALES CHART */}
-        <div
+        <p
           className="
-            xl:col-span-2
+            text-sm
+            text-[#6D7175]
+          "
+        >
+          Total Products
+        </p>
 
-            rounded-3xl
-            border
-            border-black/5
-
-            bg-white
-            p-6
-
-            shadow-sm
+        <h3
+          className="
+            mt-2
+            text-xl
+            font-bold
           "
         >
 
-          <div
-            className="
-              flex
-              items-center
-              justify-between
-            "
-          >
+          {loading
 
-            <div>
+            ? "..."
 
-              <h2
-                className="
-                  text-lg
-                  font-semibold
-                  text-[#1A1A1A]
-                "
-              >
-                Revenue Overview
-              </h2>
+            : metrics.totalProducts
+          }
 
-              <p
-                className="
-                  mt-1
-                  text-sm
-                  text-[#6D7175]
-                "
-              >
-                Monthly sales performance
-              </p>
-
-            </div>
-
-            <select
-              className="
-                rounded-xl
-                border
-                border-black/10
-
-                bg-[#F6F6F7]
-
-                px-4
-                py-2
-
-                text-sm
-                outline-none
-              "
-            >
-              <option>Last 6 Months</option>
-            </select>
-
-          </div>
-
-          {/* Fake Chart */}
-          <div
-            className="
-              mt-8
-              flex
-              h-[320px]
-              items-end
-              gap-4
-            "
-          >
-
-            {[40, 60, 55, 80, 72, 95].map(
-              (height, index) => (
-
-                <div
-                  key={index}
-                  className="flex-1"
-                >
-
-                  <div
-                    style={{
-                      height: `${height}%`,
-                    }}
-                    className="
-                      rounded-t-2xl
-
-                      bg-gradient-to-t
-                      from-black
-                      to-[#404040]
-
-                      transition
-                      hover:opacity-80
-                    "
-                  />
-
-                </div>
-
-              )
-            )}
-
-          </div>
-
-        </div>
-
-        {/* QUICK INSIGHTS */}
-        <div
-          className="
-            rounded-3xl
-            border
-            border-black/5
-
-            bg-white
-            p-6
-
-            shadow-sm
-          "
-        >
-
-          <h2
-            className="
-              text-lg
-              font-semibold
-              text-[#1A1A1A]
-            "
-          >
-            Quick Insights
-          </h2>
-
-          <div className="mt-6 space-y-5">
-
-            <div
-              className="
-                rounded-2xl
-                bg-[#F6F6F7]
-                p-4
-              "
-            >
-
-              <p className="text-sm text-[#6D7175]">
-                Best Selling Category
-              </p>
-
-              <h3
-                className="
-                  mt-2
-                  text-xl
-                  font-bold
-                "
-              >
-                Diamond
-              </h3>
-
-            </div>
-
-            <div
-              className="
-                rounded-2xl
-                bg-[#F6F6F7]
-                p-4
-              "
-            >
-
-              <p className="text-sm text-[#6D7175]">
-                Conversion Rate
-              </p>
-
-              <h3
-                className="
-                  mt-2
-                  text-xl
-                  font-bold
-                "
-              >
-                4.8%
-              </h3>
-
-            </div>
-
-            <div
-              className="
-                rounded-2xl
-                bg-[#F6F6F7]
-                p-4
-              "
-            >
-
-              <p className="text-sm text-[#6D7175]">
-                Returning Customers
-              </p>
-
-              <h3
-                className="
-                  mt-2
-                  text-xl
-                  font-bold
-                "
-              >
-                62%
-              </h3>
-
-            </div>
-
-          </div>
-
-        </div>
+        </h3>
 
       </div>
+
+      {/* PENDING ORDERS */}
+      <div
+        className="
+          rounded-2xl
+          bg-[#F6F6F7]
+          p-4
+        "
+      >
+
+        <p
+          className="
+            text-sm
+            text-[#6D7175]
+          "
+        >
+          Pending Orders
+        </p>
+
+        <h3
+          className="
+            mt-2
+            text-xl
+            font-bold
+          "
+        >
+
+          {loading
+
+            ? "..."
+
+            : metrics.pendingOrders
+          }
+
+        </h3>
+
+      </div>
+
+      {/* LOW STOCK */}
+      <div
+        className="
+          rounded-2xl
+          bg-[#F6F6F7]
+          p-4
+        "
+      >
+
+        <p
+          className="
+            text-sm
+            text-[#6D7175]
+          "
+        >
+          Inventory Alerts
+        </p>
+
+        <h3
+          className="
+            mt-2
+            text-xl
+            font-bold
+          "
+        >
+
+          {loading
+
+            ? "..."
+
+            : metrics.lowStockProducts
+          }
+
+        </h3>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
       {/* LOWER GRID */}
       <div
@@ -767,7 +1098,6 @@ export default function Dashboard() {
           xl:grid-cols-2
         "
       >
-
         {/* RECENT ORDERS */}
         <div
           className="
@@ -781,7 +1111,6 @@ export default function Dashboard() {
             shadow-sm
           "
         >
-
           <div
             className="
               flex
@@ -789,7 +1118,6 @@ export default function Dashboard() {
               justify-between
             "
           >
-
             <h2
               className="
                 text-lg
@@ -809,70 +1137,70 @@ export default function Dashboard() {
             >
               View All
             </button>
-
           </div>
 
           <div className="mt-6 space-y-4">
+            {loading ? (
+              <p className="text-sm text-[#6D7175]">Loading orders...</p>
+            ) : dashboardData.recentOrders.length === 0 ? (
+              <p className="text-sm text-[#6D7175]">No recent orders</p>
+            ) : (
+              dashboardData.recentOrders.map((order) => (
+                <div
+                  key={order._id}
+                  className="
+            flex
+            items-center
+            justify-between
 
-            {[1,2,3,4].map((item) => (
+            rounded-2xl
+            border
+            border-black/5
 
-              <div
-                key={item}
-                className="
-                  flex
-                  items-center
-                  justify-between
+            p-4
+          "
+                >
+                  <div>
+                    <h3 className="font-semibold">
+                      {order.orderNumber || order._id.slice(-6)}
+                    </h3>
 
-                  rounded-2xl
-                  border
-                  border-black/5
+                    <p
+                      className="
+                mt-1
+                text-sm
+                text-[#6D7175]
+              "
+                    >
+                      {order.customerName}
+                    </p>
+                  </div>
 
-                  p-4
-                "
-              >
+                  <div className="text-right">
+                    <h3 className="font-semibold">
+                      ₹{order.totalPrice?.toLocaleString()}
+                    </h3>
 
-                <div>
+                    <p
+                      className={`
+                mt-1
+                text-sm
+                font-medium
 
-                  <h3 className="font-semibold">
-                    #ORD-102{item}
-                  </h3>
-
-                  <p
-                    className="
-                      mt-1
-                      text-sm
-                      text-[#6D7175]
-                    "
-                  >
-                    Abdus Salam
-                  </p>
-
+                ${
+                  order.paymentStatus === "PAID"
+                    ? "text-green-600"
+                    : "text-orange-500"
+                }
+              `}
+                    >
+                      {order.paymentStatus}
+                    </p>
+                  </div>
                 </div>
-
-                <div className="text-right">
-
-                  <h3 className="font-semibold">
-                    ₹12,000
-                  </h3>
-
-                  <p
-                    className="
-                      mt-1
-                      text-sm
-                      text-green-600
-                    "
-                  >
-                    Paid
-                  </p>
-
-                </div>
-
-              </div>
-
-            ))}
-
+              ))
+            )}
           </div>
-
         </div>
 
         {/* LOW STOCK */}
@@ -888,7 +1216,6 @@ export default function Dashboard() {
             shadow-sm
           "
         >
-
           <div
             className="
               flex
@@ -896,7 +1223,6 @@ export default function Dashboard() {
               justify-between
             "
           >
-
             <h2
               className="
                 text-lg
@@ -916,94 +1242,103 @@ export default function Dashboard() {
             >
               Manage
             </button>
-
           </div>
 
           <div className="mt-6 space-y-4">
+            {loading ? (
+              <p className="text-sm text-[#6D7175]">Loading inventory...</p>
+            ) : dashboardData.lowStockProducts.length === 0 ? (
+              <p className="text-sm text-[#6D7175]">No low stock alerts</p>
+            ) : (
+              dashboardData.lowStockProducts.map((product) => {
+                const totalStock =
+                  product.variants?.length > 0
+                    ? product.variants.reduce(
+                        (acc, variant) => acc + variant.stock,
 
-            {[1,2,3,4].map((item) => (
+                        0,
+                      )
+                    : product.stock;
 
-              <div
-                key={item}
-                className="
-                  flex
-                  items-center
-                  justify-between
-
-                  rounded-2xl
-                  border
-                  border-black/5
-
-                  p-4
-                "
-              >
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-4
-                  "
-                >
-
+                return (
                   <div
+                    key={product._id}
                     className="
-                      h-12
-                      w-12
+              flex
+              items-center
+              justify-between
 
-                      rounded-xl
-                      bg-[#F6F6F7]
-                    "
-                  />
+              rounded-2xl
+              border
+              border-black/5
 
-                  <div>
-
-                    <h3 className="font-semibold">
-                      Diamond Ring {item}
-                    </h3>
-
-                    <p
+              p-4
+            "
+                  >
+                    <div
                       className="
-                        mt-1
-                        text-sm
-                        text-[#6D7175]
-                      "
+                flex
+                items-center
+                gap-4
+              "
                     >
-                      SKU-102{item}
-                    </p>
+                      <img
+                        src={
+                          product.images?.[1]
+                            ? `${import.meta.env.VITE_ASSET_URL}${product.images[1]}`
+                            : "/placeholder.webp"
+                        }
+                        alt={product.name}
+                        className="
+    h-14
+    w-14
 
-                  </div>
+    rounded-2xl
 
-                </div>
+    border
+    border-[#F1ECEE]
 
-                <div
-                  className="
-                    rounded-full
-                    bg-red-100
+    object-cover
+  "
+                      />
 
-                    px-3
-                    py-1
+                      <div>
+                        <h3 className="font-semibold">{product.name}</h3>
 
-                    text-xs
-                    font-semibold
-                    text-red-700
+                        <p
+                          className="
+                    mt-1
+                    text-sm
+                    text-[#6D7175]
                   "
-                >
-                  2 Left
-                </div>
+                        >
+                          {product.category}
+                        </p>
+                      </div>
+                    </div>
 
-              </div>
+                    <div
+                      className="
+                rounded-full
+                bg-red-100
 
-            ))}
+                px-3
+                py-1
 
+                text-xs
+                font-semibold
+                text-red-700
+              "
+                    >
+                      {totalStock} Left
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
