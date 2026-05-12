@@ -13,6 +13,7 @@ import Products from "../pages/Products";
 import Orders from "../pages/Orders";
 import Login from "../pages/Login";
 import AddProduct from "../pages/AddProduct";
+import Customers from "../pages/Customer";
 
 export default function AppRoutes() {
   return (
@@ -63,6 +64,11 @@ export default function AppRoutes() {
     <Route
       path="orders"
       element={<Orders />}
+    />
+
+     <Route
+      path="customers"
+      element={<Customers />}
     />
 
   </Route>

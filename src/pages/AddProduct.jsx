@@ -53,98 +53,120 @@ image2: "",
 
   };
 
- const handleSubmit =
-  async (e) => {
+ const handleSubmit = async (e) => {
 
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
+  const price = Number(formData.price);
 
-      const images = [
+  const originalPrice = Number(formData.originalPrice);
 
-  `/uploads/products/${formData.subcategory}/${formData.category}/${formData.image1}.webp`,
+  const stock = Number(formData.stock);
 
-  `/uploads/products/${formData.subcategory}/${formData.category}/${formData.image2}.webp`,
+  const lowStockThreshold = Number(
+    formData.lowStockThreshold
+  );
 
-];
+  // VALIDATION
 
-      await api.post(
-        "/admin/products",
+  if (price < 0) {
+    return toast.error(
+      "Price cannot be negative"
+    );
+  }
 
-        {
-          name:
-            formData.name,
+  if (originalPrice < 0) {
+    return toast.error(
+      "Original price cannot be negative"
+    );
+  }
 
-          slug:
-            formData.slug,
+  if (stock < 0) {
+    return toast.error(
+      "Stock cannot be negative"
+    );
+  }
 
-          price:
-            Number(
-              formData.price
-            ),
+  if (lowStockThreshold < 0) {
+    return toast.error(
+      "Low stock threshold cannot be negative"
+    );
+  }
 
-          originalPrice:
-            Number(
-              formData.originalPrice
-            ),
+  if (
+    originalPrice > 0 &&
+    originalPrice < price
+  ) {
+    return toast.error(
+      "Original price should be greater than price"
+    );
+  }
 
-          stock:
-            Number(
-              formData.stock
-            ),
+  try {
 
-          lowStockThreshold:
-            Number(
-              formData.lowStockThreshold
-            ),
+    const images = [
 
-          category:
-            formData.category,
+      `/uploads/products/${formData.subcategory}/${formData.category}/${formData.image1}.webp`,
 
-          subcategory:
-            formData.subcategory,
+      `/uploads/products/${formData.subcategory}/${formData.category}/${formData.image2}.webp`,
 
-          gender:
-            formData.gender,
+    ];
 
-          status:
-            formData.status,
+    await api.post(
+      "/admin/products",
 
- images,
+      {
+        name: formData.name,
 
-          description: {
+        slug: formData.slug,
 
-            short:
-              formData.shortDescription,
+        price,
 
-          },
+        originalPrice,
 
-        }
-      );
+        stock,
 
-     toast.success(
-  "Product created successfully"
-);
+        lowStockThreshold,
 
-      navigate(
-  "/admin/products"
-);
+        category: formData.category,
 
-    } catch (error) {
+        subcategory: formData.subcategory,
 
-      console.error(error);
+        gender: formData.gender,
 
-     toast.error(
+        status: formData.status,
 
-  error.response?.data?.message ||
+        images,
 
-  "Failed to create product"
+        description: {
+          short:
+            formData.shortDescription,
+        },
 
-);
+      }
+    );
 
-    }
+    toast.success(
+      "Product created successfully"
+    );
 
-  };
+    navigate("/admin/products");
+
+  } catch (error) {
+
+    console.error(error);
+
+    toast.error(
+
+      error.response?.data?.message ||
+
+      "Failed to create product"
+
+    );
+
+  }
+
+};
 
   return (
 
@@ -597,6 +619,7 @@ image2: "",
                   value={formData.price}
                   onChange={handleChange}
                   placeholder="25000"
+                   min="0"
                   className="
                     h-12
                     w-full
@@ -646,6 +669,7 @@ image2: "",
                   value={formData.originalPrice}
                   onChange={handleChange}
                   placeholder="30000"
+                   min="0"
                   className="
                     h-12
                     w-full
@@ -695,6 +719,7 @@ image2: "",
                   value={formData.stock}
                   onChange={handleChange}
                   placeholder="10"
+                   min="0"
                   className="
                     h-12
                     w-full
@@ -745,6 +770,7 @@ image2: "",
                     formData.lowStockThreshold
                   }
                   onChange={handleChange}
+                   min="0"
                   className="
                     h-12
                     w-full

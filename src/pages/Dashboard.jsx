@@ -816,7 +816,7 @@ useEffect(() => {
 
     <BarChart
       data={
-        dashboardData.monthlyRevenue || []
+        dashboardData.revenueChart || []
       }
 
       margin={{
@@ -833,38 +833,15 @@ useEffect(() => {
         stroke="#F1ECEE"
       />
 
-      <XAxis
-        dataKey="_id.month"
-
-        axisLine={false}
-        tickLine={false}
-
-        tick={{
-          fill: "#6D7175",
-          fontSize: 12,
-        }}
-
-        tickFormatter={(value) => {
-
-          const months = [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-          ];
-
-          return months[value - 1];
-
-        }}
-      />
+  <XAxis
+  dataKey="label"
+  axisLine={false}
+  tickLine={false}
+  tick={{
+    fill: "#6D7175",
+    fontSize: 12,
+  }}
+/>
 
       <YAxis
         axisLine={false}
@@ -875,57 +852,18 @@ useEffect(() => {
           fontSize: 12,
         }}
 
-        tickFormatter={(value) =>
-          `₹${value / 1000}k`
-        }
+       tickFormatter={(value) => {
+  if (value >= 1000000)
+    return `₹${(value / 1000000).toFixed(1)}M`;
+
+  if (value >= 1000)
+    return `₹${(value / 1000).toFixed(0)}k`;
+
+  return `₹${value}`;
+}}
       />
 
-      <Tooltip
 
-        contentStyle={{
-
-          borderRadius: "16px",
-
-          border:
-            "1px solid #ECE7E9",
-
-          background:
-            "#FFFFFF",
-
-          boxShadow:
-            "0 10px 30px rgba(0,0,0,0.06)",
-
-        }}
-
-        formatter={(value) => [
-
-          `₹${value.toLocaleString()}`,
-
-          "Revenue",
-
-        ]}
-
-        labelFormatter={(label) => {
-
-          const months = [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
-          ];
-
-          return months[label - 1];
-
-        }}
-      />
 
       <Bar
         dataKey="revenue"

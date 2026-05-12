@@ -198,32 +198,7 @@ useEffect(() => {
     "
   >
 
-    {/* export */}
-    <button
-      className="
-        rounded-2xl
-
-        border
-        border-[#E5E7EB]
-
-        bg-white
-
-        px-5
-        py-3
-
-        text-sm
-        font-semibold
-
-        text-[#111111]
-
-        shadow-sm
-
-        transition
-        hover:bg-[#FAFAFA]
-      "
-    >
-      Export
-    </button>
+   
 
     {/* primary */}
     <button
@@ -246,7 +221,7 @@ useEffect(() => {
         hover:opacity-90
       "
     >
-      Create Order
+      Export
     </button>
 
   </div>
