@@ -7,9 +7,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import api from "../api/client";
-import {
-  exportProductsReport,
-} from "../services/productService";
+import { exportProductsReport } from "../services/productService";
 
 import { useNavigate } from "react-router-dom";
 
@@ -22,6 +20,9 @@ export default function Products() {
   const [category, setCategory] = useState("");
 
   const [sort, setSort] = useState("-createdAt");
+
+  const [material, setMaterial] =
+  useState("");
 
   const [loading, setLoading] = useState(false);
 
@@ -48,8 +49,10 @@ export default function Products() {
 
         const [productsRes, statsRes] = await Promise.all([
           api.get(
-            `/admin/products?page=${page}&limit=10&search=${search}&category=${category}&sort=${sort}`,
-          ),
+
+  `/admin/products?page=${page}&limit=10&search=${search}&category=${category}&material=${material}&sort=${sort}`
+
+),
 
           api.get("/admin/products/stats"),
         ]);
@@ -71,46 +74,28 @@ export default function Products() {
     };
 
     fetchData();
-  }, [page, search, category, sort]);
+  }, [page, search, category, sort, material]);
 
-
-  const handleExport =
-  async () => {
-
+  const handleExport = async () => {
     try {
+      const data = await exportProductsReport();
 
-      const data =
-        await exportProductsReport();
+      const url = window.URL.createObjectURL(new Blob([data]));
 
-      const url =
-        window.URL.createObjectURL(
-          new Blob([data])
-        );
-
-      const link =
-        document.createElement("a");
+      const link = document.createElement("a");
 
       link.href = url;
 
-      link.setAttribute(
-        "download",
-        "products-report.xlsx"
-      );
+      link.setAttribute("download", "products-report.xlsx");
 
-      document.body.appendChild(
-        link
-      );
+      document.body.appendChild(link);
 
       link.click();
 
       link.remove();
-
     } catch (error) {
-
       console.error(error);
-
     }
-
   };
 
   return (
@@ -196,7 +181,7 @@ export default function Products() {
         >
           {/* secondary */}
           <button
-           onClick={handleExport}
+            onClick={handleExport}
             className="
         rounded-2xl
 
@@ -682,9 +667,10 @@ export default function Products() {
         </div>
       </div>
 
-      {/* FILTER BAR */}
-      <div
-        className="
+    {/*FILTER BAR*/}
+
+<div
+  className="
     mb-8
 
     rounded-[28px]
@@ -698,9 +684,10 @@ export default function Products() {
 
     shadow-[0_10px_30px_rgba(0,0,0,0.03)]
   "
-      >
-        <div
-          className="
+>
+
+  <div
+    className="
       flex
       flex-col
       gap-4
@@ -709,10 +696,12 @@ export default function Products() {
       xl:items-center
       xl:justify-between
     "
-        >
-          {/* LEFT */}
-          <div
-            className="
+  >
+
+    {/* LEFT FILTERS */}
+
+    <div
+      className="
         flex
         flex-1
         flex-col
@@ -720,12 +709,15 @@ export default function Products() {
 
         lg:flex-row
       "
-          >
-            {/* SEARCH */}
-            <div className="relative flex-1">
-              <Search
-                size={18}
-                className="
+    >
+
+      {/* SEARCH */}
+
+      <div className="relative flex-1">
+
+        <Search
+          size={18}
+          className="
             absolute
             left-4
             top-1/2
@@ -733,17 +725,28 @@ export default function Products() {
 
             text-[#9CA3AF]
           "
-              />
+        />
 
-              <input
-                value={search}
-                onChange={(e) => {
-                  setPage(1);
-                  setSearch(e.target.value);
-                }}
-                type="text"
-                placeholder="Search products, SKU or categories..."
-                className="
+        <input
+          value={search}
+
+          onChange={(e) => {
+
+            setPage(1);
+
+            setSearch(
+              e.target.value
+            );
+
+          }}
+
+          type="text"
+
+          placeholder="
+            Search products, materials or collections...
+          "
+
+          className="
             h-12
             w-full
 
@@ -769,92 +772,213 @@ export default function Products() {
             focus:border-[#D8C7CD]
             focus:bg-white
           "
-              />
-            </div>
+        />
 
-            {/* CATEGORY */}
-            <select
-              value={category}
-              onChange={(e) => {
-                setPage(1);
-                setCategory(e.target.value);
-              }}
-              className="
-          h-12
-
-          rounded-2xl
-
-          border
-          border-[#ECE7E9]
-
-          bg-[#FCFAFB]
-
-          px-4
-
-          text-sm
-          font-medium
-
-          text-[#111111]
-
-          outline-none
-
-          transition
-
-          focus:border-[#D8C7CD]
-          focus:bg-white
-        "
-            >
-              <option value="">All Categories</option>
-
-              <option value="gold">Gold</option>
-
-              <option value="diamond">Diamond</option>
-
-              <option value="silver">Silver</option>
-
-              <option value="gemstone">Gemstone</option>
-            </select>
-
-            {/* SORT */}
-            <select
-              value={sort}
-              onChange={(e) => {
-                setSort(e.target.value);
-              }}
-              className="
-          h-12
-
-          rounded-2xl
-
-          border
-          border-[#ECE7E9]
-
-          bg-[#FCFAFB]
-
-          px-4
-
-          text-sm
-          font-medium
-
-          text-[#111111]
-
-          outline-none
-
-          transition
-
-          focus:border-[#D8C7CD]
-          focus:bg-white
-        "
-            >
-              <option value="-createdAt">Newest First</option>
-
-              <option value="price">Price Low to High</option>
-
-              <option value="-price">Price High to Low</option>
-            </select>
-          </div>
-        </div>
       </div>
+
+      {/* CATEGORY */}
+
+      <select
+
+        value={category}
+
+        onChange={(e) => {
+
+          setPage(1);
+
+          setCategory(
+            e.target.value
+          );
+
+        }}
+
+        className="
+          h-12
+
+          rounded-2xl
+
+          border
+          border-[#ECE7E9]
+
+          bg-[#FCFAFB]
+
+          px-4
+
+          text-sm
+          font-medium
+
+          text-[#111111]
+
+          outline-none
+
+          transition
+
+          focus:border-[#D8C7CD]
+          focus:bg-white
+        "
+      >
+
+        <option value="">
+          All Categories
+        </option>
+
+        <option value="rings">
+          Rings
+        </option>
+
+        <option value="bracelets">
+          Bracelets
+        </option>
+
+        <option value="earrings">
+          Earrings
+        </option>
+
+        <option value="necklaces">
+          Necklaces
+        </option>
+
+      </select>
+
+      {/* MATERIAL */}
+
+      <select
+
+        value={material}
+
+        onChange={(e) => {
+
+          setPage(1);
+
+          setMaterial(
+            e.target.value
+          );
+
+        }}
+
+        className="
+          h-12
+
+          rounded-2xl
+
+          border
+          border-[#ECE7E9]
+
+          bg-[#FCFAFB]
+
+          px-4
+
+          text-sm
+          font-medium
+
+          text-[#111111]
+
+          outline-none
+
+          transition
+
+          focus:border-[#D8C7CD]
+          focus:bg-white
+        "
+      >
+
+        <option value="">
+          All Materials
+        </option>
+
+        <option value="18K Gold">
+          18K Gold
+        </option>
+
+        <option value="22K Gold">
+          22K Gold
+        </option>
+
+        <option value="Silver">
+          Silver
+        </option>
+
+        <option value="Diamond">
+          Diamond
+        </option>
+
+        <option value="Rose Gold">
+          Rose Gold
+        </option>
+
+        <option value="White Gold">
+          White Gold
+        </option>
+
+        <option value="Platinum">
+          Platinum
+        </option>
+
+        <option value="Gemstone">
+          Gemstone
+        </option>
+
+      </select>
+
+      {/* SORT */}
+
+      <select
+
+        value={sort}
+
+        onChange={(e) => {
+
+          setSort(
+            e.target.value
+          );
+
+        }}
+
+        className="
+          h-12
+
+          rounded-2xl
+
+          border
+          border-[#ECE7E9]
+
+          bg-[#FCFAFB]
+
+          px-4
+
+          text-sm
+          font-medium
+
+          text-[#111111]
+
+          outline-none
+
+          transition
+
+          focus:border-[#D8C7CD]
+          focus:bg-white
+        "
+      >
+
+        <option value="-createdAt">
+          Newest First
+        </option>
+
+        <option value="price">
+          Price Low to High
+        </option>
+
+        <option value="-price">
+          Price High to Low
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+</div>
 
       {/* TABLE */}
       <div
@@ -954,19 +1078,22 @@ export default function Products() {
                 {products.map((product) => {
                   return (
                     <tr
-                    onClick={() =>
-  navigate(
-    `/admin/products/${product._id}`
-  )
-}
+                      onClick={() => navigate(`/admin/products/${product._id}`)}
                       key={product._id}
                       className="
-                  border-b
-                  border-[#F5F1F2]
+  cursor-pointer
 
-                  transition
-                  hover:bg-[#FCFAFB]
-                "
+  border-b
+  border-[#F5F1F2]
+
+  transition-all
+  duration-200
+
+  hover:bg-[#FCFAFB]
+  hover:shadow-[inset_4px_0_0_#6B1A2A]
+
+  active:scale-[0.998]
+"
                     >
                       {/* PRODUCT */}
                       <td className="px-6 py-5">
@@ -1162,56 +1289,41 @@ export default function Products() {
                     "
                         >
                           {/* EDIT */}
-                          <button
-                            className="
-                        rounded-2xl
+                         <button
 
-                        border
-                        border-[#ECE7E9]
+  onClick={(e) => {
 
-                        bg-white
+    e.stopPropagation();
 
-                        px-4
-                        py-2.5
+    navigate(
+      `/admin/products/${product._id}/edit`
+    );
 
-                        text-xs
-                        font-semibold
+  }}
 
-                        text-[#111111]
+ className="
+    rounded-2xl
 
-                        shadow-sm
+    bg-[#6B1A2A]
 
-                        transition
-                        hover:bg-[#FAFAFA]
-                      "
-                          >
-                            Edit
-                          </button>
+    px-5
+    py-3
 
-                          {/* DELETE */}
-                          <button
-                            className="
-                        rounded-2xl
+    text-sm
+    font-semibold
+    text-white
 
-                        border
-                        border-[#F3D4DA]
+    shadow-lg
+    shadow-[#6B1A2A]/15
+cursor-pointer
+    transition
+    hover:opacity-90
+  "
+>
+  Edit
+</button>
 
-                        bg-[#FFF8F9]
 
-                        px-4
-                        py-2.5
-
-                        text-xs
-                        font-semibold
-
-                        text-[#C2415D]
-
-                        transition
-                        hover:bg-[#FFF1F2]
-                      "
-                          >
-                            Delete
-                          </button>
                         </div>
                       </td>
                     </tr>

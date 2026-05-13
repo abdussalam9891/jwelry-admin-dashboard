@@ -46,6 +46,16 @@ const [formData, setFormData] =
 
     image2: "",
 
+    variants: [
+  {
+    material: "",
+    size: "",
+    sku: "",
+    price: "",
+    stock: "",
+  },
+],
+
   });
 
 useEffect(() => {
@@ -99,11 +109,94 @@ useEffect(() => {
         ?.pop()
         ?.replace(".webp", "") || "",
 
+        variants:
+  initialData?.variants?.length > 0
+
+    ? initialData.variants
+
+    : [
+        {
+          material: "",
+          size: "",
+          sku: "",
+          price: "",
+          stock: "",
+        },
+      ],
+
   });
 
 }, [initialData]);
 
+const addVariant = () => {
 
+  setFormData((prev) => ({
+
+    ...prev,
+
+    variants: [
+
+      ...prev.variants,
+
+      {
+        material: "",
+        size: "",
+        sku: "",
+        price: "",
+        stock: "",
+      },
+
+    ],
+
+  }));
+
+};
+
+const handleVariantChange = (
+
+  index,
+
+  field,
+
+  value
+
+) => {
+
+  const updatedVariants =
+    [...formData.variants];
+
+  updatedVariants[index][field] =
+    value;
+
+  setFormData((prev) => ({
+
+    ...prev,
+
+    variants:
+      updatedVariants,
+
+  }));
+
+};
+
+
+const removeVariant = (index) => {
+
+  const filtered =
+    formData.variants.filter(
+
+      (_, i) => i !== index
+    );
+
+  setFormData((prev) => ({
+
+    ...prev,
+
+    variants: filtered,
+
+  }));
+
+};
 
  const handleChange = (e) => {
 
@@ -389,12 +482,13 @@ const handleSubmit = async (e) => {
       <form
         onSubmit={handleSubmit}
         className="
-          grid
-          grid-cols-1
-          gap-6
+    grid
+    grid-cols-1
+    items-start
+    gap-6
 
-          xl:grid-cols-3
-        "
+    xl:grid-cols-3
+  "
       >
 
         {/* LEFT */}
@@ -932,10 +1026,554 @@ const handleSubmit = async (e) => {
 
           </div>
 
+
+
+  {/*PRODUCT VARIANTS */}
+
+<div
+  className="
+    rounded-[32px]
+    border
+    border-[#ECE7E9]
+    bg-white
+    p-7
+    shadow-sm
+  "
+>
+
+  {/* HEADER */}
+
+  <div
+    className="
+      flex
+      flex-col
+      gap-4
+
+      md:flex-row
+      md:items-center
+      md:justify-between
+    "
+  >
+
+    <div>
+
+      <div
+        className="
+          inline-flex
+          items-center
+
+          rounded-full
+
+          bg-[#F8EEF1]
+
+          px-3
+          py-1
+
+          text-xs
+          font-semibold
+
+          text-[#6B1A2A]
+        "
+      >
+        Variant Management
+      </div>
+
+      <h2
+        className="
+          mt-4
+          text-2xl
+          font-bold
+          tracking-tight
+          text-[#111111]
+        "
+      >
+        Product Variants
+      </h2>
+
+      <p
+        className="
+          mt-2
+          max-w-xl
+          text-sm
+          leading-relaxed
+          text-[#6D7175]
+        "
+      >
+        Configure purchasable combinations
+        like material, pricing and inventory.
+        Size options automatically appear
+        for rings and bracelets.
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+
+      onClick={addVariant}
+
+      className="
+        inline-flex
+        items-center
+        justify-center
+        gap-2
+
+        rounded-2xl
+
+        bg-[#6B1A2A]
+
+        px-5
+        py-3
+
+        text-sm
+        font-semibold
+
+        text-white
+
+        shadow-lg
+        shadow-[#6B1A2A]/10
+
+        transition
+
+        hover:opacity-90
+      "
+    >
+      + Add Variant
+    </button>
+
+  </div>
+
+  {/* VARIANT LIST */}
+
+  <div className="mt-8 space-y-6">
+
+    {formData.variants.map(
+      (variant, index) => (
+
+        <div
+
+          key={index}
+
+          className="
+            relative
+
+            overflow-hidden
+
+            rounded-[28px]
+
+            border
+            border-[#ECE7E9]
+
+            bg-[#FCFAFB]
+
+            p-6
+
+            transition
+
+            hover:border-[#E4D7DB]
+          "
+        >
+
+          {/* TOP ROW */}
+
+          <div
+            className="
+              flex
+              items-center
+              justify-between
+            "
+          >
+
+            <div>
+
+              <p
+                className="
+                  text-xs
+                  font-semibold
+                  uppercase
+                  tracking-wide
+
+                  text-[#9CA3AF]
+                "
+              >
+                Variant
+              </p>
+
+              <h3
+                className="
+                  mt-1
+                  text-lg
+                  font-semibold
+                  text-[#111111]
+                "
+              >
+                #{index + 1}
+              </h3>
+
+            </div>
+
+            {formData.variants.length > 1 && (
+
+              <button
+                type="button"
+
+                onClick={() =>
+                  removeVariant(index)
+                }
+
+                className="
+                  rounded-xl
+
+                  border
+                  border-red-100
+
+                  bg-red-50
+
+                  px-4
+                  py-2
+
+                  text-sm
+                  font-semibold
+
+                  text-red-500
+
+                  transition
+
+                  hover:bg-red-100
+                "
+              >
+                Remove
+              </button>
+
+            )}
+
+          </div>
+
+          {/* FIELDS */}
+
+          <div
+            className="
+              mt-6
+
+              grid
+              grid-cols-1
+              gap-4
+
+              md:grid-cols-2
+            "
+          >
+
+            {/* MATERIAL */}
+
+            <div>
+
+              <label
+                className="
+                  mb-2
+                  block
+                  text-sm
+                  font-medium
+                  text-[#111111]
+                "
+              >
+                Material
+              </label>
+
+              <select
+
+                value={variant.material}
+
+                onChange={(e) =>
+                  handleVariantChange(
+                    index,
+                    "material",
+                    e.target.value
+                  )
+                }
+
+                className="
+                  h-12
+                  w-full
+
+                  rounded-2xl
+
+                  border
+                  border-[#ECE7E9]
+
+                  bg-white
+
+                  px-4
+
+                  text-sm
+                  text-[#111111]
+
+                  outline-none
+
+                  transition
+
+                  focus:border-[#6B1A2A]
+                "
+              >
+                <option value="">
+                  Select Material
+                </option>
+
+                <option value="18k">
+                  18K Gold
+                </option>
+
+                <option value="22k">
+                  22K Gold
+                </option>
+
+                <option value="silver">
+                  Silver
+                </option>
+
+              </select>
+
+            </div>
+
+            {/* SIZE */}
+
+            {[
+              "rings",
+              "bracelets",
+            ].includes(
+              formData.subcategory
+            ) && (
+
+              <div>
+
+                <label
+                  className="
+                    mb-2
+                    block
+                    text-sm
+                    font-medium
+                    text-[#111111]
+                  "
+                >
+                  Size
+                </label>
+
+                <input
+                  type="text"
+                  placeholder="Enter Size"
+
+                  value={variant.size}
+
+                  onChange={(e) =>
+                    handleVariantChange(
+                      index,
+                      "size",
+                      e.target.value
+                    )
+                  }
+
+                  className="
+                    h-12
+                    w-full
+
+                    rounded-2xl
+
+                    border
+                    border-[#ECE7E9]
+
+                    bg-white
+
+                    px-4
+
+                    text-sm
+
+                    outline-none
+
+                    transition
+
+                    focus:border-[#6B1A2A]
+                  "
+                />
+
+              </div>
+
+            )}
+
+            {/* SKU */}
+
+            <div>
+
+              <label
+                className="
+                  mb-2
+                  block
+                  text-sm
+                  font-medium
+                  text-[#111111]
+                "
+              >
+                SKU
+              </label>
+
+            <input
+  type="text"
+
+  value={variant.sku}
+
+  readOnly
+
+  className="
+    h-12
+    w-full
+
+    rounded-2xl
+
+    border
+    border-[#ECE7E9]
+
+    bg-[#F5F5F5]
+
+    px-4
+
+    text-sm
+
+    text-[#6D7175]
+  "
+/>
+
+            </div>
+
+            {/* PRICE */}
+
+            <div>
+
+              <label
+                className="
+                  mb-2
+                  block
+                  text-sm
+                  font-medium
+                  text-[#111111]
+                "
+              >
+                Variant Price
+              </label>
+
+              <input
+                type="number"
+                placeholder="Price"
+
+                value={variant.price}
+
+                onChange={(e) =>
+                  handleVariantChange(
+                    index,
+                    "price",
+                    e.target.value
+                  )
+                }
+
+                className="
+                  h-12
+                  w-full
+
+                  rounded-2xl
+
+                  border
+                  border-[#ECE7E9]
+
+                  bg-white
+
+                  px-4
+
+                  text-sm
+
+                  outline-none
+
+                  transition
+
+                  focus:border-[#6B1A2A]
+                "
+              />
+
+            </div>
+
+            {/* STOCK */}
+
+            <div>
+
+              <label
+                className="
+                  mb-2
+                  block
+                  text-sm
+                  font-medium
+                  text-[#111111]
+                "
+              >
+                Inventory Stock
+              </label>
+
+              <input
+                type="number"
+                placeholder="Stock Quantity"
+
+                value={variant.stock}
+
+                onChange={(e) =>
+                  handleVariantChange(
+                    index,
+                    "stock",
+                    e.target.value
+                  )
+                }
+
+                className="
+                  h-12
+                  w-full
+
+                  rounded-2xl
+
+                  border
+                  border-[#ECE7E9]
+
+                  bg-white
+
+                  px-4
+
+                  text-sm
+
+                  outline-none
+
+                  transition
+
+                  focus:border-[#6B1A2A]
+                "
+              />
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )
+    )}
+
+  </div>
+
+</div>
+
         </div>
 
         {/* RIGHT */}
-        <div className="space-y-6">
+        <div className="
+    sticky
+    top-28
+
+    h-fit
+
+    space-y-6
+  ">
 
           {/* ORGANIZATION */}
           <div

@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
-import { getProductDetails, archiveProduct } from "../services/productService";
 import ConfirmModal from "../components/ConfirmModal";
-import EditProductPage from "./EditProductPage";
+import { archiveProduct, getProductDetails } from "../services/productService";
 
 import {
   AlertTriangle,
@@ -23,11 +22,7 @@ const ProductDetailsPage = () => {
   const { id } = useParams();
 
   const [loading, setLoading] = useState(true);
-  const [
-  showArchiveModal,
-
-  setShowArchiveModal,
-] = useState(false);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
 
   const [productData, setProductData] = useState(null);
 
@@ -104,54 +99,33 @@ const ProductDetailsPage = () => {
     },
   ];
 
-
-
- const handleArchive =
-  async () => {
-
+  const handleArchive = async () => {
     try {
-
-      const data =
-        await archiveProduct(id);
+      const data = await archiveProduct(id);
 
       /*
         UPDATE UI
       */
 
-      setProductData(
-        (prev) => ({
+      setProductData((prev) => ({
+        ...prev,
 
-          ...prev,
+        product: {
+          ...prev.product,
 
-          product: {
-
-            ...prev.product,
-
-            status:
-              data.status,
-
-          },
-
-        })
-      );
+          status: data.status,
+        },
+      }));
 
       /*
         CLOSE MODAL
       */
 
-      setShowArchiveModal(
-        false
-      );
-
+      setShowArchiveModal(false);
     } catch (error) {
-
       console.error(error);
-
     }
-
   };
-
-
 
   return (
     <div className="min-h-screen bg-[#FAF7F8] p-6">
@@ -177,7 +151,7 @@ const ProductDetailsPage = () => {
             </div>
 
             <div
-  className={`
+              className={`
     rounded-full
 
     px-4
@@ -188,30 +162,24 @@ const ProductDetailsPage = () => {
 
     ${
       product.status === "ARCHIVED"
-
         ? `
           bg-[#FEF3F2]
           text-[#B42318]
         `
-
         : product.status === "DRAFT"
-
-        ? `
+          ? `
           bg-[#FFF7ED]
           text-[#C2410C]
         `
-
-        : `
+          : `
           bg-[#ECFDF3]
           text-[#027A48]
         `
     }
   `}
->
-
-  {product.status}
-
-</div>
+            >
+              {product.status}
+            </div>
 
             <div className="text-sm text-[#6D7175]">SKU: {product.sku}</div>
           </div>
@@ -221,12 +189,8 @@ const ProductDetailsPage = () => {
 
         <div className="flex flex-wrap items-center gap-3">
           <button
-
- onClick={() =>
-    setShowArchiveModal(true)
-  }
-
-  className="
+            onClick={() => setShowArchiveModal(true)}
+            className="
     flex
     items-center
     gap-2
@@ -252,19 +216,17 @@ const ProductDetailsPage = () => {
 
     hover:bg-[#FAFAFA]
   "
->
+          >
+            <Archive size={18} />
 
-  <Archive size={18} />
+            {product.status === "ARCHIVED"
+              ? "Restore Product"
+              : "Archive Product"}
+          </button>
 
- {product.status === "ARCHIVED"
-  ? "Restore Product"
-  : "Archive Product"}
-
-</button>
-
-         <Link
-  to={`/admin/products/${id}/edit`}
-  className="
+          <Link
+            to={`/admin/products/${id}/edit`}
+            className="
     flex
     items-center
     gap-2
@@ -288,11 +250,10 @@ const ProductDetailsPage = () => {
 
     hover:opacity-90
   "
->
-  <Pencil size={18} />
-
-  Edit Product
-</Link>
+          >
+            <Pencil size={18} />
+            Edit Product
+          </Link>
         </div>
       </div>
 
@@ -481,123 +442,113 @@ const ProductDetailsPage = () => {
       p-6
     "
             >
-            <div
-  className="
+              <div
+                className="
     mt-6
 
     space-y-5
   "
->
-
-  <div>
-
-    <h3
-      className="
+              >
+                <div>
+                  <h3
+                    className="
         text-sm
         font-semibold
 
         text-[#111111]
       "
-    >
-      Short Description
-    </h3>
+                  >
+                    Short Description
+                  </h3>
 
-    <p
-      className="
+                  <p
+                    className="
         mt-2
         leading-relaxed
 
         text-[#6D7175]
       "
-    >
-      {product.description?.short ||
-        "No short description available."}
-    </p>
+                  >
+                    {product.description?.short ||
+                      "No short description available."}
+                  </p>
+                </div>
 
-  </div>
-
-  <div>
-
-    <h3
-      className="
+                <div>
+                  <h3
+                    className="
         text-sm
         font-semibold
 
         text-[#111111]
       "
-    >
-      Design
-    </h3>
+                  >
+                    Design
+                  </h3>
 
-    <p
-      className="
+                  <p
+                    className="
         mt-2
         leading-relaxed
 
         text-[#6D7175]
       "
-    >
-      {product.description?.design ||
-        "No design information available."}
-    </p>
+                  >
+                    {product.description?.design ||
+                      "No design information available."}
+                  </p>
+                </div>
 
-  </div>
-
-  <div>
-
-    <h3
-      className="
+                <div>
+                  <h3
+                    className="
         text-sm
         font-semibold
 
         text-[#111111]
       "
-    >
-      Details
-    </h3>
+                  >
+                    Details
+                  </h3>
 
-    <p
-      className="
+                  <p
+                    className="
         mt-2
         leading-relaxed
 
         text-[#6D7175]
       "
-    >
-      {product.description?.details ||
-        "No additional details available."}
-    </p>
+                  >
+                    {product.description?.details ||
+                      "No additional details available."}
+                  </p>
+                </div>
 
-  </div>
-
-  <div>
-
-    <h3
-      className="
+                <div>
+                  <h3
+                    className="
         text-sm
         font-semibold
 
         text-[#111111]
       "
-    >
-      Styling
-    </h3>
+                  >
+                    Styling
+                  </h3>
 
-    <p
-      className="
+                  <p
+                    className="
         mt-2
         leading-relaxed
 
         text-[#6D7175]
       "
-    >
-      {product.description?.styling ||
-        "No styling information available."}
-    </p>
-
-  </div>
-
-</div>
+                  >
+                    {product.description?.styling ||
+                      "No styling information available."}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -616,9 +567,7 @@ const ProductDetailsPage = () => {
                   </p>
                 </div>
 
-                <button className="rounded-2xl border border-black/10 bg-white px-4 py-2 text-sm font-semibold shadow-sm">
-                  Add Variant
-                </button>
+ 
               </div>
             </div>
 
@@ -715,7 +664,16 @@ const ProductDetailsPage = () => {
 
         {/* RIGHT SIDEBAR */}
 
-        <div className="space-y-6">
+        <div
+          className="
+  sticky
+  top-24
+
+  space-y-6
+
+  self-start
+"
+        >
           {/* QUICK STATS */}
 
           <div
@@ -1144,56 +1102,28 @@ const ProductDetailsPage = () => {
         </div>
       </div>
 
-
-
-
-
-
       <ConfirmModal
-
-  open={showArchiveModal}
-
-  onClose={() =>
-    setShowArchiveModal(false)
-  }
-
-  onConfirm={handleArchive}
-
-  title={
-    product.status ===
-    "ARCHIVED"
-
-      ? "Restore Product"
-
-      : "Archive Product"
-  }
-
-  description={
-    product.status ===
-    "ARCHIVED"
-
-      ? `
+        open={showArchiveModal}
+        onClose={() => setShowArchiveModal(false)}
+        onConfirm={handleArchive}
+        title={
+          product.status === "ARCHIVED" ? "Restore Product" : "Archive Product"
+        }
+        description={
+          product.status === "ARCHIVED"
+            ? `
         This product will become
         active on the storefront again.
       `
-
-      : `
+            : `
         This product will be hidden
         from storefront visibility
         but preserved for analytics,
         reports and order history.
       `
-  }
-
-  confirmText={
-    product.status ===
-    "ARCHIVED"
-
-      ? "Restore"
-
-      : "Archive"
-  }
-/>
+        }
+        confirmText={product.status === "ARCHIVED" ? "Restore" : "Archive"}
+      />
     </div>
   );
 };
