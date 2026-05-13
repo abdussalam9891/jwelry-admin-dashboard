@@ -27,3 +27,20 @@ export const getOrders =
 
     return res.data;
 };
+
+
+export const exportOrdersReport =
+  async () => {
+
+    const res =
+      await api.get(
+        "/admin/orders/export",
+        {
+          responseType:
+            "blob",
+        }
+      );
+
+    return res.data;
+
+  };

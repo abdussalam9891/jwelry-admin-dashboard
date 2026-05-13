@@ -7,6 +7,9 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import api from "../api/client";
+import {
+  exportProductsReport,
+} from "../services/productService";
 
 import { useNavigate } from "react-router-dom";
 
@@ -69,6 +72,46 @@ export default function Products() {
 
     fetchData();
   }, [page, search, category, sort]);
+
+
+  const handleExport =
+  async () => {
+
+    try {
+
+      const data =
+        await exportProductsReport();
+
+      const url =
+        window.URL.createObjectURL(
+          new Blob([data])
+        );
+
+      const link =
+        document.createElement("a");
+
+      link.href = url;
+
+      link.setAttribute(
+        "download",
+        "products-report.xlsx"
+      );
+
+      document.body.appendChild(
+        link
+      );
+
+      link.click();
+
+      link.remove();
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  };
 
   return (
     <div className="min-h-screen bg-[#F6F6F7] p-6">
@@ -153,6 +196,7 @@ export default function Products() {
         >
           {/* secondary */}
           <button
+           onClick={handleExport}
             className="
         rounded-2xl
 
@@ -910,6 +954,11 @@ export default function Products() {
                 {products.map((product) => {
                   return (
                     <tr
+                    onClick={() =>
+  navigate(
+    `/admin/products/${product._id}`
+  )
+}
                       key={product._id}
                       className="
                   border-b

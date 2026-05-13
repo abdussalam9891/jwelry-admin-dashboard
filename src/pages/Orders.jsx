@@ -13,8 +13,8 @@ import {
 import {
   getOrderStats,
   getOrders,
+  exportOrdersReport,
 } from "../services/orderService";
-
 
 
 
@@ -111,6 +111,50 @@ useEffect(() => {
   sort,
 ]);
 
+
+
+
+const handleExport =
+  async () => {
+
+    try {
+
+      const data =
+        await exportOrdersReport();
+
+      const url =
+        window.URL.createObjectURL(
+          new Blob([data])
+        );
+
+      const link =
+        document.createElement("a");
+
+      link.href = url;
+
+      link.setAttribute(
+        "download",
+        "orders-report.xlsx"
+      );
+
+      document.body.appendChild(
+        link
+      );
+
+      link.click();
+
+      link.remove();
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  };
+
+
+
   return (
 
     <div className="space-y-6">
@@ -198,10 +242,11 @@ useEffect(() => {
     "
   >
 
-   
+
 
     {/* primary */}
     <button
+    onClick={handleExport}
       className="
         rounded-2xl
 

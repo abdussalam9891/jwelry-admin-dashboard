@@ -14,6 +14,8 @@ import Orders from "../pages/Orders";
 import Login from "../pages/Login";
 import AddProduct from "../pages/AddProduct";
 import Customers from "../pages/Customer";
+import ProductDetailsPage from "../pages/ProductDetails";
+import EditProductPage from "../pages/EditProductPage";
 
 export default function AppRoutes() {
   return (
@@ -55,6 +57,21 @@ export default function AppRoutes() {
       path="products"
       element={<Products />}
     />
+
+
+    <Route
+  path="/admin/products/:id/edit"
+  element={<EditProductPage />}
+/>
+
+
+
+    <Route
+  path="/admin/products/:id"
+  element={<ProductDetailsPage />}
+/>
+
+
 
     <Route
     path="products/new"
