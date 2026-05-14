@@ -1,70 +1,49 @@
 import { useEffect, useState } from "react";
 
 import {
-  Search,
-  Filter,
-  Eye,
-  PackageCheck,
   Clock3,
+  Eye,
+  Filter,
+  PackageCheck,
+  Search,
   Truck,
   XCircle,
 } from "lucide-react";
 
 import {
+  exportOrdersReport,
   getOrderStats,
   getOrders,
-  exportOrdersReport,
 } from "../services/orderService";
 
-
-
-
-
 export default function Orders() {
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    processingOrders: 0,
+    shippedOrders: 0,
+    cancelledOrders: 0,
+  });
 
+  const [orders, setOrders] = useState([]);
 
- const [stats, setStats] = useState({
-  totalOrders: 0,
-  processingOrders: 0,
-  shippedOrders: 0,
-  cancelledOrders: 0,
-});
+  const [pagination, setPagination] = useState(null);
 
-const [orders, setOrders] =
-  useState([]);
+  const [page, setPage] = useState(1);
 
-const [pagination, setPagination] =
-  useState(null);
+  const [search, setSearch] = useState("");
 
-const [page, setPage] =
-  useState(1);
+  const [status, setStatus] = useState("");
 
-const [search, setSearch] =
-  useState("");
+  const [sort, setSort] = useState("-createdAt");
 
-const [status, setStatus] =
-  useState("");
+  const [loading, setLoading] = useState(false);
 
-const [sort, setSort] =
-  useState("-createdAt");
-
-const [loading, setLoading] =
-  useState(false);
-
-useEffect(() => {
-
-  const fetchData =
-    async () => {
-
+  useEffect(() => {
+    const fetchData = async () => {
       try {
-
         setLoading(true);
 
-        const [
-          statsData,
-          ordersData,
-        ] = await Promise.all([
-
+        const [statsData, ordersData] = await Promise.all([
           getOrderStats(),
 
           getOrders({
@@ -74,7 +53,6 @@ useEffect(() => {
             status,
             sort,
           }),
-
         ]);
 
         /* KPI STATS */
@@ -83,85 +61,46 @@ useEffect(() => {
 
         /* ORDERS */
 
-        setOrders(
-          ordersData.orders
-        );
+        setOrders(ordersData.orders);
 
-        setPagination(
-          ordersData.pagination
-        );
-
+        setPagination(ordersData.pagination);
       } catch (error) {
-
         console.error(error);
-
       } finally {
-
         setLoading(false);
-
       }
     };
 
-  fetchData();
+    fetchData();
+  }, [page, search, status, sort]);
 
-}, [
-  page,
-  search,
-  status,
-  sort,
-]);
-
-
-
-
-const handleExport =
-  async () => {
-
+  const handleExport = async () => {
     try {
+      const data = await exportOrdersReport();
 
-      const data =
-        await exportOrdersReport();
+      const url = window.URL.createObjectURL(new Blob([data]));
 
-      const url =
-        window.URL.createObjectURL(
-          new Blob([data])
-        );
-
-      const link =
-        document.createElement("a");
+      const link = document.createElement("a");
 
       link.href = url;
 
-      link.setAttribute(
-        "download",
-        "orders-report.xlsx"
-      );
+      link.setAttribute("download", "orders-report.xlsx");
 
-      document.body.appendChild(
-        link
-      );
+      document.body.appendChild(link);
 
       link.click();
 
       link.remove();
-
     } catch (error) {
-
       console.error(error);
-
     }
-
   };
 
-
-
   return (
-
     <div className="space-y-6">
-
-     {/* HEADER */}
-<div
-  className="
+      {/* HEADER */}
+      <div
+        className="
     flex
     flex-col
     gap-5
@@ -170,13 +109,11 @@ const handleExport =
     lg:items-center
     lg:justify-between
   "
->
-
-  {/* LEFT */}
-  <div>
-
-    <div
-      className="
+      >
+        {/* LEFT */}
+        <div>
+          <div
+            className="
         inline-flex
         items-center
 
@@ -195,26 +132,26 @@ const handleExport =
 
         text-[#6B1A2A]
       "
-    >
-      Order Management
-    </div>
+          >
+            Order Management
+          </div>
 
-    <h1
-      className="
+          <h1
+            className="
         mt-4
 
         text-4xl
         font-bold
         tracking-tight
 
-        text-[#111111]
+        text-text-primary
       "
-    >
-      Orders
-    </h1>
+          >
+            Orders
+          </h1>
 
-    <p
-      className="
+          <p
+            className="
         mt-2
 
         max-w-2xl
@@ -222,35 +159,29 @@ const handleExport =
         text-sm
         leading-relaxed
 
-        text-[#6D7175]
+        text-text-secondary
       "
-    >
-      Monitor customer purchases,
-      fulfillment workflows and
-      payment operations across
-      your store.
-    </p>
+          >
+            Monitor customer purchases, fulfillment workflows and payment
+            operations across your store.
+          </p>
+        </div>
 
-  </div>
-
-  {/* RIGHT */}
-  <div
-    className="
+        {/* RIGHT */}
+        <div
+          className="
       flex
       items-center
       gap-3
     "
-  >
-
-
-
-    {/* primary */}
-    <button
-    onClick={handleExport}
-      className="
+        >
+          {/* primary */}
+          <button
+            onClick={handleExport}
+            className="
         rounded-2xl
 
-        bg-[#6B1A2A]
+        bg-brand
 
         px-5
         py-3
@@ -265,17 +196,15 @@ const handleExport =
         transition
         hover:opacity-90
       "
-    >
-      Export
-    </button>
+          >
+            Export
+          </button>
+        </div>
+      </div>
 
-  </div>
-
-</div>
-
-    {/* KPI */}
-<div
-  className="
+      {/* KPI */}
+      <div
+        className="
     grid
     grid-cols-1
     gap-5
@@ -283,20 +212,19 @@ const handleExport =
     md:grid-cols-2
     xl:grid-cols-4
   "
->
-
-  {/* TOTAL ORDERS */}
-  <div
-    className="
+      >
+        {/* TOTAL ORDERS */}
+        <div
+          className="
       relative
       overflow-hidden
 
       rounded-[28px]
 
       border
-      border-[#ECE7E9]
+      border-border
 
-      bg-white
+      bg-surface
 
       p-6
 
@@ -307,10 +235,9 @@ const handleExport =
       hover:shadow-xl
       hover:shadow-black/[0.03]
     "
-  >
-
-    <div
-      className="
+        >
+          <div
+            className="
         absolute
         right-0
         top-0
@@ -324,22 +251,19 @@ const handleExport =
 
         blur-2xl
       "
-    />
+          />
 
-    <div className="relative z-10">
-
-      <div
-        className="
+          <div className="relative z-10">
+            <div
+              className="
           flex
           items-start
           justify-between
         "
-      >
-
-        <div>
-
-          <p
-            className="
+            >
+              <div>
+                <p
+                  className="
               text-xs
               font-medium
               uppercase
@@ -347,28 +271,27 @@ const handleExport =
 
               text-[#9CA3AF]
             "
-          >
-            Total Orders
-          </p>
+                >
+                  Total Orders
+                </p>
 
-          <h2
-            className="
+                <h2
+                  className="
               mt-4
 
               text-4xl
               font-bold
               tracking-tight
 
-              text-[#111111]
+              text-text-primary
             "
-          >
-            {stats.totalOrders}
-          </h2>
+                >
+                  {stats.totalOrders}
+                </h2>
+              </div>
 
-        </div>
-
-        <div
-          className="
+              <div
+                className="
             flex
             h-12
             w-12
@@ -382,28 +305,25 @@ const handleExport =
 
             text-[#6B1A2A]
           "
-        >
-          <PackageCheck size={20} />
+              >
+                <PackageCheck size={20} />
+              </div>
+            </div>
+          </div>
         </div>
 
-      </div>
-
-    </div>
-
-  </div>
-
-  {/* PROCESSING */}
-  <div
-    className="
+        {/* PROCESSING */}
+        <div
+          className="
       relative
       overflow-hidden
 
       rounded-[28px]
 
       border
-      border-[#ECE7E9]
+      border-border
 
-      bg-white
+      bg-surface
 
       p-6
 
@@ -414,10 +334,9 @@ const handleExport =
       hover:shadow-xl
       hover:shadow-black/[0.03]
     "
-  >
-
-    <div
-      className="
+        >
+          <div
+            className="
         absolute
         right-0
         top-0
@@ -431,22 +350,19 @@ const handleExport =
 
         blur-2xl
       "
-    />
+          />
 
-    <div className="relative z-10">
-
-      <div
-        className="
+          <div className="relative z-10">
+            <div
+              className="
           flex
           items-start
           justify-between
         "
-      >
-
-        <div>
-
-          <p
-            className="
+            >
+              <div>
+                <p
+                  className="
               text-xs
               font-medium
               uppercase
@@ -454,28 +370,27 @@ const handleExport =
 
               text-[#9CA3AF]
             "
-          >
-            Processing
-          </p>
+                >
+                  Processing
+                </p>
 
-          <h2
-            className="
+                <h2
+                  className="
               mt-4
 
               text-4xl
               font-bold
               tracking-tight
 
-              text-[#111111]
+              text-text-primary
             "
-          >
-           {stats.processingOrders}
-          </h2>
+                >
+                  {stats.processingOrders}
+                </h2>
+              </div>
 
-        </div>
-
-        <div
-          className="
+              <div
+                className="
             flex
             h-12
             w-12
@@ -489,28 +404,25 @@ const handleExport =
 
             text-[#D97706]
           "
-        >
-          <Clock3 size={20} />
+              >
+                <Clock3 size={20} />
+              </div>
+            </div>
+          </div>
         </div>
 
-      </div>
-
-    </div>
-
-  </div>
-
-  {/* SHIPPED */}
-  <div
-    className="
+        {/* SHIPPED */}
+        <div
+          className="
       relative
       overflow-hidden
 
       rounded-[28px]
 
       border
-      border-[#ECE7E9]
+      border-border
 
-      bg-white
+      bg-surface
 
       p-6
 
@@ -521,10 +433,9 @@ const handleExport =
       hover:shadow-xl
       hover:shadow-black/[0.03]
     "
-  >
-
-    <div
-      className="
+        >
+          <div
+            className="
         absolute
         right-0
         top-0
@@ -538,22 +449,19 @@ const handleExport =
 
         blur-2xl
       "
-    />
+          />
 
-    <div className="relative z-10">
-
-      <div
-        className="
+          <div className="relative z-10">
+            <div
+              className="
           flex
           items-start
           justify-between
         "
-      >
-
-        <div>
-
-          <p
-            className="
+            >
+              <div>
+                <p
+                  className="
               text-xs
               font-medium
               uppercase
@@ -561,28 +469,27 @@ const handleExport =
 
               text-[#9CA3AF]
             "
-          >
-            Shipped
-          </p>
+                >
+                  Shipped
+                </p>
 
-          <h2
-            className="
+                <h2
+                  className="
               mt-4
 
               text-4xl
               font-bold
               tracking-tight
 
-              text-[#111111]
+              text-text-primary
             "
-          >
-           {stats.shippedOrders}
-          </h2>
+                >
+                  {stats.shippedOrders}
+                </h2>
+              </div>
 
-        </div>
-
-        <div
-          className="
+              <div
+                className="
             flex
             h-12
             w-12
@@ -596,28 +503,25 @@ const handleExport =
 
             text-[#2563EB]
           "
-        >
-          <Truck size={20} />
+              >
+                <Truck size={20} />
+              </div>
+            </div>
+          </div>
         </div>
 
-      </div>
-
-    </div>
-
-  </div>
-
-  {/* CANCELLED */}
-  <div
-    className="
+        {/* CANCELLED */}
+        <div
+          className="
       relative
       overflow-hidden
 
       rounded-[28px]
 
       border
-      border-[#ECE7E9]
+      border-border
 
-      bg-white
+      bg-surface
 
       p-6
 
@@ -628,10 +532,9 @@ const handleExport =
       hover:shadow-xl
       hover:shadow-black/[0.03]
     "
-  >
-
-    <div
-      className="
+        >
+          <div
+            className="
         absolute
         right-0
         top-0
@@ -645,22 +548,19 @@ const handleExport =
 
         blur-2xl
       "
-    />
+          />
 
-    <div className="relative z-10">
-
-      <div
-        className="
+          <div className="relative z-10">
+            <div
+              className="
           flex
           items-start
           justify-between
         "
-      >
-
-        <div>
-
-          <p
-            className="
+            >
+              <div>
+                <p
+                  className="
               text-xs
               font-medium
               uppercase
@@ -668,28 +568,27 @@ const handleExport =
 
               text-[#9CA3AF]
             "
-          >
-            Cancelled
-          </p>
+                >
+                  Cancelled
+                </p>
 
-          <h2
-            className="
+                <h2
+                  className="
               mt-4
 
               text-4xl
               font-bold
               tracking-tight
 
-              text-[#111111]
+              text-text-primary
             "
-          >
-           {stats.cancelledOrders}
-          </h2>
+                >
+                  {stats.cancelledOrders}
+                </h2>
+              </div>
 
-        </div>
-
-        <div
-          className="
+              <div
+                className="
             flex
             h-12
             w-12
@@ -703,36 +602,31 @@ const handleExport =
 
             text-[#E11D48]
           "
-        >
-          <XCircle size={20} />
+              >
+                <XCircle size={20} />
+              </div>
+            </div>
+          </div>
         </div>
-
       </div>
 
-    </div>
-
-  </div>
-
-</div>
-
-{/* FILTER BAR */}
-<div
-  className="
+      {/* FILTER BAR */}
+      <div
+        className="
     rounded-[28px]
 
     border
-    border-[#ECE7E9]
+    border-border
 
-    bg-white
+    bg-surface
 
     p-5
 
     shadow-[0_10px_30px_rgba(0,0,0,0.03)]
   "
->
-
-  <div
-    className="
+      >
+        <div
+          className="
       flex
       flex-col
       gap-4
@@ -741,11 +635,10 @@ const handleExport =
       xl:items-center
       xl:justify-between
     "
-  >
-
-    {/* LEFT */}
-    <div
-      className="
+        >
+          {/* LEFT */}
+          <div
+            className="
         flex
         flex-1
         flex-col
@@ -753,14 +646,12 @@ const handleExport =
 
         lg:flex-row
       "
-    >
-
-      {/* SEARCH */}
-      <div className="relative flex-1">
-
-        <Search
-          size={18}
-          className="
+          >
+            {/* SEARCH */}
+            <div className="relative flex-1">
+              <Search
+                size={18}
+                className="
             absolute
             left-4
             top-1/2
@@ -768,39 +659,35 @@ const handleExport =
 
             text-[#9CA3AF]
           "
-        />
+              />
 
-        <input
-          type="text"
-
-          value={search}
-
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-
-          placeholder="
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="
             Search orders,
             customers or order IDs...
           "
-
-          className="
+                className="
             h-12
             w-full
 
             rounded-2xl
 
             border
-            border-[#ECE7E9]
+            border-border
 
-            bg-[#FCFAFB]
+            bg-surface-secondary
 
             pl-11
             pr-4
 
             text-sm
-            text-[#111111]
+            text-text-primary
 
             outline-none
 
@@ -809,15 +696,14 @@ const handleExport =
             placeholder:text-[#9CA3AF]
 
             focus:border-[#D8C7CD]
-            focus:bg-white
+            focus:bg-surface
           "
-        />
+              />
+            </div>
 
-      </div>
-
-      {/* FILTER BUTTON */}
-      <button
-        className="
+            {/* FILTER BUTTON */}
+            <button
+              className="
           inline-flex
           items-center
           justify-center
@@ -826,9 +712,9 @@ const handleExport =
           rounded-2xl
 
           border
-          border-[#ECE7E9]
+          border-border
 
-          bg-[#FCFAFB]
+          bg-surface-secondary
 
           px-5
           py-3
@@ -836,202 +722,155 @@ const handleExport =
           text-sm
           font-semibold
 
-          text-[#111111]
+          text-text-primary
 
           transition
           hover:bg-[#F8EEF1]
         "
-      >
+            >
+              <Filter size={16} className="text-[#6B1A2A]" />
+              Filters
+            </button>
+          </div>
 
-        <Filter
-          size={16}
-          className="text-[#6B1A2A]"
-        />
-
-        Filters
-
-      </button>
-
-    </div>
-
-    {/* RIGHT */}
-    <div
-      className="
+          {/* RIGHT */}
+          <div
+            className="
         flex
         flex-col
         gap-3
 
         sm:flex-row
       "
-    >
-
-      {/* STATUS */}
-      <select
-
-        value={status}
-
-        onChange={(e) => {
-          setStatus(e.target.value);
-          setPage(1);
-        }}
-
-        className="
+          >
+            {/* STATUS */}
+            <select
+              value={status}
+              onChange={(e) => {
+                setStatus(e.target.value);
+                setPage(1);
+              }}
+              className="
           h-12
 
           rounded-2xl
 
           border
-          border-[#ECE7E9]
+          border-border
 
-          bg-[#FCFAFB]
+          bg-surface-secondary
 
           px-4
 
           text-sm
           font-medium
 
-          text-[#111111]
+          text-text-primary
 
           outline-none
 
           transition
 
           focus:border-[#D8C7CD]
-          focus:bg-white
+          focus:bg-surface
         "
-      >
+            >
+              <option value="">All Status</option>
 
-        <option value="">
-          All Status
-        </option>
+              <option value="PLACED">Placed</option>
 
-        <option value="PLACED">
-          Placed
-        </option>
+              <option value="CONFIRMED">Confirmed</option>
 
-        <option value="CONFIRMED">
-          Confirmed
-        </option>
+              <option value="SHIPPED">Shipped</option>
 
-        <option value="SHIPPED">
-          Shipped
-        </option>
+              <option value="DELIVERED">Delivered</option>
 
-        <option value="DELIVERED">
-          Delivered
-        </option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
 
-        <option value="CANCELLED">
-          Cancelled
-        </option>
-
-      </select>
-
-      {/* SORT */}
-      <select
-
-        value={sort}
-
-        onChange={(e) => {
-          setSort(e.target.value);
-          setPage(1);
-        }}
-
-        className="
+            {/* SORT */}
+            <select
+              value={sort}
+              onChange={(e) => {
+                setSort(e.target.value);
+                setPage(1);
+              }}
+              className="
           h-12
 
           rounded-2xl
 
           border
-          border-[#ECE7E9]
+          border-border
 
-          bg-[#FCFAFB]
+          bg-surface-secondary
 
           px-4
 
           text-sm
           font-medium
 
-          text-[#111111]
+          text-text-primary
 
           outline-none
 
           transition
 
           focus:border-[#D8C7CD]
-          focus:bg-white
+          focus:bg-surface
         "
-      >
+            >
+              <option value="-createdAt">Newest First</option>
 
-        <option value="-createdAt">
-          Newest First
-        </option>
+              <option value="createdAt">Oldest First</option>
 
-        <option value="createdAt">
-          Oldest First
-        </option>
+              <option value="-totalPrice">Highest Value</option>
 
-        <option value="-totalPrice">
-          Highest Value
-        </option>
+              <option value="totalPrice">Lowest Value</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-        <option value="totalPrice">
-          Lowest Value
-        </option>
-
-      </select>
-
-    </div>
-
-  </div>
-
-</div>
-
-     {/* TABLE */}
-<div
-  className="
+      {/* TABLE */}
+      <div
+        className="
     overflow-hidden
 
     rounded-[32px]
 
     border
-    border-[#ECE7E9]
+    border-border
 
-    bg-white
+    bg-surface
 
     shadow-[0_10px_40px_rgba(0,0,0,0.04)]
   "
->
-
-  <div className="overflow-x-auto">
-
-    <table className="min-w-full border-collapse">
-
-      <thead>
-
-        <tr
-          className="
+      >
+        <div className="overflow-x-auto">
+          <table className="min-w-full border-collapse">
+            <thead>
+              <tr
+                className="
             border-b
             border-[#F1ECEE]
 
-            bg-[#FCFAFB]
+            bg-surface-secondary
 
             text-left
           "
-        >
-
-          {[
-            "Order",
-            "Customer",
-            "Date",
-            "Amount",
-            "Payment",
-            "Fulfillment",
-          ].map((heading) => (
-
-            <th
-              key={heading}
-              className="
+              >
+                {[
+                  "Order",
+                  "Customer",
+                  "Date",
+                  "Amount",
+                  "Payment",
+                  "Fulfillment",
+                ].map((heading) => (
+                  <th
+                    key={heading}
+                    className="
                 px-6
                 py-5
 
@@ -1042,14 +881,13 @@ const handleExport =
 
                 text-[#9CA3AF]
               "
-            >
-              {heading}
-            </th>
+                  >
+                    {heading}
+                  </th>
+                ))}
 
-          ))}
-
-          <th
-            className="
+                <th
+                  className="
               px-6
               py-5
 
@@ -1062,111 +900,90 @@ const handleExport =
 
               text-[#9CA3AF]
             "
-          >
-            Actions
-          </th>
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
 
-        </tr>
-
-      </thead>
-
-     <tbody>
-
-  {loading ? (
-
-    <tr>
-
-      <td
-        colSpan={7}
-        className="
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="
           px-6
           py-16
 
           text-center
-          text-[#6D7175]
+          text-text-secondary
         "
-      >
-        Loading orders...
-      </td>
-
-    </tr>
-
-  ) : orders.length === 0 ? (
-
-    <tr>
-
-      <td
-        colSpan={7}
-        className="
+                  >
+                    Loading orders...
+                  </td>
+                </tr>
+              ) : orders.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="
           px-6
           py-16
 
           text-center
-          text-[#6D7175]
+          text-text-secondary
         "
-      >
-        No orders found
-      </td>
-
-    </tr>
-
-  ) : (
-
-    orders.map((order) => (
-
-      <tr
-        key={order._id}
-
-        className="
+                  >
+                    No orders found
+                  </td>
+                </tr>
+              ) : (
+                orders.map((order) => (
+                  <tr
+                    key={order._id}
+                    className="
           border-b
           border-[#F5F1F2]
 
           transition
-          hover:bg-[#FCFAFB]
+          hover:bg-surface-secondary
         "
-      >
-
-        {/* ORDER */}
-        <td className="px-6 py-5">
-
-          <div>
-
-            <h3
-              className="
+                  >
+                    {/* ORDER */}
+                    <td className="px-6 py-5">
+                      <div>
+                        <h3
+                          className="
                 font-semibold
-                text-[#111111]
+                text-text-primary
               "
-            >
-              #{order.orderNumber}
-            </h3>
+                        >
+                          #{order.orderNumber}
+                        </h3>
 
-            <p
-              className="
+                        <p
+                          className="
                 mt-1
                 text-sm
                 text-[#8A8F98]
               "
-            >
-              {order.items.length} items
-            </p>
+                        >
+                          {order.items.length} items
+                        </p>
+                      </div>
+                    </td>
 
-          </div>
-
-        </td>
-
-        {/* CUSTOMER */}
-        <td className="px-6 py-5">
-
-          <div
-            className="
+                    {/* CUSTOMER */}
+                    <td className="px-6 py-5">
+                      <div
+                        className="
               flex
               items-center
               gap-3
             "
-          >
-
-            <div
-              className="
+                      >
+                        <div
+                          className="
                 flex
                 h-11
                 w-11
@@ -1183,70 +1000,63 @@ const handleExport =
 
                 text-[#6B1A2A]
               "
-            >
-              {order.user?.name?.charAt(0)}
-            </div>
+                        >
+                          {order.user?.name?.charAt(0)}
+                        </div>
 
-            <div>
-
-              <h3
-                className="
+                        <div>
+                          <h3
+                            className="
                   font-medium
                   text-[#111]
                 "
-              >
-                {order.user?.name}
-              </h3>
+                          >
+                            {order.user?.name}
+                          </h3>
 
-              <p
-                className="
+                          <p
+                            className="
                   mt-1
                   text-sm
                   text-[#8A8F98]
                 "
-              >
-                {order.user?.email}
-              </p>
+                          >
+                            {order.user?.email}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
 
-            </div>
-
-          </div>
-
-        </td>
-
-        {/* DATE */}
-        <td
-          className="
+                    {/* DATE */}
+                    <td
+                      className="
             px-6
             py-5
 
             text-[15px]
             text-[#4B5563]
           "
-        >
-          {new Date(
-            order.createdAt
-          ).toLocaleDateString()}
-        </td>
+                    >
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </td>
 
-        {/* AMOUNT */}
-        <td
-          className="
+                    {/* AMOUNT */}
+                    <td
+                      className="
             px-6
             py-5
 
             font-semibold
-            text-[#111111]
+            text-text-primary
           "
-        >
-          ₹{order.totalPrice}
-        </td>
+                    >
+                      ₹{order.totalPrice}
+                    </td>
 
-        {/* PAYMENT */}
-        <td className="px-6 py-5">
-
-          <span
-            className={`
+                    {/* PAYMENT */}
+                    <td className="px-6 py-5">
+                      <span
+                        className={`
               inline-flex
               items-center
 
@@ -1259,23 +1069,20 @@ const handleExport =
               font-semibold
 
               ${
-                order.paymentStatus ===
-                "PAID"
+                order.paymentStatus === "PAID"
                   ? "bg-[#EEF8F1] text-[#0F9F61]"
                   : "bg-[#FFF5E8] text-[#D97706]"
               }
             `}
-          >
-            {order.paymentStatus}
-          </span>
+                      >
+                        {order.paymentStatus}
+                      </span>
+                    </td>
 
-        </td>
-
-        {/* FULFILLMENT */}
-        <td className="px-6 py-5">
-
-          <span
-            className={`
+                    {/* FULFILLMENT */}
+                    <td className="px-6 py-5">
+                      <span
+                        className={`
               inline-flex
               items-center
 
@@ -1288,32 +1095,28 @@ const handleExport =
               font-semibold
 
               ${
-                order.orderStatus ===
-                "DELIVERED"
+                order.orderStatus === "DELIVERED"
                   ? "bg-[#EEF8F1] text-[#0F9F61]"
-                  : order.orderStatus ===
-                    "CANCELLED"
-                  ? "bg-[#FFF1F2] text-[#E11D48]"
-                  : "bg-[#FFF5E8] text-[#D97706]"
+                  : order.orderStatus === "CANCELLED"
+                    ? "bg-[#FFF1F2] text-[#E11D48]"
+                    : "bg-[#FFF5E8] text-[#D97706]"
               }
             `}
-          >
-            {order.orderStatus}
-          </span>
+                      >
+                        {order.orderStatus}
+                      </span>
+                    </td>
 
-        </td>
-
-        {/* ACTION */}
-        <td
-          className="
+                    {/* ACTION */}
+                    <td
+                      className="
             px-6
             py-5
             text-right
           "
-        >
-
-          <button
-            className="
+                    >
+                      <button
+                        className="
               inline-flex
               items-center
               gap-2
@@ -1321,9 +1124,9 @@ const handleExport =
               rounded-2xl
 
               border
-              border-[#ECE7E9]
+              border-border
 
-              bg-white
+              bg-surface
 
               px-4
               py-2.5
@@ -1331,38 +1134,28 @@ const handleExport =
               text-sm
               font-semibold
 
-              text-[#111111]
+              text-text-primary
 
               shadow-sm
 
               transition
               hover:bg-[#FAFAFA]
             "
-          >
+                      >
+                        <Eye size={16} />
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-            <Eye size={16} />
-
-            View
-
-          </button>
-
-        </td>
-
-      </tr>
-
-    ))
-
-  )}
-
-</tbody>
-
-    </table>
-
-  </div>
-
-{/* PAGINATION */}
-<div
-  className="
+        {/* PAGINATION */}
+        <div
+          className="
     flex
     flex-col
     gap-4
@@ -1370,7 +1163,7 @@ const handleExport =
     border-t
     border-[#F1ECEE]
 
-    bg-[#FCFAFB]
+    bg-surface-secondary
 
     px-6
     py-5
@@ -1379,57 +1172,35 @@ const handleExport =
     md:items-center
     md:justify-between
   "
->
-
-  <p
-    className="
+        >
+          <p
+            className="
       text-sm
-      text-[#6D7175]
+      text-text-secondary
     "
-  >
+          >
+            Showing {(page - 1) * 10 + 1}-
+            {Math.min(page * 10, pagination?.totalOrders || 0)} of{" "}
+            {pagination?.totalOrders || 0} orders
+          </p>
 
-    Showing{" "}
-
-    {(page - 1) * 10 + 1}
-
-    -
-
-    {Math.min(
-      page * 10,
-      pagination?.totalOrders || 0
-    )}
-
-    {" "}of{" "}
-
-    {pagination?.totalOrders || 0}
-
-    {" "}orders
-
-  </p>
-
-  <div
-    className="
+          <div
+            className="
       flex
       items-center
       gap-2
     "
-  >
+          >
+            {/* PREVIOUS */}
 
-    {/* PREVIOUS */}
-
-    <button
-
-      disabled={page === 1}
-
-      onClick={() =>
-        setPage((prev) => prev - 1)
-      }
-
-      className={`
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((prev) => prev - 1)}
+              className={`
         rounded-2xl
 
         border
-        border-[#ECE7E9]
+        border-border
 
         px-4
         py-2.5
@@ -1441,36 +1212,26 @@ const handleExport =
 
         ${
           page === 1
-
             ? "cursor-not-allowed bg-[#F5F5F5] text-[#A1A1AA]"
-
-            : "bg-white text-[#111] hover:bg-[#FAFAFA]"
+            : "bg-surface text-[#111] hover:bg-[#FAFAFA]"
         }
       `}
-    >
-      Previous
-    </button>
+            >
+              Previous
+            </button>
 
-    {/* PAGE BUTTONS */}
+            {/* PAGE BUTTONS */}
 
-    {Array.from({
-      length:
-        pagination?.totalPages || 1,
-    }).map((_, index) => {
+            {Array.from({
+              length: pagination?.totalPages || 1,
+            }).map((_, index) => {
+              const pageNumber = index + 1;
 
-      const pageNumber =
-        index + 1;
-
-      return (
-
-        <button
-          key={pageNumber}
-
-          onClick={() =>
-            setPage(pageNumber)
-          }
-
-          className={`
+              return (
+                <button
+                  key={pageNumber}
+                  onClick={() => setPage(pageNumber)}
+                  className={`
             rounded-2xl
 
             px-4
@@ -1483,51 +1244,40 @@ const handleExport =
 
             ${
               page === pageNumber
-
                 ? `
-                  bg-[#6B1A2A]
+                  bg-brand
                   text-white
 
                   shadow-lg
                   shadow-[#6B1A2A]/15
                 `
-
                 : `
                   border
-                  border-[#ECE7E9]
+                  border-border
 
-                  bg-white
+                  bg-surface
                   text-[#111]
 
                   hover:bg-[#FAFAFA]
                 `
             }
           `}
-        >
-          {pageNumber}
-        </button>
+                >
+                  {pageNumber}
+                </button>
+              );
+            })}
 
-      );
-    })}
+            {/* NEXT */}
 
-    {/* NEXT */}
-
-    <button
-
-      disabled={
-        page ===
-        pagination?.totalPages
-      }
-
-      onClick={() =>
-        setPage((prev) => prev + 1)
-      }
-
-      className={`
+            <button
+              disabled={page === pagination?.totalPages}
+              onClick={() => setPage((prev) => prev + 1)}
+              className={`
         rounded-2xl
 
         border
-        border-[#ECE7E9]
+        border-border
 
         px-4
         py-2.5
@@ -1538,26 +1288,17 @@ const handleExport =
         transition
 
         ${
-          page ===
-          pagination?.totalPages
-
+          page === pagination?.totalPages
             ? "cursor-not-allowed bg-[#F5F5F5] text-[#A1A1AA]"
-
-            : "bg-white text-[#111] hover:bg-[#FAFAFA]"
+            : "bg-surface text-[#111] hover:bg-[#FAFAFA]"
         }
       `}
-    >
-      Next
-    </button>
-
-  </div>
-
-</div>
-
-</div>
-
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-
   );
-
 }

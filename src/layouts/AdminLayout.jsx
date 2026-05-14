@@ -14,13 +14,17 @@ export default function AdminLayout() {
 
   return (
 
-    <div
-      className="
-        min-h-screen
-        bg-[#F6F7F9]
-        flex
-      "
-    >
+   <div
+  className="
+    min-h-screen
+
+    bg-bg
+
+    text-text-primary
+
+    flex
+  "
+>
 
       <Sidebar
         sidebarOpen={sidebarOpen}
@@ -45,7 +49,7 @@ export default function AdminLayout() {
         <main
           className="
             flex-1
-            
+
             p-4
             md:p-6
             lg:p-8

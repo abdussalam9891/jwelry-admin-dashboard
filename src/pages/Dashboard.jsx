@@ -155,7 +155,7 @@ export default function Dashboard() {
 
       rounded-full
 
-      bg-[#6B1A2A]/10
+      bg-brand/10
 
       blur-3xl
     "
@@ -188,7 +188,7 @@ export default function Dashboard() {
           border
           border-[#E7D7DC]
 
-          bg-white/80
+          bg-surface/80
 
           px-4
           py-2
@@ -214,7 +214,7 @@ export default function Dashboard() {
           font-bold
           tracking-tight
 
-          text-[#111111]
+          text-text-primary
 
           md:text-5xl
         "
@@ -231,7 +231,7 @@ export default function Dashboard() {
           text-[15px]
           leading-relaxed
 
-          text-[#6D7175]
+          text-text-secondary
         "
             >
               Track revenue, inventory, fulfillment operations and customer
@@ -252,7 +252,7 @@ export default function Dashboard() {
               className="
           rounded-2xl
 
-          bg-[#6B1A2A]
+          bg-brand
 
           px-5
           py-3
@@ -278,7 +278,7 @@ export default function Dashboard() {
           border
           border-black/10
 
-          bg-white/70
+          bg-surface/70
 
           px-5
           py-3
@@ -291,7 +291,7 @@ export default function Dashboard() {
           backdrop-blur-xl
 
           transition
-          hover:bg-white
+          hover:bg-surface
         "
             >
               View Analytics
@@ -311,21 +311,20 @@ export default function Dashboard() {
     xl:grid-cols-4
   "
       >
-     {/* REVENUE */}
+        {/* REVENUE */}
 
-<Link
-  to="/admin/analytics"
-
-  className="
+        <Link
+          to="/admin/analytics"
+          className="
     relative
     overflow-hidden
 
     rounded-[28px]
 
     border
-    border-[#ECE7E9]
+    border-border
 
-    bg-white
+    bg-surface
 
     p-6
 
@@ -339,10 +338,9 @@ export default function Dashboard() {
     cursor-pointer
     block
   "
->
-
-  <div
-    className="
+        >
+          <div
+            className="
       absolute
       right-0
       top-0
@@ -356,22 +354,19 @@ export default function Dashboard() {
 
       blur-2xl
     "
-  />
+          />
 
-  <div className="relative z-10">
-
-    <div
-      className="
+          <div className="relative z-10">
+            <div
+              className="
         flex
         items-start
         justify-between
       "
-    >
-
-      <div>
-
-        <p
-          className="
+            >
+              <div>
+                <p
+                  className="
             text-xs
             font-medium
             uppercase
@@ -379,30 +374,29 @@ export default function Dashboard() {
 
             text-[#9CA3AF]
           "
-        >
-          Total Revenue
-        </p>
+                >
+                  Total Revenue
+                </p>
 
-        <h2
-          className="
+                <h2
+                  className="
             mt-4
 
             text-4xl
             font-bold
             tracking-tight
 
-            text-[#111111]
+            text-text-primary
           "
-        >
-          {loading
-            ? "..."
-            : `₹${metrics.totalRevenue?.toLocaleString()}`}
-        </h2>
+                >
+                  {loading
+                    ? "..."
+                    : `₹${metrics.totalRevenue?.toLocaleString()}`}
+                </h2>
+              </div>
 
-      </div>
-
-      <div
-        className="
+              <div
+                className="
           flex
           h-12
           w-12
@@ -416,65 +410,59 @@ export default function Dashboard() {
 
           text-[#6B1A2A]
         "
-      >
-        <IndianRupee size={22} />
-      </div>
+              >
+                <IndianRupee size={22} />
+              </div>
+            </div>
 
-    </div>
+            {/* FOOTER */}
 
-    {/* FOOTER */}
-
-    <div
-      className="
+            <div
+              className="
         mt-8
 
         flex
         items-center
         justify-between
       "
-    >
-
-      <p
-        className="
+            >
+              <p
+                className="
           text-sm
-          text-[#6D7175]
+          text-text-secondary
         "
-      >
-        Explore revenue analytics
-      </p>
+              >
+                Explore revenue analytics
+              </p>
 
-      <span
-        className="
+              <span
+                className="
           text-sm
           font-semibold
 
           text-[#6B1A2A]
         "
-      >
-        View analytics →
-      </span>
+              >
+                View analytics →
+              </span>
+            </div>
+          </div>
+        </Link>
 
-    </div>
+        {/* ORDERS */}
 
-  </div>
-
-</Link>
-
-     {/* ORDERS */}
-
-<Link
-  to="/admin/orders"
-
-  className="
+        <Link
+          to="/admin/orders"
+          className="
     relative
     overflow-hidden
 
     rounded-[28px]
 
     border
-    border-[#ECE7E9]
+    border-border
 
-    bg-white
+    bg-surface
 
     p-6
 
@@ -488,10 +476,9 @@ export default function Dashboard() {
     cursor-pointer
     block
   "
->
-
-  <div
-    className="
+        >
+          <div
+            className="
       absolute
       right-0
       top-0
@@ -505,22 +492,19 @@ export default function Dashboard() {
 
       blur-2xl
     "
-  />
+          />
 
-  <div className="relative z-10">
-
-    <div
-      className="
+          <div className="relative z-10">
+            <div
+              className="
         flex
         items-start
         justify-between
       "
-    >
-
-      <div>
-
-        <p
-          className="
+            >
+              <div>
+                <p
+                  className="
             text-xs
             font-medium
             uppercase
@@ -528,30 +512,27 @@ export default function Dashboard() {
 
             text-[#9CA3AF]
           "
-        >
-          Orders
-        </p>
+                >
+                  Orders
+                </p>
 
-        <h2
-          className="
+                <h2
+                  className="
             mt-4
 
             text-4xl
             font-bold
             tracking-tight
 
-            text-[#111111]
+            text-text-primary
           "
-        >
-          {loading
-            ? "..."
-            : metrics.totalOrders}
-        </h2>
+                >
+                  {loading ? "..." : metrics.totalOrders}
+                </h2>
+              </div>
 
-      </div>
-
-      <div
-        className="
+              <div
+                className="
           flex
           h-12
           w-12
@@ -565,65 +546,59 @@ export default function Dashboard() {
 
           text-[#6B1A2A]
         "
-      >
-        <ShoppingCart size={20} />
-      </div>
+              >
+                <ShoppingCart size={20} />
+              </div>
+            </div>
 
-    </div>
+            {/* FOOTER */}
 
-    {/* FOOTER */}
-
-    <div
-      className="
+            <div
+              className="
         mt-8
 
         flex
         items-center
         justify-between
       "
-    >
-
-      <p
-        className="
+            >
+              <p
+                className="
           text-sm
-          text-[#6D7175]
+          text-text-secondary
         "
-      >
-        Track and manage orders
-      </p>
+              >
+                Track and manage orders
+              </p>
 
-      <span
-        className="
+              <span
+                className="
           text-sm
           font-semibold
 
           text-[#6B1A2A]
         "
-      >
-        View orders →
-      </span>
+              >
+                View orders →
+              </span>
+            </div>
+          </div>
+        </Link>
 
-    </div>
+        {/* CUSTOMERS */}
 
-  </div>
-
-</Link>
-
-      {/* CUSTOMERS */}
-
-<Link
-  to="/admin/customers"
-
-  className="
+        <Link
+          to="/admin/customers"
+          className="
     relative
     overflow-hidden
 
     rounded-[28px]
 
     border
-    border-[#ECE7E9]
+    border-border
 
-    bg-white
+    bg-surface
 
     p-6
 
@@ -637,10 +612,9 @@ export default function Dashboard() {
     cursor-pointer
     block
   "
->
-
-  <div
-    className="
+        >
+          <div
+            className="
       absolute
       right-0
       top-0
@@ -654,22 +628,19 @@ export default function Dashboard() {
 
       blur-2xl
     "
-  />
+          />
 
-  <div className="relative z-10">
-
-    <div
-      className="
+          <div className="relative z-10">
+            <div
+              className="
         flex
         items-start
         justify-between
       "
-    >
-
-      <div>
-
-        <p
-          className="
+            >
+              <div>
+                <p
+                  className="
             text-xs
             font-medium
             uppercase
@@ -677,30 +648,27 @@ export default function Dashboard() {
 
             text-[#9CA3AF]
           "
-        >
-          Customers
-        </p>
+                >
+                  Customers
+                </p>
 
-        <h2
-          className="
+                <h2
+                  className="
             mt-4
 
             text-4xl
             font-bold
             tracking-tight
 
-            text-[#111111]
+            text-text-primary
           "
-        >
-          {loading
-            ? "..."
-            : metrics.totalCustomers}
-        </h2>
+                >
+                  {loading ? "..." : metrics.totalCustomers}
+                </h2>
+              </div>
 
-      </div>
-
-      <div
-        className="
+              <div
+                className="
           flex
           h-12
           w-12
@@ -714,49 +682,44 @@ export default function Dashboard() {
 
           text-[#6B1A2A]
         "
-      >
-        <Users size={20} />
-      </div>
+              >
+                <Users size={20} />
+              </div>
+            </div>
 
-    </div>
+            {/* FOOTER */}
 
-    {/* FOOTER */}
-
-    <div
-      className="
+            <div
+              className="
         mt-8
 
         flex
         items-center
         justify-between
       "
-    >
-
-      <p
-        className="
+            >
+              <p
+                className="
           text-sm
-          text-[#6D7175]
+          text-text-secondary
         "
-      >
-        Manage customer accounts
-      </p>
+              >
+                Manage customer accounts
+              </p>
 
-      <span
-        className="
+              <span
+                className="
           text-sm
           font-semibold
 
           text-[#6B1A2A]
         "
-      >
-        View customers →
-      </span>
-
-    </div>
-
-  </div>
-
-</Link>
+              >
+                View customers →
+              </span>
+            </div>
+          </div>
+        </Link>
 
         {/* LOW STOCK */}
 
@@ -769,9 +732,9 @@ export default function Dashboard() {
     rounded-[28px]
 
     border
-    border-[#ECE7E9]
+    border-border
 
-    bg-white
+    bg-surface
 
     p-6
 
@@ -833,7 +796,7 @@ export default function Dashboard() {
             font-bold
             tracking-tight
 
-            text-[#111111]
+            text-text-primary
           "
                 >
                   {loading ? "..." : metrics.lowStockProducts}
@@ -860,8 +823,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-           
-
             {/* FOOTER */}
 
             <div
@@ -876,7 +837,7 @@ export default function Dashboard() {
               <p
                 className="
           text-sm
-          text-[#6D7175]
+          text-text-secondary
         "
               >
                 Products running low
@@ -917,7 +878,7 @@ export default function Dashboard() {
     border
     border-black/5
 
-    bg-white
+    bg-surface
 
     p-6
 
@@ -980,7 +941,7 @@ export default function Dashboard() {
           mt-2
           text-sm
           leading-6
-          text-[#6D7175]
+          text-text-secondary
 
           max-w-lg
         "
@@ -1064,7 +1025,7 @@ export default function Dashboard() {
           border
           border-black/10
 
-          bg-white
+          bg-surface
 
           px-4
 
@@ -1112,7 +1073,7 @@ export default function Dashboard() {
           border
           border-black/10
 
-          bg-white
+          bg-surface
 
           px-4
 
@@ -1223,7 +1184,7 @@ export default function Dashboard() {
       border
       border-black/5
 
-      bg-white
+      bg-surface
       p-6
 
       shadow-sm
@@ -1251,7 +1212,7 @@ export default function Dashboard() {
               <p
                 className="
             text-sm
-            text-[#6D7175]
+            text-text-secondary
           "
               >
                 Total Products
@@ -1279,7 +1240,7 @@ export default function Dashboard() {
               <p
                 className="
             text-sm
-            text-[#6D7175]
+            text-text-secondary
           "
               >
                 Pending Orders
@@ -1307,7 +1268,7 @@ export default function Dashboard() {
               <p
                 className="
             text-sm
-            text-[#6D7175]
+            text-text-secondary
           "
               >
                 Inventory Alerts
@@ -1344,7 +1305,7 @@ export default function Dashboard() {
             border
             border-black/5
 
-            bg-white
+            bg-surface
             p-6
 
             shadow-sm
@@ -1385,9 +1346,9 @@ export default function Dashboard() {
 
           <div className="mt-6 space-y-4">
             {loading ? (
-              <p className="text-sm text-[#6D7175]">Loading orders...</p>
+              <p className="text-sm text-text-secondary">Loading orders...</p>
             ) : dashboardData.recentOrders.length === 0 ? (
-              <p className="text-sm text-[#6D7175]">No recent orders</p>
+              <p className="text-sm text-text-secondary">No recent orders</p>
             ) : (
               dashboardData.recentOrders.map((order) => (
                 <div
@@ -1413,7 +1374,7 @@ export default function Dashboard() {
                       className="
                 mt-1
                 text-sm
-                text-[#6D7175]
+                text-text-secondary
               "
                     >
                       {order.customerName}
@@ -1454,7 +1415,7 @@ export default function Dashboard() {
             border
             border-black/5
 
-            bg-white
+            bg-surface
             p-6
 
             shadow-sm
@@ -1495,9 +1456,11 @@ export default function Dashboard() {
 
           <div className="mt-6 space-y-4">
             {loading ? (
-              <p className="text-sm text-[#6D7175]">Loading inventory...</p>
+              <p className="text-sm text-text-secondary">
+                Loading inventory...
+              </p>
             ) : dashboardData.lowStockProducts.length === 0 ? (
-              <p className="text-sm text-[#6D7175]">No low stock alerts</p>
+              <p className="text-sm text-text-secondary">No low stock alerts</p>
             ) : (
               dashboardData.lowStockProducts.map((product) => {
                 const totalStock =
@@ -1532,11 +1495,10 @@ export default function Dashboard() {
               "
                     >
                       <img
-                        src={
-                          product.images?.[1]
-                            ? `${import.meta.env.VITE_ASSET_URL}${product.images[1]}`
-                            : "/placeholder.webp"
-                        }
+                       src={
+  product.images?.[1]?.url ||
+  "/placeholder.webp"
+}
                         alt={product.name}
                         className="
     h-14
@@ -1558,7 +1520,7 @@ export default function Dashboard() {
                           className="
                     mt-1
                     text-sm
-                    text-[#6D7175]
+                    text-text-secondary
                   "
                         >
                           {product.category}

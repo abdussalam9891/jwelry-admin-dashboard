@@ -69,7 +69,7 @@ export default function CustomersPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <button className="h-12 px-6 rounded-2xl border border-black/10 bg-white font-medium hover:bg-black/5 transition">
+            <button className="h-12 px-6 rounded-2xl border border-black/10 bg-surface font-medium hover:bg-black/5 transition">
               Export
             </button>
 
@@ -84,21 +84,19 @@ export default function CustomersPage() {
           {stats.map((item) => (
             <div
               key={item.title}
-              className="bg-white rounded-3xl border border-black/5 p-6 shadow-sm"
+              className="bg-surface rounded-3xl border border-black/5 p-6 shadow-sm"
             >
               <p className="text-sm text-black/45 font-medium mb-4 uppercase tracking-wide">
                 {item.title}
               </p>
 
-              <h2 className="text-4xl font-bold text-black">
-                {item.value}
-              </h2>
+              <h2 className="text-4xl font-bold text-black">{item.value}</h2>
             </div>
           ))}
         </div>
 
         {/* SEARCH + FILTERS */}
-        <div className="bg-white border border-black/5 rounded-3xl p-4 md:p-5 shadow-sm">
+        <div className="bg-surface border border-black/5 rounded-3xl p-4 md:p-5 shadow-sm">
           <div className="flex flex-col xl:flex-row gap-4">
             <div className="flex-1 relative">
               <input
@@ -109,14 +107,14 @@ export default function CustomersPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <select className="h-14 rounded-2xl border border-black/10 bg-white px-4 outline-none min-w-[170px]">
+              <select className="h-14 rounded-2xl border border-black/10 bg-surface px-4 outline-none min-w-[170px]">
                 <option>All Status</option>
                 <option>VIP</option>
                 <option>Active</option>
                 <option>New</option>
               </select>
 
-              <select className="h-14 rounded-2xl border border-black/10 bg-white px-4 outline-none min-w-[170px]">
+              <select className="h-14 rounded-2xl border border-black/10 bg-surface px-4 outline-none min-w-[170px]">
                 <option>Newest First</option>
                 <option>Highest Spend</option>
                 <option>Most Orders</option>
@@ -126,7 +124,7 @@ export default function CustomersPage() {
         </div>
 
         {/* DESKTOP TABLE */}
-        <div className="hidden lg:block bg-white border border-black/5 rounded-[2rem] overflow-hidden shadow-sm">
+        <div className="hidden lg:block bg-surface border border-black/5 rounded-[2rem] overflow-hidden shadow-sm">
           <div className="grid grid-cols-6 gap-4 px-8 py-5 border-b border-black/5 text-xs uppercase tracking-[0.2em] text-black/40 font-semibold">
             <p>Customer</p>
             <p>Orders</p>
@@ -158,13 +156,9 @@ export default function CustomersPage() {
                   </div>
                 </div>
 
-                <p className="font-medium text-black">
-                  {customer.orders}
-                </p>
+                <p className="font-medium text-black">{customer.orders}</p>
 
-                <p className="font-semibold text-black">
-                  {customer.spent}
-                </p>
+                <p className="font-semibold text-black">{customer.spent}</p>
 
                 <div>
                   <span
@@ -172,20 +166,18 @@ export default function CustomersPage() {
                       customer.status === "VIP"
                         ? "bg-[#f8eef1] text-[#7b1e2b] border-[#edd8de]"
                         : customer.status === "Active"
-                        ? "bg-[#eef7f1] text-[#127a3f] border-[#d7edde]"
-                        : "bg-[#fff4e8] text-[#c77700] border-[#ffe1b4]"
+                          ? "bg-[#eef7f1] text-[#127a3f] border-[#d7edde]"
+                          : "bg-[#fff4e8] text-[#c77700] border-[#ffe1b4]"
                     }`}
                   >
                     {customer.status}
                   </span>
                 </div>
 
-                <p className="text-black/60 font-medium">
-                  {customer.joined}
-                </p>
+                <p className="text-black/60 font-medium">{customer.joined}</p>
 
                 <div className="flex justify-end">
-                  <button className="h-11 px-5 rounded-xl border border-black/10 bg-white hover:bg-black/5 transition font-medium">
+                  <button className="h-11 px-5 rounded-xl border border-black/10 bg-surface hover:bg-black/5 transition font-medium">
                     View Profile
                   </button>
                 </div>
@@ -199,7 +191,7 @@ export default function CustomersPage() {
           {customers.map((customer) => (
             <div
               key={customer.id}
-              className="bg-white rounded-[2rem] border border-black/5 p-5 shadow-sm"
+              className="bg-surface rounded-[2rem] border border-black/5 p-5 shadow-sm"
             >
               <div className="flex items-start justify-between gap-4 mb-5">
                 <div className="flex items-center gap-3 min-w-0">
@@ -208,9 +200,7 @@ export default function CustomersPage() {
                   </div>
 
                   <div className="min-w-0">
-                    <p className="font-semibold truncate">
-                      {customer.name}
-                    </p>
+                    <p className="font-semibold truncate">{customer.name}</p>
 
                     <p className="text-sm text-black/50 truncate">
                       {customer.email}
@@ -229,9 +219,7 @@ export default function CustomersPage() {
                     Orders
                   </p>
 
-                  <p className="font-semibold text-lg">
-                    {customer.orders}
-                  </p>
+                  <p className="font-semibold text-lg">{customer.orders}</p>
                 </div>
 
                 <div>
@@ -256,7 +244,7 @@ export default function CustomersPage() {
                   </p>
                 </div>
 
-                <button className="h-11 px-5 rounded-xl border border-black/10 bg-white hover:bg-black/5 transition font-medium shrink-0">
+                <button className="h-11 px-5 rounded-xl border border-black/10 bg-surface hover:bg-black/5 transition font-medium shrink-0">
                   View
                 </button>
               </div>

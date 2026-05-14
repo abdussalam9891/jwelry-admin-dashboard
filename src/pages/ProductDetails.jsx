@@ -135,13 +135,13 @@ const ProductDetailsPage = () => {
         <div>
           <Link
             to="/admin/products"
-            className="inline-flex items-center gap-2 text-sm text-[#6D7175]"
+            className="inline-flex items-center gap-2 text-sm text-text-secondary"
           >
             <ArrowLeft size={16} />
             Back to products
           </Link>
 
-          <h1 className="mt-4 text-4xl font-bold tracking-tight text-[#111111]">
+          <h1 className="mt-4 text-4xl font-bold tracking-tight text-text-primary">
             {product.name}
           </h1>
 
@@ -181,7 +181,9 @@ const ProductDetailsPage = () => {
               {product.status}
             </div>
 
-            <div className="text-sm text-[#6D7175]">SKU: {product.sku}</div>
+            <div className="text-sm text-text-secondary">
+              SKU: {product.sku}
+            </div>
           </div>
         </div>
 
@@ -200,7 +202,7 @@ const ProductDetailsPage = () => {
     border
     border-black/10
 
-    bg-white
+    bg-surface
 
     px-5
     py-3
@@ -208,7 +210,7 @@ const ProductDetailsPage = () => {
     text-sm
     font-semibold
 
-    text-[#111111]
+    text-text-primary
 
     shadow-sm
 
@@ -233,7 +235,7 @@ const ProductDetailsPage = () => {
 
     rounded-2xl
 
-    bg-[#6B1A2A]
+    bg-brand
 
     px-5
     py-3
@@ -269,9 +271,9 @@ const ProductDetailsPage = () => {
             className="
     rounded-[28px]
     border
-    border-[#ECE7E9]
+    border-border
 
-    bg-white
+    bg-surface
     p-6
 
     shadow-sm
@@ -290,7 +292,7 @@ const ProductDetailsPage = () => {
           text-xl
           font-semibold
 
-          text-[#111111]
+          text-text-primary
         "
                 >
                   Product Media
@@ -301,7 +303,7 @@ const ProductDetailsPage = () => {
           mt-1
           text-sm
 
-          text-[#6D7175]
+          text-text-secondary
         "
                 >
                   Product gallery and storefront assets.
@@ -342,7 +344,7 @@ const ProductDetailsPage = () => {
                 product.images.map((image, index) => (
                   <img
                     key={index}
-                    src={`${import.meta.env.VITE_ASSET_URL}${image}`}
+                    src={image.url}
                     alt={product.name}
                     className="
               h-[320px]
@@ -391,9 +393,9 @@ const ProductDetailsPage = () => {
     rounded-[28px]
 
     border
-    border-[#ECE7E9]
+    border-border
 
-    bg-white
+    bg-surface
     p-6
 
     shadow-sm
@@ -412,7 +414,7 @@ const ProductDetailsPage = () => {
           text-xl
           font-semibold
 
-          text-[#111111]
+          text-text-primary
         "
                 >
                   Product Overview
@@ -423,7 +425,7 @@ const ProductDetailsPage = () => {
           mt-1
           text-sm
 
-          text-[#6D7175]
+          text-text-secondary
         "
                 >
                   Internal product summary and storefront description.
@@ -455,7 +457,7 @@ const ProductDetailsPage = () => {
         text-sm
         font-semibold
 
-        text-[#111111]
+        text-text-primary
       "
                   >
                     Short Description
@@ -466,7 +468,7 @@ const ProductDetailsPage = () => {
         mt-2
         leading-relaxed
 
-        text-[#6D7175]
+        text-text-secondary
       "
                   >
                     {product.description?.short ||
@@ -480,7 +482,7 @@ const ProductDetailsPage = () => {
         text-sm
         font-semibold
 
-        text-[#111111]
+        text-text-primary
       "
                   >
                     Design
@@ -491,7 +493,7 @@ const ProductDetailsPage = () => {
         mt-2
         leading-relaxed
 
-        text-[#6D7175]
+        text-text-secondary
       "
                   >
                     {product.description?.design ||
@@ -505,7 +507,7 @@ const ProductDetailsPage = () => {
         text-sm
         font-semibold
 
-        text-[#111111]
+        text-text-primary
       "
                   >
                     Details
@@ -516,7 +518,7 @@ const ProductDetailsPage = () => {
         mt-2
         leading-relaxed
 
-        text-[#6D7175]
+        text-text-secondary
       "
                   >
                     {product.description?.details ||
@@ -530,7 +532,7 @@ const ProductDetailsPage = () => {
         text-sm
         font-semibold
 
-        text-[#111111]
+        text-text-primary
       "
                   >
                     Styling
@@ -541,7 +543,7 @@ const ProductDetailsPage = () => {
         mt-2
         leading-relaxed
 
-        text-[#6D7175]
+        text-text-secondary
       "
                   >
                     {product.description?.styling ||
@@ -554,26 +556,24 @@ const ProductDetailsPage = () => {
 
           {/* VARIANTS */}
 
-          <div className="rounded-[28px] border border-[#ECE7E9] bg-white shadow-sm">
+          <div className="rounded-[28px] border border-border bg-surface shadow-sm">
             <div className="border-b border-black/5 p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-semibold text-[#111111]">
+                  <h2 className="text-xl font-semibold text-text-primary">
                     Variant Inventory
                   </h2>
 
-                  <p className="mt-1 text-sm text-[#6D7175]">
+                  <p className="mt-1 text-sm text-text-secondary">
                     Manage variant stock, pricing and sales analytics.
                   </p>
                 </div>
-
- 
               </div>
             </div>
 
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
-                <thead className="border-b border-black/5 bg-[#FAFAFA] text-left text-[#6D7175]">
+                <thead className="border-b border-black/5 bg-[#FAFAFA] text-left text-text-secondary">
                   <tr>
                     <th className="px-6 py-4 font-medium">SKU</th>
                     <th className="px-6 py-4 font-medium">Material</th>
@@ -588,27 +588,27 @@ const ProductDetailsPage = () => {
                 <tbody>
                   {variants.map((variant, index) => (
                     <tr key={index} className="border-b border-black/5">
-                      <td className="px-6 py-5 font-medium text-[#111111]">
+                      <td className="px-6 py-5 font-medium text-text-primary">
                         {variant.sku}
                       </td>
 
-                      <td className="px-6 py-5 text-[#6D7175]">
+                      <td className="px-6 py-5 text-text-secondary">
                         {variant.material}
                       </td>
 
-                      <td className="px-6 py-5 text-[#6D7175]">
+                      <td className="px-6 py-5 text-text-secondary">
                         {variant.size}
                       </td>
 
-                      <td className="px-6 py-5 font-semibold text-[#111111]">
+                      <td className="px-6 py-5 font-semibold text-text-primary">
                         ₹{variant.price.toLocaleString()}
                       </td>
 
-                      <td className="px-6 py-5 text-[#111111]">
+                      <td className="px-6 py-5 text-text-primary">
                         {variant.stock}
                       </td>
 
-                      <td className="px-6 py-5 text-[#111111]">
+                      <td className="px-6 py-5 text-text-primary">
                         {variant.sold}
                       </td>
 
@@ -626,9 +626,9 @@ const ProductDetailsPage = () => {
 
           {/* RECENT ORDERS */}
 
-          <div className="rounded-[28px] border border-[#ECE7E9] bg-white shadow-sm">
+          <div className="rounded-[28px] border border-border bg-surface shadow-sm">
             <div className="border-b border-black/5 p-6">
-              <h2 className="text-xl font-semibold text-[#111111]">
+              <h2 className="text-xl font-semibold text-text-primary">
                 Recent Orders
               </h2>
             </div>
@@ -640,16 +640,16 @@ const ProductDetailsPage = () => {
                   className="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between"
                 >
                   <div>
-                    <p className="font-semibold text-[#111111]">
+                    <p className="font-semibold text-text-primary">
                       {order.orderNumber}
                     </p>
 
-                    <p className="mt-1 text-sm text-[#6D7175]">
+                    <p className="mt-1 text-sm text-text-secondary">
                       {order.customerName}
                     </p>
                   </div>
 
-                  <div className="font-semibold text-[#111111]">
+                  <div className="font-semibold text-text-primary">
                     ₹{order.totalPrice.toLocaleString()}
                   </div>
 
@@ -693,9 +693,9 @@ const ProductDetailsPage = () => {
           rounded-[28px]
 
           border
-          border-[#ECE7E9]
+          border-border
 
-          bg-white
+          bg-surface
           p-6
 
           shadow-sm
@@ -712,7 +712,7 @@ const ProductDetailsPage = () => {
                       <p
                         className="
                 text-sm
-                text-[#6D7175]
+                text-text-secondary
               "
                       >
                         {item.title}
@@ -726,7 +726,7 @@ const ProductDetailsPage = () => {
                 font-bold
                 tracking-tight
 
-                text-[#111111]
+                text-text-primary
               "
                       >
                         {item.value}
@@ -764,9 +764,9 @@ const ProductDetailsPage = () => {
     rounded-[28px]
 
     border
-    border-[#ECE7E9]
+    border-border
 
-    bg-white
+    bg-surface
     p-6
 
     shadow-sm
@@ -802,7 +802,7 @@ const ProductDetailsPage = () => {
                 <h2
                   className="
           font-semibold
-          text-[#111111]
+          text-text-primary
         "
                 >
                   Sales Performance
@@ -813,7 +813,7 @@ const ProductDetailsPage = () => {
           mt-1
           text-sm
 
-          text-[#6D7175]
+          text-text-secondary
         "
                 >
                   Product sales and revenue insights.
@@ -842,7 +842,7 @@ const ProductDetailsPage = () => {
                 <p
                   className="
           text-sm
-          text-[#6D7175]
+          text-text-secondary
         "
                 >
                   Total Revenue
@@ -855,7 +855,7 @@ const ProductDetailsPage = () => {
           text-2xl
           font-bold
 
-          text-[#111111]
+          text-text-primary
         "
                 >
                   ₹{analytics.totalRevenue.toLocaleString()}
@@ -874,7 +874,7 @@ const ProductDetailsPage = () => {
                 <p
                   className="
           text-sm
-          text-[#6D7175]
+          text-text-secondary
         "
                 >
                   Units Sold
@@ -887,7 +887,7 @@ const ProductDetailsPage = () => {
           text-2xl
           font-bold
 
-          text-[#111111]
+          text-text-primary
         "
                 >
                   {analytics.totalUnitsSold}
@@ -904,7 +904,7 @@ const ProductDetailsPage = () => {
       border
       border-black/5
 
-      bg-[#FCFAFB]
+      bg-surface-secondary
 
       p-5
     "
@@ -920,7 +920,7 @@ const ProductDetailsPage = () => {
                   <p
                     className="
             text-sm
-            text-[#6D7175]
+            text-text-secondary
           "
                   >
                     Total Orders
@@ -933,7 +933,7 @@ const ProductDetailsPage = () => {
             text-3xl
             font-bold
 
-            text-[#111111]
+            text-text-primary
           "
                   >
                     {analytics.totalOrders}
@@ -968,9 +968,9 @@ const ProductDetailsPage = () => {
     rounded-[28px]
 
     border
-    border-[#ECE7E9]
+    border-border
 
-    bg-white
+    bg-surface
     p-6
 
     shadow-sm
@@ -981,7 +981,7 @@ const ProductDetailsPage = () => {
       text-lg
       font-semibold
 
-      text-[#111111]
+      text-text-primary
     "
             >
               Product Information
@@ -1003,7 +1003,7 @@ const ProductDetailsPage = () => {
                 <span
                   className="
           text-sm
-          text-[#6D7175]
+          text-text-secondary
         "
                 >
                   Product Type
@@ -1012,7 +1012,7 @@ const ProductDetailsPage = () => {
                 <span
                   className="
           font-medium
-          text-[#111111]
+          text-text-primary
         "
                 >
                   Jewelry
@@ -1029,7 +1029,7 @@ const ProductDetailsPage = () => {
                 <span
                   className="
           text-sm
-          text-[#6D7175]
+          text-text-secondary
         "
                 >
                   Category
@@ -1038,7 +1038,7 @@ const ProductDetailsPage = () => {
                 <span
                   className="
           font-medium
-          text-[#111111]
+          text-text-primary
         "
                 >
                   {product.category || "-"}
@@ -1055,7 +1055,7 @@ const ProductDetailsPage = () => {
                 <span
                   className="
           text-sm
-          text-[#6D7175]
+          text-text-secondary
         "
                 >
                   Variants
@@ -1064,7 +1064,7 @@ const ProductDetailsPage = () => {
                 <span
                   className="
           font-medium
-          text-[#111111]
+          text-text-primary
         "
                 >
                   {variants.length}
@@ -1081,7 +1081,7 @@ const ProductDetailsPage = () => {
                 <span
                   className="
           text-sm
-          text-[#6D7175]
+          text-text-secondary
         "
                 >
                   Inventory Status
@@ -1091,7 +1091,7 @@ const ProductDetailsPage = () => {
                   className="
           font-medium
 
-          text-[#111111]
+          text-text-primary
         "
                 >
                   {analytics.lowStockCount > 0 ? "Needs Attention" : "Healthy"}

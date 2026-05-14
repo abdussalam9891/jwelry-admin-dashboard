@@ -1,13 +1,20 @@
-import {
-  Menu,
-  Bell,
-  Search,
-  ChevronDown,
-} from "lucide-react";
+import { Bell, ChevronDown, Menu, Search } from "lucide-react";
 
-export default function Topbar({
-  setSidebarOpen,
-}) {
+export default function Topbar({ setSidebarOpen }) {
+  const toggleTheme = () => {
+    const html = document.documentElement;
+
+    html.classList.toggle("dark");
+
+    const isDark = html.classList.contains("dark");
+
+    localStorage.setItem(
+      "theme",
+
+      isDark ? "dark" : "light",
+    );
+  };
+
   return (
     <header
       className="
@@ -20,7 +27,7 @@ export default function Topbar({
         border-b
         border-black/5
 
-        bg-white/80
+        bg-surface/80
         backdrop-blur-xl
 
         px-4
@@ -35,9 +42,7 @@ export default function Topbar({
       <div className="flex items-center gap-4">
         {/* mobile menu */}
         <button
-          onClick={() =>
-            setSidebarOpen(true)
-          }
+          onClick={() => setSidebarOpen(true)}
           className="
             md:hidden
             text-black/70
@@ -53,7 +58,7 @@ export default function Topbar({
               text-[22px]
               font-semibold
               tracking-tight
-              text-[#111111]
+              text-text-primary
             "
           >
             Dashboard
@@ -62,7 +67,7 @@ export default function Topbar({
           <p
             className="
               text-sm
-              text-[#6D7175]
+              text-text-secondary
               mt-0.5
             "
           >
@@ -124,7 +129,7 @@ export default function Topbar({
               outline-none
 
               focus:border-black/15
-              focus:bg-white
+              focus:bg-surface
 
               transition
             "
@@ -140,6 +145,34 @@ export default function Topbar({
           gap-3
         "
       >
+        {/* {theme button } */}
+
+        <button
+          onClick={toggleTheme}
+          className="
+    flex
+    h-11
+    w-11
+    items-center
+    justify-center
+
+    rounded-2xl
+
+    border
+    border-border
+
+    bg-surface
+
+    text-text-primary
+
+    transition
+
+    hover:bg-surface-secondary
+  "
+        >
+          🌙
+        </button>
+
         {/* notification */}
         <button
           className="
@@ -153,7 +186,7 @@ export default function Topbar({
             border
             border-black/5
 
-            bg-white
+            bg-surface
 
             flex
             items-center
@@ -164,10 +197,7 @@ export default function Topbar({
             transition
           "
         >
-          <Bell
-            size={18}
-            className="text-[#444]"
-          />
+          <Bell size={18} className="text-[#444]" />
 
           {/* notification dot */}
           <span
@@ -197,7 +227,7 @@ export default function Topbar({
             border
             border-black/5
 
-            bg-white
+            bg-surface
 
             px-3
             py-2
@@ -217,7 +247,7 @@ export default function Topbar({
 
               rounded-full
 
-              bg-[#6B1A2A]
+              bg-brand
 
               text-sm
               font-semibold
@@ -243,7 +273,7 @@ export default function Topbar({
               className="
                 mt-1
                 text-xs
-                text-[#6D7175]
+                text-text-secondary
               "
             >
               Super Admin

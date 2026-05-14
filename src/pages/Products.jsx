@@ -21,8 +21,7 @@ export default function Products() {
 
   const [sort, setSort] = useState("-createdAt");
 
-  const [material, setMaterial] =
-  useState("");
+  const [material, setMaterial] = useState("");
 
   const [loading, setLoading] = useState(false);
 
@@ -49,10 +48,8 @@ export default function Products() {
 
         const [productsRes, statsRes] = await Promise.all([
           api.get(
-
-  `/admin/products?page=${page}&limit=10&search=${search}&category=${category}&material=${material}&sort=${sort}`
-
-),
+            `/admin/products?page=${page}&limit=10&search=${search}&category=${category}&material=${material}&sort=${sort}`,
+          ),
 
           api.get("/admin/products/stats"),
         ]);
@@ -148,7 +145,7 @@ export default function Products() {
         font-bold
         tracking-tight
 
-        text-[#111111]
+        text-text-primary
       "
           >
             Products
@@ -163,7 +160,7 @@ export default function Products() {
         text-sm
         leading-relaxed
 
-        text-[#6D7175]
+        text-text-secondary
       "
           >
             Manage inventory, pricing, stock levels and product visibility
@@ -186,9 +183,9 @@ export default function Products() {
         rounded-2xl
 
         border
-        border-[#ECE7E9]
+        border-border
 
-        bg-white
+        bg-surface
 
         px-5
         py-3
@@ -196,7 +193,7 @@ export default function Products() {
         text-sm
         font-semibold
 
-        text-[#111111]
+        text-text-primary
 
         shadow-sm
 
@@ -213,7 +210,7 @@ export default function Products() {
             className="
     rounded-2xl
 
-    bg-[#6B1A2A]
+    bg-brand
 
     px-5
     py-3
@@ -256,9 +253,9 @@ export default function Products() {
       rounded-[28px]
 
       border
-      border-[#ECE7E9]
+      border-border
 
-      bg-white
+      bg-surface
 
       p-6
 
@@ -317,7 +314,7 @@ export default function Products() {
               font-bold
               tracking-tight
 
-              text-[#111111]
+              text-text-primary
             "
                 >
                   {stats.totalProducts}
@@ -355,9 +352,9 @@ export default function Products() {
       rounded-[28px]
 
       border
-      border-[#ECE7E9]
+      border-border
 
-      bg-white
+      bg-surface
 
       p-6
 
@@ -416,7 +413,7 @@ export default function Products() {
               font-bold
               tracking-tight
 
-              text-[#111111]
+              text-text-primary
             "
                 >
                   {stats.lowStockProducts}
@@ -477,9 +474,9 @@ export default function Products() {
       rounded-[28px]
 
       border
-      border-[#ECE7E9]
+      border-border
 
-      bg-white
+      bg-surface
 
       p-6
 
@@ -538,7 +535,7 @@ export default function Products() {
               font-bold
               tracking-tight
 
-              text-[#111111]
+              text-text-primary
             "
                 >
                   {stats.outOfStockProducts}
@@ -576,9 +573,9 @@ export default function Products() {
       rounded-[28px]
 
       border
-      border-[#ECE7E9]
+      border-border
 
-      bg-white
+      bg-surface
 
       p-6
 
@@ -637,7 +634,7 @@ export default function Products() {
               font-bold
               tracking-tight
 
-              text-[#111111]
+              text-text-primary
             "
                 >
                   {stats.totalCategories}
@@ -667,27 +664,26 @@ export default function Products() {
         </div>
       </div>
 
-    {/*FILTER BAR*/}
+      {/*FILTER BAR*/}
 
-<div
-  className="
+      <div
+        className="
     mb-8
 
     rounded-[28px]
 
     border
-    border-[#ECE7E9]
+    border-border
 
-    bg-white
+    bg-surface
 
     p-5
 
     shadow-[0_10px_30px_rgba(0,0,0,0.03)]
   "
->
-
-  <div
-    className="
+      >
+        <div
+          className="
       flex
       flex-col
       gap-4
@@ -696,12 +692,11 @@ export default function Products() {
       xl:items-center
       xl:justify-between
     "
-  >
+        >
+          {/* LEFT FILTERS */}
 
-    {/* LEFT FILTERS */}
-
-    <div
-      className="
+          <div
+            className="
         flex
         flex-1
         flex-col
@@ -709,15 +704,13 @@ export default function Products() {
 
         lg:flex-row
       "
-    >
+          >
+            {/* SEARCH */}
 
-      {/* SEARCH */}
-
-      <div className="relative flex-1">
-
-        <Search
-          size={18}
-          className="
+            <div className="relative flex-1">
+              <Search
+                size={18}
+                className="
             absolute
             left-4
             top-1/2
@@ -725,43 +718,35 @@ export default function Products() {
 
             text-[#9CA3AF]
           "
-        />
+              />
 
-        <input
-          value={search}
+              <input
+                value={search}
+                onChange={(e) => {
+                  setPage(1);
 
-          onChange={(e) => {
-
-            setPage(1);
-
-            setSearch(
-              e.target.value
-            );
-
-          }}
-
-          type="text"
-
-          placeholder="
+                  setSearch(e.target.value);
+                }}
+                type="text"
+                placeholder="
             Search products, materials or collections...
           "
-
-          className="
+                className="
             h-12
             w-full
 
             rounded-2xl
 
             border
-            border-[#ECE7E9]
+            border-border
 
-            bg-[#FCFAFB]
+            bg-surface-secondary
 
             pl-11
             pr-4
 
             text-sm
-            text-[#111111]
+            text-text-primary
 
             outline-none
 
@@ -770,215 +755,150 @@ export default function Products() {
             placeholder:text-[#9CA3AF]
 
             focus:border-[#D8C7CD]
-            focus:bg-white
+            focus:bg-surface
           "
-        />
+              />
+            </div>
 
+            {/* CATEGORY */}
+
+            <select
+              value={category}
+              onChange={(e) => {
+                setPage(1);
+
+                setCategory(e.target.value);
+              }}
+              className="
+          h-12
+
+          rounded-2xl
+
+          border
+          border-border
+
+          bg-surface-secondary
+
+          px-4
+
+          text-sm
+          font-medium
+
+          text-text-primary
+
+          outline-none
+
+          transition
+
+          focus:border-[#D8C7CD]
+          focus:bg-surface
+        "
+            >
+              <option value="">All Categories</option>
+
+              <option value="rings">Rings</option>
+
+              <option value="bracelets">Bracelets</option>
+
+              <option value="earrings">Earrings</option>
+
+              <option value="necklaces">Necklaces</option>
+            </select>
+
+            {/* MATERIAL */}
+
+            <select
+              value={material}
+              onChange={(e) => {
+                setPage(1);
+
+                setMaterial(e.target.value);
+              }}
+              className="
+          h-12
+
+          rounded-2xl
+
+          border
+          border-border
+
+          bg-surface-secondary
+
+          px-4
+
+          text-sm
+          font-medium
+
+          text-text-primary
+
+          outline-none
+
+          transition
+
+          focus:border-[#D8C7CD]
+          focus:bg-surface
+        "
+            >
+              <option value="">All Materials</option>
+
+              <option value="18K Gold">18K Gold</option>
+
+              <option value="22K Gold">22K Gold</option>
+
+              <option value="Silver">Silver</option>
+
+              <option value="Diamond">Diamond</option>
+
+              <option value="Rose Gold">Rose Gold</option>
+
+              <option value="White Gold">White Gold</option>
+
+              <option value="Platinum">Platinum</option>
+
+              <option value="Gemstone">Gemstone</option>
+            </select>
+
+            {/* SORT */}
+
+            <select
+              value={sort}
+              onChange={(e) => {
+                setSort(e.target.value);
+              }}
+              className="
+          h-12
+
+          rounded-2xl
+
+          border
+          border-border
+
+          bg-surface-secondary
+
+          px-4
+
+          text-sm
+          font-medium
+
+          text-text-primary
+
+          outline-none
+
+          transition
+
+          focus:border-[#D8C7CD]
+          focus:bg-surface
+        "
+            >
+              <option value="-createdAt">Newest First</option>
+
+              <option value="price">Price Low to High</option>
+
+              <option value="-price">Price High to Low</option>
+            </select>
+          </div>
+        </div>
       </div>
-
-      {/* CATEGORY */}
-
-      <select
-
-        value={category}
-
-        onChange={(e) => {
-
-          setPage(1);
-
-          setCategory(
-            e.target.value
-          );
-
-        }}
-
-        className="
-          h-12
-
-          rounded-2xl
-
-          border
-          border-[#ECE7E9]
-
-          bg-[#FCFAFB]
-
-          px-4
-
-          text-sm
-          font-medium
-
-          text-[#111111]
-
-          outline-none
-
-          transition
-
-          focus:border-[#D8C7CD]
-          focus:bg-white
-        "
-      >
-
-        <option value="">
-          All Categories
-        </option>
-
-        <option value="rings">
-          Rings
-        </option>
-
-        <option value="bracelets">
-          Bracelets
-        </option>
-
-        <option value="earrings">
-          Earrings
-        </option>
-
-        <option value="necklaces">
-          Necklaces
-        </option>
-
-      </select>
-
-      {/* MATERIAL */}
-
-      <select
-
-        value={material}
-
-        onChange={(e) => {
-
-          setPage(1);
-
-          setMaterial(
-            e.target.value
-          );
-
-        }}
-
-        className="
-          h-12
-
-          rounded-2xl
-
-          border
-          border-[#ECE7E9]
-
-          bg-[#FCFAFB]
-
-          px-4
-
-          text-sm
-          font-medium
-
-          text-[#111111]
-
-          outline-none
-
-          transition
-
-          focus:border-[#D8C7CD]
-          focus:bg-white
-        "
-      >
-
-        <option value="">
-          All Materials
-        </option>
-
-        <option value="18K Gold">
-          18K Gold
-        </option>
-
-        <option value="22K Gold">
-          22K Gold
-        </option>
-
-        <option value="Silver">
-          Silver
-        </option>
-
-        <option value="Diamond">
-          Diamond
-        </option>
-
-        <option value="Rose Gold">
-          Rose Gold
-        </option>
-
-        <option value="White Gold">
-          White Gold
-        </option>
-
-        <option value="Platinum">
-          Platinum
-        </option>
-
-        <option value="Gemstone">
-          Gemstone
-        </option>
-
-      </select>
-
-      {/* SORT */}
-
-      <select
-
-        value={sort}
-
-        onChange={(e) => {
-
-          setSort(
-            e.target.value
-          );
-
-        }}
-
-        className="
-          h-12
-
-          rounded-2xl
-
-          border
-          border-[#ECE7E9]
-
-          bg-[#FCFAFB]
-
-          px-4
-
-          text-sm
-          font-medium
-
-          text-[#111111]
-
-          outline-none
-
-          transition
-
-          focus:border-[#D8C7CD]
-          focus:bg-white
-        "
-      >
-
-        <option value="-createdAt">
-          Newest First
-        </option>
-
-        <option value="price">
-          Price Low to High
-        </option>
-
-        <option value="-price">
-          Price High to Low
-        </option>
-
-      </select>
-
-    </div>
-
-  </div>
-
-</div>
 
       {/* TABLE */}
       <div
@@ -988,9 +908,9 @@ export default function Products() {
     rounded-[32px]
 
     border
-    border-[#ECE7E9]
+    border-border
 
-    bg-white
+    bg-surface
 
     shadow-[0_10px_40px_rgba(0,0,0,0.04)]
   "
@@ -1008,7 +928,7 @@ export default function Products() {
           text-sm
           font-medium
 
-          text-[#6D7175]
+          text-text-secondary
         "
             >
               Loading products...
@@ -1022,7 +942,7 @@ export default function Products() {
               border-b
               border-[#F1ECEE]
 
-              bg-[#FCFAFB]
+              bg-surface-secondary
 
               text-left
             "
@@ -1089,7 +1009,7 @@ export default function Products() {
   transition-all
   duration-200
 
-  hover:bg-[#FCFAFB]
+  hover:bg-surface-secondary
   hover:shadow-[inset_4px_0_0_#6B1A2A]
 
   active:scale-[0.998]
@@ -1106,9 +1026,7 @@ export default function Products() {
                         >
                           <img
                             src={
-                              product.images?.[1]
-                                ? `${import.meta.env.VITE_ASSET_URL}${product.images[1]}`
-                                : "/placeholder.webp"
+                              product.images?.[1]?.url || "/placeholder.webp"
                             }
                             alt={product.name}
                             className="
@@ -1130,7 +1048,7 @@ export default function Products() {
                           text-sm
                           font-semibold
 
-                          text-[#111111]
+                          text-text-primary
                         "
                             >
                               {product.name}
@@ -1189,7 +1107,7 @@ export default function Products() {
                     text-sm
                     font-semibold
 
-                    text-[#111111]
+                    text-text-primary
                   "
                       >
                         ₹{product.price.toLocaleString()}
@@ -1289,22 +1207,16 @@ export default function Products() {
                     "
                         >
                           {/* EDIT */}
-                         <button
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
 
-  onClick={(e) => {
-
-    e.stopPropagation();
-
-    navigate(
-      `/admin/products/${product._id}/edit`
-    );
-
-  }}
-
- className="
+                              navigate(`/admin/products/${product._id}/edit`);
+                            }}
+                            className="
     rounded-2xl
 
-    bg-[#6B1A2A]
+    bg-brand
 
     px-5
     py-3
@@ -1319,11 +1231,9 @@ cursor-pointer
     transition
     hover:opacity-90
   "
->
-  Edit
-</button>
-
-
+                          >
+                            Edit
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -1346,7 +1256,7 @@ cursor-pointer
       border-t
       border-[#F1ECEE]
 
-      bg-[#FCFAFB]
+      bg-surface-secondary
 
       px-6
       py-5
@@ -1363,12 +1273,15 @@ cursor-pointer
           text-sm
           font-medium
 
-          text-[#6D7175]
+          text-text-secondary
         "
             >
               Showing page{" "}
-              <span className="text-[#111111]">{pagination.currentPage}</span>{" "}
-              of <span className="text-[#111111]">{pagination.totalPages}</span>
+              <span className="text-text-primary">
+                {pagination.currentPage}
+              </span>{" "}
+              of{" "}
+              <span className="text-text-primary">{pagination.totalPages}</span>
             </p>
           </div>
 
@@ -1388,9 +1301,9 @@ cursor-pointer
           rounded-2xl
 
           border
-          border-[#ECE7E9]
+          border-border
 
-          bg-white
+          bg-surface
 
           px-4
           py-2.5
@@ -1398,7 +1311,7 @@ cursor-pointer
           text-sm
           font-semibold
 
-          text-[#111111]
+          text-text-primary
 
           shadow-sm
 
@@ -1424,7 +1337,7 @@ cursor-pointer
 
           rounded-2xl
 
-          bg-[#6B1A2A]
+          bg-brand
 
           px-4
 
@@ -1447,9 +1360,9 @@ cursor-pointer
           rounded-2xl
 
           border
-          border-[#ECE7E9]
+          border-border
 
-          bg-white
+          bg-surface
 
           px-4
           py-2.5
@@ -1457,7 +1370,7 @@ cursor-pointer
           text-sm
           font-semibold
 
-          text-[#111111]
+          text-text-primary
 
           shadow-sm
 

@@ -1,15 +1,13 @@
 import { NavLink } from "react-router-dom";
 
-import logo from "../assets/icon/logo.png";
-
 import {
+  ChevronRight,
   LayoutDashboard,
+  LogOut,
   Package,
+  Settings,
   ShoppingCart,
   Users,
-  Settings,
-  LogOut,
-  ChevronRight,
   X,
 } from "lucide-react";
 
@@ -58,10 +56,7 @@ const navSections = [
   },
 ];
 
-export default function Sidebar({
-  sidebarOpen,
-  setSidebarOpen,
-}) {
+export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
   return (
     <>
       {/* overlay */}
@@ -78,50 +73,47 @@ export default function Sidebar({
           duration-300
           md:hidden
 
-          ${
-            sidebarOpen
-              ? "opacity-100 visible"
-              : "opacity-0 invisible"
-          }
+          ${sidebarOpen ? "opacity-100 visible" : "opacity-0 invisible"}
         `}
       />
 
       {/* sidebar */}
 
       <aside
-        className={`
-          fixed
-          top-0
-          left-0
-          z-50
+  className={`
+    fixed
+    top-0
+    left-0
+    z-50
 
-          h-screen
-          w-[280px]
+    h-screen
+    w-[280px]
 
-          bg-[#FCFCFD]
-          border-r
-          border-black/[0.06]
+    bg-surface
 
-          px-4
-          py-5
+    border-r
+    border-border
 
-          flex
-          flex-col
+    px-4
+    py-5
 
-          transition-transform
-          duration-300
+    flex
+    flex-col
 
-          shadow-[0_0_40px_rgba(0,0,0,0.03)]
+    transition-transform
+    duration-300
 
-          md:translate-x-0
+    shadow-[0_0_40px_rgba(0,0,0,0.08)]
 
-          ${
-            sidebarOpen
-              ? "translate-x-0"
-              : "-translate-x-full"
-          }
-        `}
-      >
+    md:translate-x-0
+
+    ${
+      sidebarOpen
+        ? "translate-x-0"
+        : "-translate-x-full"
+    }
+  `}
+>
         {/* top */}
 
         <div
@@ -142,8 +134,6 @@ export default function Sidebar({
               px-1
             "
           >
-
-
             {/* text */}
 
             <div
@@ -211,10 +201,7 @@ export default function Sidebar({
           "
         >
           {navSections.map((section) => (
-            <div
-              key={section.title}
-              className="mb-7"
-            >
+            <div key={section.title} className="mb-7">
               {/* section title */}
 
               <p
@@ -250,9 +237,7 @@ export default function Sidebar({
                       key={link.path}
                       to={link.path}
                       end={link.path === "/admin"}
-                      onClick={() =>
-                        setSidebarOpen(false)
-                      }
+                      onClick={() => setSidebarOpen(false)}
                       className={({ isActive }) => `
                         relative
                         overflow-hidden
@@ -275,7 +260,7 @@ export default function Sidebar({
                         ${
                           isActive
                             ? `
-                              bg-[#6B1A2A]/10
+                              bg-brand/10
                               text-[#6B1A2A]
 
                               border
@@ -308,23 +293,18 @@ export default function Sidebar({
 
                                 rounded-r-full
 
-                                bg-[#6B1A2A]
+                                bg-brand
                               "
                             />
                           )}
 
                           {/* icon */}
 
-                          <Icon
-                            size={18}
-                            className="shrink-0"
-                          />
+                          <Icon size={18} className="shrink-0" />
 
                           {/* label */}
 
-                          <span className="flex-1">
-                            {link.label}
-                          </span>
+                          <span className="flex-1">{link.label}</span>
 
                           {/* badge */}
 
@@ -334,7 +314,7 @@ export default function Sidebar({
                                 text-[11px]
                                 font-semibold
 
-                                bg-[#6B1A2A]
+                                bg-brand
                                 text-white
 
                                 px-2
@@ -403,7 +383,6 @@ export default function Sidebar({
             "
           >
             <Settings size={18} />
-
             Settings
           </NavLink>
 
@@ -433,7 +412,6 @@ export default function Sidebar({
             "
           >
             <LogOut size={18} />
-
             Logout
           </button>
 
@@ -445,7 +423,7 @@ export default function Sidebar({
 
               rounded-2xl
 
-              bg-white
+              bg-surface
 
               border
               border-black/5
@@ -477,7 +455,7 @@ export default function Sidebar({
 
                     rounded-full
 
-                    bg-[#6B1A2A]
+                    bg-brand
 
                     flex
                     items-center

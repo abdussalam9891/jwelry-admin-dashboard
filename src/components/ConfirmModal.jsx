@@ -17,11 +17,9 @@ const ConfirmModal = ({
 
   loading = false,
 }) => {
-
   if (!open) return null;
 
   return (
-
     <div
       className="
         fixed
@@ -39,7 +37,6 @@ const ConfirmModal = ({
         backdrop-blur-sm
       "
     >
-
       <div
         className="
           relative
@@ -49,20 +46,17 @@ const ConfirmModal = ({
 
           rounded-[32px]
 
-          bg-white
+          bg-surface
 
           p-8
 
           shadow-2xl
         "
       >
-
         {/* CLOSE */}
 
         <button
-
           onClick={onClose}
-
           className="
             absolute
             right-5
@@ -72,7 +66,7 @@ const ConfirmModal = ({
 
             transition
 
-            hover:text-[#111111]
+            hover:text-text-primary
           "
         >
           <X size={20} />
@@ -85,7 +79,7 @@ const ConfirmModal = ({
             text-2xl
             font-bold
 
-            text-[#111111]
+            text-text-primary
           "
         >
           {title}
@@ -99,7 +93,7 @@ const ConfirmModal = ({
 
             leading-relaxed
 
-            text-[#6D7175]
+            text-text-secondary
           "
         >
           {description}
@@ -118,18 +112,15 @@ const ConfirmModal = ({
             gap-3
           "
         >
-
           <button
-
             onClick={onClose}
-
             className="
               rounded-2xl
 
               border
               border-black/10
 
-              bg-white
+              bg-surface
 
               px-5
               py-3
@@ -137,7 +128,7 @@ const ConfirmModal = ({
               text-sm
               font-semibold
 
-              text-[#111111]
+              text-text-primary
 
               transition
 
@@ -148,15 +139,12 @@ const ConfirmModal = ({
           </button>
 
           <button
-
             disabled={loading}
-
             onClick={onConfirm}
-
             className="
               rounded-2xl
 
-              bg-[#6B1A2A]
+              bg-brand
 
               px-5
               py-3
@@ -174,19 +162,12 @@ const ConfirmModal = ({
               disabled:opacity-50
             "
           >
-            {loading
-              ? "Processing..."
-              : confirmText}
+            {loading ? "Processing..." : confirmText}
           </button>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 };
 
 export default ConfirmModal;

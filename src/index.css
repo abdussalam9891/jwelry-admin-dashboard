@@ -1,1 +1,146 @@
- @import "tailwindcss";
+@import "tailwindcss";
+
+:root {
+
+  /* BACKGROUNDS */
+
+  --bg:
+    247 244 245;
+
+  --surface:
+    255 255 255;
+
+  --surface-secondary:
+    252 250 251;
+
+  /* TEXT */
+
+  --text-primary:
+    17 17 17;
+
+  --text-secondary:
+    109 113 117;
+
+  /* BORDERS */
+
+  --border:
+    236 231 233;
+
+  /* BRAND */
+
+  --brand:
+    107 26 42;
+
+  /* STATUS */
+
+  --success:
+    15 159 97;
+
+  --warning:
+    217 119 6;
+
+  --danger:
+    225 29 72;
+
+}
+
+.dark {
+
+  /* APP */
+
+  --bg:
+    22 18 21;
+
+  /* CARDS */
+
+  --surface:
+    33 27 31;
+
+  /* INPUTS */
+
+  --surface-secondary:
+    42 35 40;
+
+  /* BORDERS */
+
+  --border:
+    65 55 61;
+
+  /* TEXT */
+
+  --text-primary:
+    248 244 245;
+
+  --text-secondary:
+    188 174 180;
+
+  /* BRAND */
+
+  --brand:
+    145 45 65;
+
+  /* STATUS */
+
+  --success:
+    74 222 128;
+
+  --warning:
+    250 204 21;
+
+  --danger:
+    251 113 133;
+
+}
+
+/*
+==========================================
+GLOBAL
+==========================================
+*/
+
+body {
+
+  background:
+    rgb(var(--bg));
+
+  color:
+    rgb(var(--text-primary));
+
+}
+
+
+
+
+@theme {
+
+  --color-bg:
+    rgb(var(--bg));
+
+  --color-surface:
+    rgb(var(--surface));
+
+  --color-surface-secondary:
+    rgb(var(--surface-secondary));
+
+  --color-border:
+    rgb(var(--border));
+
+  --color-text-primary:
+    rgb(var(--text-primary));
+
+  --color-text-secondary:
+    rgb(var(--text-secondary));
+
+  --color-brand:
+    rgb(var(--brand));
+
+  --color-success:
+    rgb(var(--success));
+
+  --color-warning:
+    rgb(var(--warning));
+
+  --color-danger:
+    rgb(var(--danger));
+
+}
