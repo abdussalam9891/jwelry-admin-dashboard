@@ -3,7 +3,15 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import ConfirmModal from "../components/ConfirmModal";
-import { archiveProduct, getProductDetails } from "../services/productService";
+import { archiveProduct, getProductDetails,   deleteProduct,
+ } from "../services/productService";
+
+ import toast
+from "react-hot-toast";
+
+import {
+  useNavigate
+} from "react-router-dom";
 
 import {
   AlertTriangle,
@@ -11,7 +19,8 @@ import {
   ArrowLeft,
   Boxes,
   IndianRupee,
-  Pencil,
+   Pencil,
+  Trash2,
   ShoppingBag,
   TrendingUp,
 } from "lucide-react";
@@ -19,10 +28,21 @@ import {
 import { Link } from "react-router-dom";
 
 const ProductDetailsPage = () => {
+
+
+  const navigate =
+  useNavigate();
   const { id } = useParams();
 
   const [loading, setLoading] = useState(true);
   const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [showDeleteModal,
+setShowDeleteModal] =
+  useState(false);
+
+  const [deleteLoading,
+setDeleteLoading] =
+  useState(false);
 
   const [productData, setProductData] = useState(null);
 
@@ -127,10 +147,54 @@ const ProductDetailsPage = () => {
     }
   };
 
+  const handleDelete =
+  async () => {
+
+    try {
+
+      setDeleteLoading(true);
+
+
+
+    await deleteProduct(id);
+
+
+
+      toast.success(
+        "Product deleted successfully"
+      );
+
+
+
+      navigate(
+        "/admin/products"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      toast.error(
+
+        error.response?.data?.message ||
+
+        "Failed to delete product"
+      );
+
+    } finally {
+
+      setDeleteLoading(false);
+
+      setShowDeleteModal(false);
+
+    }
+
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF7F8] p-6">
-      {/* TOP BAR */}
 
+      {/* TOP BAR */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <Link
@@ -181,82 +245,146 @@ const ProductDetailsPage = () => {
               {product.status}
             </div>
 
-            <div className="text-sm text-text-secondary">
-              SKU: {product.sku}
-            </div>
+
           </div>
         </div>
 
         {/* ACTIONS */}
 
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={() => setShowArchiveModal(true)}
-            className="
-    flex
-    items-center
-    gap-2
+      {/* ACTIONS */}
 
-    rounded-2xl
+<div className="flex flex-wrap items-center gap-3">
 
-    border
-    border-black/10
+  {/* ARCHIVE */}
 
-    bg-surface
+  <button
+    onClick={() =>
+      setShowArchiveModal(true)
+    }
 
-    px-5
-    py-3
+    className="
+      flex
+      items-center
+      gap-2
 
-    text-sm
-    font-semibold
+      rounded-2xl
 
-    text-text-primary
+      border
+      border-black/10
 
-    shadow-sm
+      bg-surface
 
-    transition
+      px-5
+      py-3
 
-    hover:bg-[#FAFAFA]
-  "
-          >
-            <Archive size={18} />
+      text-sm
+      font-semibold
 
-            {product.status === "ARCHIVED"
-              ? "Restore Product"
-              : "Archive Product"}
-          </button>
+      text-text-primary
 
-          <Link
-            to={`/admin/products/${id}/edit`}
-            className="
-    flex
-    items-center
-    gap-2
+      shadow-sm
 
-    rounded-2xl
+      transition
 
-    bg-brand
+      hover:bg-[#FAFAFA]
+    "
+  >
 
-    px-5
-    py-3
+    <Archive size={18} />
 
-    text-sm
-    font-semibold
+    {product.status === "ARCHIVED"
 
-    text-white
+      ? "Restore Product"
 
-    shadow-lg
-    shadow-[#6B1A2A]/20
+      : "Archive Product"}
 
-    transition
+  </button>
 
-    hover:opacity-90
-  "
-          >
-            <Pencil size={18} />
-            Edit Product
-          </Link>
-        </div>
+
+
+  {/* EDIT */}
+
+  <Link
+    to={`/admin/products/${id}/edit`}
+
+    className="
+      flex
+      items-center
+      gap-2
+
+      rounded-2xl
+
+      bg-brand
+
+      px-5
+      py-3
+
+      text-sm
+      font-semibold
+
+      text-white
+
+      shadow-lg
+      shadow-[#6B1A2A]/20
+
+      transition
+
+      hover:opacity-90
+    "
+  >
+
+    <Pencil size={18} />
+
+    Edit Product
+
+  </Link>
+
+
+
+  {/* DELETE */}
+
+  <button
+    onClick={() =>
+  setShowDeleteModal(true)
+}
+
+    className="
+      flex
+      items-center
+      gap-2
+
+      rounded-2xl
+
+      border
+      border-red-100
+
+      bg-red-50
+
+      px-5
+      py-3
+
+      text-sm
+      font-semibold
+
+      text-red-600
+
+      shadow-sm
+
+      transition
+
+      hover:bg-red-100
+    "
+  >
+
+    <Trash2 size={18} />
+
+    Delete Product
+
+  </button>
+
+</div>
+
+
       </div>
 
       {/* GRID */}
@@ -963,6 +1091,8 @@ const ProductDetailsPage = () => {
 
           {/* PRODUCT INFO */}
 
+
+
           <div
             className="
     rounded-[28px]
@@ -1099,7 +1229,11 @@ const ProductDetailsPage = () => {
               </div>
             </div>
           </div>
+
+
+
         </div>
+
       </div>
 
       <ConfirmModal
@@ -1124,6 +1258,33 @@ const ProductDetailsPage = () => {
         }
         confirmText={product.status === "ARCHIVED" ? "Restore" : "Archive"}
       />
+
+
+      <ConfirmModal
+
+  open={showDeleteModal}
+
+  onClose={() =>
+    setShowDeleteModal(false)
+  }
+
+  onConfirm={handleDelete}
+
+  loading={deleteLoading}
+
+  title="Delete Product"
+
+  description={`
+    This action cannot be undone.
+
+    The product, variants,
+    inventory data and analytics
+    associations will be permanently deleted.
+  `}
+
+  confirmText="Delete Product"
+
+/>
     </div>
   );
 };

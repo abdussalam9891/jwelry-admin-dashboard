@@ -84,3 +84,18 @@ export const updateProduct =
     return res.data;
 
   };
+
+
+
+  export const deleteProduct =
+  async (id) => {
+
+    const { data } =
+      await api.delete(
+        `/admin/products/${id}`
+      );
+
+
+
+    return data;
+};
