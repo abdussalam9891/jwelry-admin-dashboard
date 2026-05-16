@@ -1,6 +1,28 @@
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { format } from "date-fns";
+
+import { CalendarIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+
+import { Calendar } from "@/components/ui/calendar";
+
+import MetricCard from "@/components/dashboard/MetricCard";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import { AlertTriangle, IndianRupee, ShoppingCart, Users } from "lucide-react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+
 import { Link } from "react-router-dom";
 
 import { useEffect, useState } from "react";
@@ -84,14 +106,6 @@ export default function Dashboard() {
     fetchDashboard();
   }, [range, customMode, fromDate, toDate]);
 
-  const handleCustomRange = (from, to) => {
-    setCustomMode(true);
-
-    setFromDate(from);
-
-    setToDate(to);
-  };
-
   const handlePresetChange = (value) => {
     setCustomMode(false);
 
@@ -128,12 +142,14 @@ export default function Dashboard() {
     relative
     overflow-hidden
 
+    border
+    border-border
+
     rounded-[32px]
 
-    border
-    border-[#E9E3E5]
+   dark:border-white/[0.1]
 
-     
+
 
     p-8
 
@@ -193,7 +209,7 @@ export default function Dashboard() {
           text-xs
           font-medium
 
-          text-[#6B1A2A]
+          text-brand
 
           backdrop-blur-xl
         "
@@ -283,7 +299,7 @@ export default function Dashboard() {
           text-sm
           font-semibold
 
-          text-[#111]
+          text-text-primary
 
           backdrop-blur-xl
 
@@ -308,551 +324,54 @@ export default function Dashboard() {
     xl:grid-cols-4
   "
       >
-        {/* REVENUE */}
-
-        <Link
+        <MetricCard
           to="/admin/analytics"
-          className="
-    relative
-    overflow-hidden
+          title="Total Revenue"
+          value={metrics.totalRevenue}
+          icon={IndianRupee}
+          description="Explore revenue analytics"
+          actionText="View analytics"
+          iconBg="#F8EEF1"
+          iconColor="#6B1A2A"
+          loading={loading}
+          prefix="₹"
+        />
 
-    rounded-[28px]
-
-    border
-    border-border
-
-    bg-surface
-
-    p-6
-
-    shadow-sm
-    transition
-
-    hover:-translate-y-1
-    hover:shadow-xl
-    hover:shadow-black/[0.03]
-
-    cursor-pointer
-    block
-  "
-        >
-          <div
-            className="
-      absolute
-      right-0
-      top-0
-
-      h-28
-      w-28
-
-      rounded-full
-
-      bg-[#F8EEF1]
-
-      blur-2xl
-    "
-          />
-
-          <div className="relative z-10">
-            <div
-              className="
-        flex
-        items-start
-        justify-between
-      "
-            >
-              <div>
-                <p
-                  className="
-            text-xs
-            font-medium
-            uppercase
-            tracking-wide
-
-            text-[#9CA3AF]
-          "
-                >
-                  Total Revenue
-                </p>
-
-                <h2
-                  className="
-            mt-4
-
-            text-4xl
-            font-bold
-            tracking-tight
-
-            text-text-primary
-          "
-                >
-                  {loading
-                    ? "..."
-                    : `₹${metrics.totalRevenue?.toLocaleString()}`}
-                </h2>
-              </div>
-
-              <div
-                className="
-          flex
-          h-12
-          w-12
-
-          items-center
-          justify-center
-
-          rounded-2xl
-
-          bg-[#F8EEF1]
-
-          text-[#6B1A2A]
-        "
-              >
-                <IndianRupee size={22} />
-              </div>
-            </div>
-
-            {/* FOOTER */}
-
-            <div
-              className="
-        mt-8
-
-        flex
-        items-center
-        justify-between
-      "
-            >
-              <p
-                className="
-          text-sm
-          text-text-secondary
-        "
-              >
-                Explore revenue analytics
-              </p>
-
-              <span
-                className="
-          text-sm
-          font-semibold
-
-          text-[#6B1A2A]
-        "
-              >
-                View analytics →
-              </span>
-            </div>
-          </div>
-        </Link>
-
-        {/* ORDERS */}
-
-        <Link
+        <MetricCard
           to="/admin/orders"
-          className="
-    relative
-    overflow-hidden
+          title="Orders"
+          value={metrics.totalOrders}
+          icon={ShoppingCart}
+          description="Track and manage orders"
+          actionText="View orders"
+          iconBg="#EEF6FF"
+          iconColor="#2563EB"
+          loading={loading}
+        />
 
-    rounded-[28px]
-
-    border
-    border-border
-
-    bg-surface
-
-    p-6
-
-    shadow-sm
-    transition
-
-    hover:-translate-y-1
-    hover:shadow-xl
-    hover:shadow-black/[0.03]
-
-    cursor-pointer
-    block
-  "
-        >
-          <div
-            className="
-      absolute
-      right-0
-      top-0
-
-      h-28
-      w-28
-
-      rounded-full
-
-      bg-[#F8EEF1]
-
-      blur-2xl
-    "
-          />
-
-          <div className="relative z-10">
-            <div
-              className="
-        flex
-        items-start
-        justify-between
-      "
-            >
-              <div>
-                <p
-                  className="
-            text-xs
-            font-medium
-            uppercase
-            tracking-wide
-
-            text-[#9CA3AF]
-          "
-                >
-                  Orders
-                </p>
-
-                <h2
-                  className="
-            mt-4
-
-            text-4xl
-            font-bold
-            tracking-tight
-
-            text-text-primary
-          "
-                >
-                  {loading ? "..." : metrics.totalOrders}
-                </h2>
-              </div>
-
-              <div
-                className="
-          flex
-          h-12
-          w-12
-
-          items-center
-          justify-center
-
-          rounded-2xl
-
-          bg-[#F8EEF1]
-
-          text-[#6B1A2A]
-        "
-              >
-                <ShoppingCart size={20} />
-              </div>
-            </div>
-
-            {/* FOOTER */}
-
-            <div
-              className="
-        mt-8
-
-        flex
-        items-center
-        justify-between
-      "
-            >
-              <p
-                className="
-          text-sm
-          text-text-secondary
-        "
-              >
-                Track and manage orders
-              </p>
-
-              <span
-                className="
-          text-sm
-          font-semibold
-
-          text-[#6B1A2A]
-        "
-              >
-                View orders →
-              </span>
-            </div>
-          </div>
-        </Link>
-
-        {/* CUSTOMERS */}
-
-        <Link
+        <MetricCard
           to="/admin/customers"
-          className="
-    relative
-    overflow-hidden
+          title="Customers"
+          value={metrics.totalCustomers}
+          icon={Users}
+          description="Manage customer accounts"
+          actionText="View customers"
+          iconBg="#EEF8F1"
+          iconColor="#0F9F61"
+          loading={loading}
+        />
 
-    rounded-[28px]
-
-    border
-    border-border
-
-    bg-surface
-
-    p-6
-
-    shadow-sm
-    transition
-
-    hover:-translate-y-1
-    hover:shadow-xl
-    hover:shadow-black/[0.03]
-
-    cursor-pointer
-    block
-  "
-        >
-          <div
-            className="
-      absolute
-      right-0
-      top-0
-
-      h-28
-      w-28
-
-      rounded-full
-
-      bg-[#F8EEF1]
-
-      blur-2xl
-    "
-          />
-
-          <div className="relative z-10">
-            <div
-              className="
-        flex
-        items-start
-        justify-between
-      "
-            >
-              <div>
-                <p
-                  className="
-            text-xs
-            font-medium
-            uppercase
-            tracking-wide
-
-            text-[#9CA3AF]
-          "
-                >
-                  Customers
-                </p>
-
-                <h2
-                  className="
-            mt-4
-
-            text-4xl
-            font-bold
-            tracking-tight
-
-            text-text-primary
-          "
-                >
-                  {loading ? "..." : metrics.totalCustomers}
-                </h2>
-              </div>
-
-              <div
-                className="
-          flex
-          h-12
-          w-12
-
-          items-center
-          justify-center
-
-          rounded-2xl
-
-          bg-[#F8EEF1]
-
-          text-[#6B1A2A]
-        "
-              >
-                <Users size={20} />
-              </div>
-            </div>
-
-            {/* FOOTER */}
-
-            <div
-              className="
-        mt-8
-
-        flex
-        items-center
-        justify-between
-      "
-            >
-              <p
-                className="
-          text-sm
-          text-text-secondary
-        "
-              >
-                Manage customer accounts
-              </p>
-
-              <span
-                className="
-          text-sm
-          font-semibold
-
-          text-[#6B1A2A]
-        "
-              >
-                View customers →
-              </span>
-            </div>
-          </div>
-        </Link>
-
-        {/* LOW STOCK */}
-
-        <Link
+        <MetricCard
           to="/admin/products?stock=low"
-          className="
-    relative
-    overflow-hidden
-
-    rounded-[28px]
-
-    border
-    border-border
-
-    bg-surface
-
-    p-6
-
-    shadow-sm
-    transition
-
-    hover:-translate-y-1
-    hover:shadow-xl
-    hover:shadow-black/[0.03]
-
-    cursor-pointer
-    block
-  "
-        >
-          <div
-            className="
-      absolute
-      right-0
-      top-0
-
-      h-28
-      w-28
-
-      rounded-full
-
-      bg-[#F8EEF1]
-
-      blur-2xl
-    "
-          />
-
-          <div className="relative z-10">
-            <div
-              className="
-        flex
-        items-start
-        justify-between
-      "
-            >
-              <div>
-                <p
-                  className="
-            text-xs
-            font-medium
-            uppercase
-            tracking-wide
-
-            text-[#9CA3AF]
-          "
-                >
-                  Low Stock
-                </p>
-
-                <h2
-                  className="
-            mt-4
-
-            text-4xl
-            font-bold
-            tracking-tight
-
-            text-text-primary
-          "
-                >
-                  {loading ? "..." : metrics.lowStockProducts}
-                </h2>
-              </div>
-
-              <div
-                className="
-          flex
-          h-12
-          w-12
-
-          items-center
-          justify-center
-
-          rounded-2xl
-
-          bg-[#F8EEF1]
-
-          text-[#6B1A2A]
-        "
-              >
-                <AlertTriangle size={20} />
-              </div>
-            </div>
-
-            {/* FOOTER */}
-
-            <div
-              className="
-        mt-8
-
-        flex
-        items-center
-        justify-between
-      "
-            >
-              <p
-                className="
-          text-sm
-          text-text-secondary
-        "
-              >
-                Products running low
-              </p>
-
-              <span
-                className="
-          text-sm
-          font-semibold
-
-          text-[#6B1A2A]
-        "
-              >
-                View inventory →
-              </span>
-            </div>
-          </div>
-        </Link>
+          title="Low Stock"
+          value={metrics.lowStockProducts}
+          icon={AlertTriangle}
+          description="Products running low"
+          actionText="View inventory"
+          iconBg="#FFF5E8"
+          iconColor="#D97706"
+          loading={loading}
+        />
       </div>
 
       {/* GRID */}
@@ -873,7 +392,7 @@ export default function Dashboard() {
 
     rounded-[2rem]
     border
-    border-black/5
+    border-border
 
     bg-surface
 
@@ -914,7 +433,7 @@ export default function Dashboard() {
           text-xs
           font-semibold
 
-          text-[#6B1A2A]
+          text-brand
 
           mb-4
         "
@@ -927,7 +446,7 @@ export default function Dashboard() {
           text-[1.8rem]
           font-bold
           tracking-tight
-          text-[#1A1A1A]
+          text-text-primary
         "
               >
                 Revenue Overview
@@ -960,137 +479,149 @@ export default function Dashboard() {
             >
               {/* RANGE */}
 
-              <select
+              <Select
                 value={range}
-                onChange={(e) => handlePresetChange(e.target.value)}
-                className="
-          h-11
-
-          rounded-xl
-          border
-          border-black/10
-
-          bg-[#F6F6F7]
-
-          px-4
-
-          text-sm
-          font-medium
-
-          outline-none
-
-          transition
-
-          focus:border-[#6B1A2A]/30
-          focus:ring-4
-          focus:ring-[#6B1A2A]/10
-        "
+                onValueChange={(value) => handlePresetChange(value)}
               >
-                <option value="7d">Last 7 Days</option>
+                <SelectTrigger
+                  className="
+      h-11
+      w-[180px]
 
-                <option value="15d">Last 15 Days</option>
+      rounded-xl
 
-                <option value="1m">Last 1 Month</option>
+      border-black/10
 
-                <option value="3m">Last 3 Months</option>
+      bg-surface-secondary
 
-                <option value="6m">Last 6 Months</option>
+      text-sm
+      font-medium
 
-                <option value="12m">Last 12 Months</option>
-              </select>
+      shadow-none
+
+      focus:ring-4
+      focus:ring-[#6B1A2A]/10
+      focus:border-border-[#6B1A2A]/30
+    "
+                >
+                  <SelectValue placeholder="Select Range" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="7d">Last 7 Days</SelectItem>
+
+                  <SelectItem value="15d">Last 15 Days</SelectItem>
+
+                  <SelectItem value="1m">Last 1 Month</SelectItem>
+
+                  <SelectItem value="3m">Last 3 Months</SelectItem>
+
+                  <SelectItem value="6m">Last 6 Months</SelectItem>
+
+                  <SelectItem value="12m">Last 12 Months</SelectItem>
+                </SelectContent>
+              </Select>
 
               {/* FROM */}
 
-              <DatePicker
-                selected={fromDate}
-                onChange={(date) => {
-                  setCustomMode(true);
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="
+        h-11
+        w-[160px]
 
-                  setFromDate(date);
-                }}
-                maxDate={new Date()}
-                selectsStart
-                startDate={fromDate}
-                endDate={toDate}
-                dateFormat="dd MMM yyyy"
-                placeholderText="From Date"
-                className="
-          h-11
-          w-[160px]
+        justify-start
+        rounded-xl
 
-          rounded-xl
-          border
-          border-black/10
+        border-black/10
 
-          bg-surface
+        bg-surface
 
-          px-4
+        px-4
 
-          text-sm
-          font-medium
+        text-left
+        text-sm
+        font-medium
 
-          outline-none
+        shadow-sm
+      "
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
 
-          shadow-sm
+                    {fromDate ? format(fromDate, "dd MMM yyyy") : "From Date"}
+                  </Button>
+                </PopoverTrigger>
 
-          transition
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={fromDate}
+                    onSelect={(date) => {
+                      setCustomMode(true);
 
-          focus:border-[#6B1A2A]/30
-          focus:ring-4
-          focus:ring-[#6B1A2A]/10
-        "
-              />
+                      setFromDate(date);
+                    }}
+                    disabled={(date) => date > new Date()}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
 
               {/* TO */}
 
-              <DatePicker
-                selected={toDate}
-                onChange={(date) => {
-                  if (fromDate && date < fromDate) {
-                    return;
-                  }
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    disabled={!fromDate}
+                    className="
+        h-11
+        w-[160px]
 
-                  setCustomMode(true);
+        justify-start
+        rounded-xl
 
-                  setToDate(date);
-                }}
-                minDate={fromDate}
-                maxDate={new Date()}
-                selectsEnd
-                startDate={fromDate}
-                endDate={toDate}
-                dateFormat="dd MMM yyyy"
-                placeholderText="To Date"
-                disabled={!fromDate}
-                className="
-          h-11
-          w-[160px]
+        border-black/10
 
-          rounded-xl
-          border
-          border-black/10
+        bg-surface
 
-          bg-surface
+        px-4
 
-          px-4
+        text-left
+        text-sm
+        font-medium
 
-          text-sm
-          font-medium
+        shadow-sm
+      "
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
 
-          outline-none
+                    {toDate ? format(toDate, "dd MMM yyyy") : "To Date"}
+                  </Button>
+                </PopoverTrigger>
 
-          shadow-sm
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={toDate}
+                    onSelect={(date) => {
+                      if (fromDate && date < fromDate) {
+                        return;
+                      }
 
-          transition
+                      setCustomMode(true);
 
-          focus:border-[#6B1A2A]/30
-          focus:ring-4
-          focus:ring-[#6B1A2A]/10
-
-          disabled:opacity-50
-          disabled:cursor-not-allowed
-        "
-              />
+                      setToDate(date);
+                    }}
+                    disabled={(date) =>
+                      date > new Date() || (fromDate && date < fromDate)
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
@@ -1179,7 +710,7 @@ export default function Dashboard() {
           className="
       rounded-3xl
       border
-      border-black/5
+      border-border
 
       bg-surface
       p-6
@@ -1191,7 +722,7 @@ export default function Dashboard() {
             className="
         text-lg
         font-semibold
-        text-[#1A1A1A]
+        text-text-primary
       "
           >
             Quick Insights
@@ -1202,7 +733,7 @@ export default function Dashboard() {
             <div
               className="
           rounded-2xl
-          bg-[#F6F6F7]
+          bg-surface-secondary
           p-4
         "
             >
@@ -1230,7 +761,7 @@ export default function Dashboard() {
             <div
               className="
           rounded-2xl
-          bg-[#F6F6F7]
+          bg-surface-secondary
           p-4
         "
             >
@@ -1258,7 +789,7 @@ export default function Dashboard() {
             <div
               className="
           rounded-2xl
-          bg-[#F6F6F7]
+          bg-surface-secondary
           p-4
         "
             >
@@ -1300,7 +831,7 @@ export default function Dashboard() {
           className="
             rounded-3xl
             border
-            border-black/5
+           border-border
 
             bg-surface
             p-6
@@ -1319,7 +850,7 @@ export default function Dashboard() {
               className="
                 text-lg
                 font-semibold
-                text-[#1A1A1A]
+                text-text-primary
               "
             >
               Recent Orders
@@ -1331,10 +862,10 @@ export default function Dashboard() {
     text-sm
     font-medium
 
-    text-black/60
+
 
     transition
-    hover:text-[#6B1A2A]
+    hover:text-brand
   "
             >
               View All
@@ -1357,7 +888,7 @@ export default function Dashboard() {
 
             rounded-2xl
             border
-            border-black/5
+            border-border
 
             p-4
           "
@@ -1410,7 +941,7 @@ export default function Dashboard() {
           className="
             rounded-3xl
             border
-            border-black/5
+           border-border
 
             bg-surface
             p-6
@@ -1429,7 +960,7 @@ export default function Dashboard() {
               className="
                 text-lg
                 font-semibold
-                text-[#1A1A1A]
+                text-text-primary
               "
             >
               Inventory Alerts
@@ -1441,10 +972,10 @@ export default function Dashboard() {
     text-sm
     font-medium
 
-    text-black/60
+
 
     transition
-    hover:text-[#6B1A2A]
+    hover:text-brand
   "
             >
               Manage
@@ -1479,7 +1010,7 @@ export default function Dashboard() {
 
               rounded-2xl
               border
-              border-black/5
+             border-border
 
               p-4
             "
@@ -1492,10 +1023,7 @@ export default function Dashboard() {
               "
                     >
                       <img
-                       src={
-  product.images?.[1]?.url ||
-  "/placeholder.webp"
-}
+                        src={product.images?.[1]?.url || "/placeholder.webp"}
                         alt={product.name}
                         className="
     h-14
@@ -1504,7 +1032,7 @@ export default function Dashboard() {
     rounded-2xl
 
     border
-    border-[#F1ECEE]
+   border-border
 
     object-cover
   "

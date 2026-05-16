@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-
-
 const materialOptions = [
   "18K Gold",
   "22K Gold",
@@ -13,180 +11,88 @@ const materialOptions = [
   "Gemstone",
 ];
 
+const sizeOptions = ["6", "7", "8"];
 
+export default function ProductVariants({ formData, setFormData }) {
+  const [selectedMaterials, setSelectedMaterials] = useState([]);
 
-const sizeOptions = [
-  "6",
-  "7",
-  "8",
-];
+  const [selectedSizes, setSelectedSizes] = useState([]);
 
-
-
-export default function ProductVariants({
-  formData,
-  setFormData,
-}) {
-
-  const [selectedMaterials, setSelectedMaterials] =
-    useState([]);
-
-  const [selectedSizes, setSelectedSizes] =
-    useState([]);
-
-
-
-
-  const toggleSelection = (
-    value,
-    selected,
-    setter
-  ) => {
-
+  const toggleSelection = (value, selected, setter) => {
     if (selected.includes(value)) {
-
-      setter(
-        selected.filter(
-          (item) => item !== value
-        )
-      );
-
+      setter(selected.filter((item) => item !== value));
     } else {
-
-      setter([
-        ...selected,
-        value,
-      ]);
-
+      setter([...selected, value]);
     }
-
   };
 
-
-
-
   const generateVariants = () => {
-
     const generatedVariants = [];
 
+    selectedMaterials.forEach((material) => {
+      // PRODUCTS WITHOUT SIZE
 
+      if (!["rings", "bracelets"].includes(formData.category)) {
+        const sku = `${formData.category}-${material}`
 
-    selectedMaterials.forEach(
-      (material) => {
+          .toUpperCase()
 
-        // PRODUCTS WITHOUT SIZE
+          .replace(/\s+/g, "-");
 
-        if (
-          !["rings", "bracelets"].includes(
-            formData.category
-          )
-        ) {
+        generatedVariants.push({
+          material,
 
-          const sku =
+          size: "",
 
-            `${formData.category}-${material}`
+          sku,
 
-              .toUpperCase()
+          price: "",
 
-              .replace(/\s+/g, "-");
+          stock: "",
+        });
 
-
-
-          generatedVariants.push({
-
-            material,
-
-            size: "",
-
-            sku,
-
-            price: "",
-
-            stock: "",
-          });
-
-          return;
-        }
-
-
-
-        // PRODUCTS WITH SIZE
-
-        selectedSizes.forEach(
-          (size) => {
-
-            const sku =
-
-              `${formData.category}-${material}-${size}`
-
-                .toUpperCase()
-
-                .replace(/\s+/g, "-");
-
-
-
-            generatedVariants.push({
-
-              material,
-
-              size,
-
-              sku,
-
-              price: "",
-
-              stock: "",
-            });
-
-          }
-        );
-
+        return;
       }
-    );
 
+      // PRODUCTS WITH SIZE
 
+      selectedSizes.forEach((size) => {
+        const sku = `${formData.category}-${material}-${size}`
+
+          .toUpperCase()
+
+          .replace(/\s+/g, "-");
+
+        generatedVariants.push({
+          material,
+
+          size,
+
+          sku,
+
+          price: "",
+
+          stock: "",
+        });
+      });
+    });
 
     // REMOVE DUPLICATES
 
-    const existingSkus =
-      formData.variants.map(
-        (variant) => variant.sku
-      );
+    const existingSkus = formData.variants.map((variant) => variant.sku);
 
-
-
-    const uniqueGeneratedVariants =
-
-      generatedVariants.filter(
-        (variant) =>
-
-          !existingSkus.includes(
-            variant.sku
-          )
-      );
-
-
+    const uniqueGeneratedVariants = generatedVariants.filter(
+      (variant) => !existingSkus.includes(variant.sku),
+    );
 
     setFormData((prev) => ({
-
       ...prev,
 
-      variants: [
-
-        ...prev.variants,
-
-        ...uniqueGeneratedVariants,
-      ],
-
+      variants: [...prev.variants, ...uniqueGeneratedVariants],
     }));
-
   };
 
-
-
-
   return (
-
     <div
       className="
         rounded-[32px]
@@ -201,7 +107,6 @@ export default function ProductVariants({
         shadow-sm
       "
     >
-
       {/* HEADER */}
 
       <div
@@ -215,9 +120,7 @@ export default function ProductVariants({
           md:justify-between
         "
       >
-
         <div>
-
           <div
             className="
               inline-flex
@@ -225,7 +128,7 @@ export default function ProductVariants({
 
               rounded-full
 
-              bg-[#F8EEF1]
+
 
               px-3
               py-1
@@ -233,13 +136,11 @@ export default function ProductVariants({
               text-xs
               font-semibold
 
-              text-[#6B1A2A]
+              text-brand
             "
           >
             Variant Management
           </div>
-
-
 
           <h2
             className="
@@ -255,8 +156,6 @@ export default function ProductVariants({
             Product Variants
           </h2>
 
-
-
           <p
             className="
               mt-2
@@ -269,15 +168,11 @@ export default function ProductVariants({
               text-text-secondary
             "
           >
-            Configure purchasable combinations
-            like material, pricing and inventory.
+            Configure purchasable combinations like material, pricing and
+            inventory.
           </p>
-
         </div>
-
       </div>
-
-
 
       {/* VARIANT GENERATOR */}
 
@@ -295,7 +190,6 @@ export default function ProductVariants({
           p-6
         "
       >
-
         <h3
           className="
             text-lg
@@ -306,12 +200,9 @@ export default function ProductVariants({
           Variant Generator
         </h3>
 
-
-
         {/* MATERIALS */}
 
         <div className="mt-6">
-
           <p
             className="
               mb-3
@@ -325,25 +216,18 @@ export default function ProductVariants({
             Select Materials
           </p>
 
-
-
           <div className="flex flex-wrap gap-3">
-
             {materialOptions.map((material) => (
-
               <button
                 key={material}
-
                 type="button"
-
                 onClick={() =>
                   toggleSelection(
                     material,
                     selectedMaterials,
-                    setSelectedMaterials
+                    setSelectedMaterials,
                   )
                 }
-
                 className={`
                   rounded-2xl
 
@@ -359,32 +243,21 @@ export default function ProductVariants({
 
                   ${
                     selectedMaterials.includes(material)
-
-                      ? "border-[#6B1A2A] bg-[#6B1A2A] text-white"
-
-                      : "border-border bg-white text-text-primary"
+                      ? "border-brand bg-brand text-white"
+                      : "border-border bg-surface text-text-primary"
                   }
                 `}
               >
                 {material}
               </button>
-
             ))}
-
           </div>
-
         </div>
-
-
 
         {/* SIZES */}
 
-        {["rings", "bracelets"].includes(
-          formData.category
-        ) && (
-
+        {["rings", "bracelets"].includes(formData.category) && (
           <div className="mt-6">
-
             <p
               className="
                 mb-3
@@ -398,25 +271,14 @@ export default function ProductVariants({
               Select Sizes
             </p>
 
-
-
             <div className="flex flex-wrap gap-3">
-
               {sizeOptions.map((size) => (
-
                 <button
                   key={size}
-
                   type="button"
-
                   onClick={() =>
-                    toggleSelection(
-                      size,
-                      selectedSizes,
-                      setSelectedSizes
-                    )
+                    toggleSelection(size, selectedSizes, setSelectedSizes)
                   }
-
                   className={`
                     rounded-2xl
 
@@ -432,33 +294,23 @@ export default function ProductVariants({
 
                     ${
                       selectedSizes.includes(size)
-
-                        ? "border-[#6B1A2A] bg-[#6B1A2A] text-white"
-
-                        : "border-border bg-white text-text-primary"
+                        ? "border-brand bg-brand text-white"
+                        : "border-border bg-surface text-text-primary"
                     }
                   `}
                 >
                   {size}
                 </button>
-
               ))}
-
             </div>
-
           </div>
-
         )}
-
-
 
         {/* GENERATE BUTTON */}
 
         <button
           type="button"
-
           onClick={generateVariants}
-
           className="
             mt-8
 
@@ -481,11 +333,7 @@ export default function ProductVariants({
         >
           Generate Variants
         </button>
-
       </div>
-
     </div>
-
   );
-
 }

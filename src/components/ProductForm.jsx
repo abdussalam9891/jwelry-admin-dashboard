@@ -18,20 +18,10 @@ import { Link } from "react-router-dom";
 
 import { ArrowLeft } from "lucide-react";
 
-
-
-export default function ProductForm({
-  initialData = null,
-  mode = "create",
-}) {
-
-  const isEditMode =
-    mode === "edit";
-
-
+export default function ProductForm({ initialData = null, mode = "create" }) {
+  const isEditMode = mode === "edit";
 
   const {
-
     formData,
 
     setFormData,
@@ -49,30 +39,22 @@ export default function ProductForm({
     removeImage,
 
     moveImage,
-
   } = useProductForm({
-
     initialData,
 
     mode,
-
   });
 
-
-
-
   return (
-
     <div
       className="
         min-h-screen
 
-        bg-[#FAF7F8]
+        bg-bg
 
         p-6
       "
     >
-
       {/* HEADER */}
 
       <div
@@ -88,15 +70,11 @@ export default function ProductForm({
           lg:justify-between
         "
       >
-
         <div>
-
-       <div className="mb-8">
-
-  <Link
-    to="/admin/products"
-
-    className="
+          <div className="mb-8">
+            <Link
+              to="/admin/products"
+              className="
       group
       inline-flex
       items-center
@@ -107,7 +85,7 @@ export default function ProductForm({
       border
       border-border
 
-      bg-white
+      bg-surface
 
       px-4
       py-2.5
@@ -122,15 +100,14 @@ export default function ProductForm({
       transition-all
       duration-200
 
-      hover:-translate-y-[1px]
+
       hover:border-[#6B1A2A]/20
-      hover:text-[#6B1A2A]
+      hover:text-brand
       hover:shadow-md
     "
-  >
-
-    <div
-      className="
+            >
+              <div
+                className="
         flex
         h-8
         w-8
@@ -142,24 +119,20 @@ export default function ProductForm({
 
         bg-[#F8EEF1]
 
-        text-[#6B1A2A]
+        text-brand
 
         transition-transform
         duration-200
 
         group-hover:-translate-x-0.5
       "
-    >
-      <ArrowLeft size={16} />
-    </div>
+              >
+                <ArrowLeft size={16} />
+              </div>
 
-    <span>
-      Back to Products
-    </span>
-
-  </Link>
-
-</div>
+              <span>Back to Products</span>
+            </Link>
+          </div>
 
           <div
             className="
@@ -169,7 +142,7 @@ export default function ProductForm({
               rounded-full
 
               border
-              border-[#E8DADF]
+              border-border
 
               bg-[#F8EEF1]
 
@@ -179,19 +152,11 @@ export default function ProductForm({
               text-xs
               font-medium
 
-              text-[#6B1A2A]
+              text-brand
             "
           >
-
-            {isEditMode
-
-              ? "Product Editing"
-
-              : "Product Creation"}
-
+            {isEditMode ? "Product Editing" : "Product Creation"}
           </div>
-
-
 
           <h1
             className="
@@ -204,16 +169,8 @@ export default function ProductForm({
               text-text-primary
             "
           >
-
-            {isEditMode
-
-              ? "Edit Product"
-
-              : "Add Product"}
-
+            {isEditMode ? "Edit Product" : "Add Product"}
           </h1>
-
-
 
           <p
             className="
@@ -227,34 +184,17 @@ export default function ProductForm({
               text-text-secondary
             "
           >
-
             {isEditMode
-
               ? "Update product details, inventory, pricing and visibility."
-
               : "Create a new product and manage inventory, pricing and visibility."}
-
           </p>
-
-
-
         </div>
-
       </div>
-
-
-
-
-
-
-
-
 
       {/* FORM */}
 
       <form
         onSubmit={handleSubmit}
-
         className="
           grid
           grid-cols-1
@@ -264,7 +204,6 @@ export default function ProductForm({
           xl:grid-cols-3
         "
       >
-
         {/* LEFT */}
 
         <div
@@ -274,21 +213,13 @@ export default function ProductForm({
             space-y-6
           "
         >
-
-          <ProductBasicInfo
-            formData={formData}
-            handleChange={handleChange}
-          />
-
-
+          <ProductBasicInfo formData={formData} handleChange={handleChange} />
 
           <ProductDescription
             formData={formData}
             handleChange={handleChange}
             setFormData={setFormData}
           />
-
-
 
           <ProductImages
             formData={formData}
@@ -297,31 +228,16 @@ export default function ProductForm({
             moveImage={moveImage}
           />
 
+          <ProductPricing formData={formData} handleChange={handleChange} />
 
-
-          <ProductPricing
-            formData={formData}
-            handleChange={handleChange}
-          />
-
-
-
-          <ProductVariants
-            formData={formData}
-            setFormData={setFormData}
-          />
-
-
+          <ProductVariants formData={formData} setFormData={setFormData} />
 
           <ProductVariantsList
             formData={formData}
             removeVariant={removeVariant}
             handleVariantChange={handleVariantChange}
           />
-
         </div>
-
-
 
         {/* RIGHT */}
 
@@ -335,19 +251,15 @@ export default function ProductForm({
             space-y-6
           "
         >
-
           <ProductOrganization
             formData={formData}
             handleChange={handleChange}
           />
 
-
-
           {/* SUBMIT */}
 
           <button
             type="submit"
-
             className="
               w-full
 
@@ -371,21 +283,10 @@ export default function ProductForm({
               hover:opacity-90
             "
           >
-
-            {mode === "edit"
-
-              ? "Save Changes"
-
-              : "Create Product"}
-
+            {mode === "edit" ? "Save Changes" : "Create Product"}
           </button>
-
         </div>
-
       </form>
-
     </div>
-
   );
-
 }

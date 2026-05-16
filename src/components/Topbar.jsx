@@ -1,18 +1,20 @@
-import { Bell, ChevronDown, Menu, Search } from "lucide-react";
+import { Bell, ChevronDown, Menu, Moon, Search, Sun } from "lucide-react";
+import { useState } from "react";
 
 export default function Topbar({ setSidebarOpen }) {
+  const [isDark, setIsDark] = useState(
+    document.documentElement.classList.contains("dark"),
+  );
   const toggleTheme = () => {
     const html = document.documentElement;
 
     html.classList.toggle("dark");
 
-    const isDark = html.classList.contains("dark");
+    const dark = html.classList.contains("dark");
 
-    localStorage.setItem(
-      "theme",
+    setIsDark(dark);
 
-      isDark ? "dark" : "light",
-    );
+    localStorage.setItem("theme", dark ? "dark" : "light");
   };
 
   return (
@@ -25,7 +27,7 @@ export default function Topbar({ setSidebarOpen }) {
         h-[68px]
 
         border-b
-        border-black/5
+        border-border
 
         bg-surface/80
         backdrop-blur-xl
@@ -45,7 +47,7 @@ export default function Topbar({ setSidebarOpen }) {
           onClick={() => setSidebarOpen(true)}
           className="
             md:hidden
-            text-black/70
+            text-text-secondary
           "
         >
           <Menu size={22} />
@@ -103,7 +105,7 @@ export default function Topbar({ setSidebarOpen }) {
               left-4
               top-1/2
               -translate-y-1/2
-              text-black/40
+             text-text-secondary
             "
           />
 
@@ -117,9 +119,10 @@ export default function Topbar({ setSidebarOpen }) {
               rounded-xl
 
               border
-              border-black/5
+             border-border
+             bg-surface-secondary
 
-              bg-[#F6F7F9]
+
 
               pl-11
               pr-4
@@ -128,7 +131,7 @@ export default function Topbar({ setSidebarOpen }) {
 
               outline-none
 
-              focus:border-black/15
+
               focus:bg-surface
 
               transition
@@ -165,12 +168,12 @@ export default function Topbar({ setSidebarOpen }) {
 
     text-text-primary
 
-    transition
+    transition-colors
 
     hover:bg-surface-secondary
   "
         >
-          🌙
+          {isDark ? <Sun size={18} /> : <Moon size={18} />}
         </button>
 
         {/* notification */}
@@ -184,7 +187,7 @@ export default function Topbar({ setSidebarOpen }) {
             rounded-xl
 
             border
-            border-black/5
+            border-border
 
             bg-surface
 
@@ -192,12 +195,12 @@ export default function Topbar({ setSidebarOpen }) {
             items-center
             justify-center
 
-            hover:bg-[#F8F8F8]
+            hover:bg-surface-secondary
 
             transition
           "
         >
-          <Bell size={18} className="text-[#444]" />
+          <Bell size={18} className="text-text-primary" />
 
           {/* notification dot */}
           <span
@@ -225,14 +228,14 @@ export default function Topbar({ setSidebarOpen }) {
             rounded-xl
 
             border
-            border-black/5
+            border-border
 
             bg-surface
 
             px-3
             py-2
 
-            hover:bg-[#F8F8F8]
+            hover:bg-surface-secondary
 
             transition
           "
@@ -262,7 +265,7 @@ export default function Topbar({ setSidebarOpen }) {
               className="
                 text-sm
                 font-medium
-                text-[#111]
+               text-text-primary
                 leading-none
               "
             >
@@ -285,7 +288,7 @@ export default function Topbar({ setSidebarOpen }) {
             className="
               hidden
               sm:block
-              text-black/40
+             text-text-secondary
             "
           />
         </button>

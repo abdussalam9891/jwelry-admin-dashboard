@@ -1,226 +1,106 @@
-import { getCustomers,  exportCustomersReport,  } from "../services/customerService";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-
+import {
+  exportCustomersReport,
+  getCustomers,
+} from "../services/customerService";
 
 export default function CustomersPage() {
+  const navigate = useNavigate();
 
+  const [search, setSearch] = useState("");
 
-const navigate = useNavigate();
+  const [tier, setTier] = useState("All");
 
+  const [sort, setSort] = useState("Newest");
 
-const [
-  search,
-  setSearch,
-] = useState("");
+  const [page, setPage] = useState(1);
 
+  const [pagination, setPagination] = useState(null);
 
+  const [customers, setCustomers] = useState([]);
 
-const [
-  tier,
-  setTier,
-] = useState("All");
+  const [loading, setLoading] = useState(true);
 
-
-
-const [
-  sort,
-  setSort,
-] = useState("Newest");
-
-
-
-const [
-  page,
-  setPage,
-] = useState(1);
-
-const [
-  pagination,
-  setPagination,
-] = useState(null);
-
-  const [
-  customers,
-  setCustomers,
-] = useState([]);
-
-const [
-  loading,
-  setLoading,
-] = useState(true);
-
-
-
-useEffect(() => {
-
-  const fetchCustomers =
-    async () => {
-
+  useEffect(() => {
+    const fetchCustomers = async () => {
       try {
-
         setLoading(true);
 
+        const data = await getCustomers({
+          search,
 
+          tier,
 
-        const data =
-          await getCustomers({
+          sort,
 
-            search,
+          page,
 
-            tier,
+          limit: 8,
+        });
 
-            sort,
+        setCustomers(data.customers);
 
-            page,
-
-            limit: 8,
-
-          });
-
-
-
-        setCustomers(
-          data.customers
-        );
-
-
-
-        setPagination(
-          data.pagination
-        );
-
+        setPagination(data.pagination);
       } catch (error) {
-
         console.error(error);
-
       } finally {
-
         setLoading(false);
-
       }
-
     };
 
+    fetchCustomers();
+  }, [search, tier, sort, page]);
 
+  const stats = [
+    {
+      title: "Total Customers",
 
-  fetchCustomers();
+      value: customers.length,
+    },
 
-}, [
-  search,
-  tier,
-  sort,
-  page,
-]);
+    {
+      title: "Platinum Tier",
 
+      value: customers.filter((c) => c.customerTier === "Platinum").length,
+    },
 
+    {
+      title: "Gold Tier",
 
+      value: customers.filter((c) => c.customerTier === "Gold").length,
+    },
 
-const stats = [
+    {
+      title: "Revenue Generated",
 
-  {
-    title:
-      "Total Customers",
-
-    value:
-      customers.length,
-  },
-
-  {
-    title:
-      "Platinum Tier",
-
-    value:
-      customers.filter(
-        (c) =>
-          c.customerTier ===
-          "Platinum"
-      ).length,
-  },
-
-  {
-    title:
-      "Gold Tier",
-
-    value:
-      customers.filter(
-        (c) =>
-          c.customerTier ===
-          "Gold"
-      ).length,
-  },
-
-  {
-    title:
-      "Revenue Generated",
-
-    value:
-      `₹${customers
-        .reduce(
-          (acc, customer) =>
-            acc +
-            customer.totalSpent,
-          0
-        )
+      value: `₹${customers
+        .reduce((acc, customer) => acc + customer.totalSpent, 0)
         .toLocaleString()}`,
-  },
+    },
+  ];
 
-];
-
-
-
-const handleExport =
-  async () => {
-
+  const handleExport = async () => {
     try {
+      const data = await exportCustomersReport();
 
-      const data =
-        await exportCustomersReport();
+      const url = window.URL.createObjectURL(new Blob([data]));
 
-
-
-      const url =
-        window.URL.createObjectURL(
-          new Blob([data])
-        );
-
-
-
-      const link =
-        document.createElement("a");
-
-
+      const link = document.createElement("a");
 
       link.href = url;
 
-      link.setAttribute(
-        "download",
-        "customers-report.xlsx"
-      );
+      link.setAttribute("download", "customers-report.xlsx");
 
-
-
-      document.body.appendChild(
-        link
-      );
-
-
+      document.body.appendChild(link);
 
       link.click();
 
-
-
       link.remove();
-
     } catch (error) {
-
       console.error(error);
-
     }
-
   };
-
 
   return (
     <div className="min-h-screen  p-4 md:p-8">
@@ -232,29 +112,27 @@ const handleExport =
               Customer Management
             </p>
 
-            <h1 className="text-4xl font-bold tracking-tight text-black">
+            <h1 className="text-4xl font-bold tracking-tight text-text-primary">
               Customers
             </h1>
 
-            <p className="text-black/55 mt-2 max-w-2xl leading-7">
+            <p className="text-text-secondary mt-2 max-w-2xl leading-7">
               Manage customer relationships, monitor purchasing activity,
               analyze retention trends and handle support operations.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-           <button
-
-  onClick={handleExport}
-
-  className="
+            <button
+              onClick={handleExport}
+              className="
     h-12
     px-6
 
     rounded-2xl
 
     border
-    border-black/10
+    border-border
 
     bg-surface
 
@@ -262,15 +140,11 @@ const handleExport =
 
     transition
 
-    hover:bg-black/5
+    hover:bg-surface-secondary
   "
->
-
-  Export
-
-</button>
-
-
+            >
+              Export
+            </button>
           </div>
         </div>
 
@@ -279,48 +153,42 @@ const handleExport =
           {stats.map((item) => (
             <div
               key={item.title}
-              className="bg-surface rounded-3xl border border-black/5 p-6 shadow-sm"
+              className="bg-surface rounded-3xl border border-border p-6 shadow-sm"
             >
-              <p className="text-sm text-black/45 font-medium mb-4 uppercase tracking-wide">
+              <p className="text-sm text-text-secondary font-medium mb-4 uppercase tracking-wide">
                 {item.title}
               </p>
 
-              <h2 className="text-4xl font-bold text-black">{item.value}</h2>
+              <h2 className="text-4xl font-bold text-text-primary">
+                {item.value}
+              </h2>
             </div>
           ))}
         </div>
 
         {/* SEARCH + FILTERS */}
-        <div className="bg-surface border border-black/5 rounded-3xl p-4 md:p-5 shadow-sm">
+        <div className="bg-surface border border-border rounded-3xl p-4 md:p-5 shadow-sm">
           <div className="flex flex-col xl:flex-row gap-4">
             <div className="flex-1 relative">
               <input
-  type="text"
+                type="text"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
 
-  value={search}
-
-  onChange={(e) => {
-
-    setSearch(
-      e.target.value
-    );
-
-    setPage(1);
-
-  }}
-
-  placeholder="Search customers by name, email or phone..."
-
-  className="
+                  setPage(1);
+                }}
+                placeholder="Search customers by name, email or phone..."
+                className="
     w-full
     h-14
 
     rounded-2xl
 
     border
-    border-black/10
+    border-border
 
-    bg-[#fafafa]
+    bg-surface-secondary
 
     px-5
 
@@ -329,30 +197,24 @@ const handleExport =
     focus:ring-2
     focus:ring-[#7b1e2b]/20
   "
-/>
+              />
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-             <select
-  value={tier}
+              <select
+                value={tier}
+                onChange={(e) => {
+                  setTier(e.target.value);
 
-  onChange={(e) => {
-
-    setTier(
-      e.target.value
-    );
-
-    setPage(1);
-
-  }}
-
-  className="
+                  setPage(1);
+                }}
+                className="
     h-14
 
     rounded-2xl
 
     border
-    border-black/10
+    border-border
 
     bg-surface
 
@@ -362,50 +224,32 @@ const handleExport =
 
     min-w-[170px]
   "
->
+              >
+                <option value="All">All Tiers</option>
 
-  <option value="All">
-    All Tiers
-  </option>
+                <option value="Platinum">Platinum</option>
 
-  <option value="Platinum">
-    Platinum
-  </option>
+                <option value="Gold">Gold</option>
 
-  <option value="Gold">
-    Gold
-  </option>
+                <option value="Silver">Silver</option>
 
-  <option value="Silver">
-    Silver
-  </option>
-
-  <option value="Bronze">
-    Bronze
-  </option>
-
-</select>
+                <option value="Bronze">Bronze</option>
+              </select>
 
               <select
-  value={sort}
+                value={sort}
+                onChange={(e) => {
+                  setSort(e.target.value);
 
-  onChange={(e) => {
-
-    setSort(
-      e.target.value
-    );
-
-    setPage(1);
-
-  }}
-
-  className="
+                  setPage(1);
+                }}
+                className="
     h-14
 
     rounded-2xl
 
     border
-    border-black/10
+    border-border
 
     bg-surface
 
@@ -415,29 +259,21 @@ const handleExport =
 
     min-w-[170px]
   "
->
+              >
+                <option value="Newest">Newest First</option>
 
-  <option value="Newest">
-    Newest First
-  </option>
+                <option value="Highest Spend">Highest Spend</option>
 
-  <option value="Highest Spend">
-    Highest Spend
-  </option>
-
-  <option value="Most Orders">
-    Most Orders
-  </option>
-
-</select>
+                <option value="Most Orders">Most Orders</option>
+              </select>
             </div>
           </div>
         </div>
 
-      {/* DESKTOP TABLE */}
+        {/* DESKTOP TABLE */}
 
-<div
-  className="
+        <div
+          className="
     hidden
     lg:block
 
@@ -452,12 +288,11 @@ const handleExport =
 
     shadow-sm
   "
->
+        >
+          {/* TABLE HEADER */}
 
-  {/* TABLE HEADER */}
-
-  <div
-    className="
+          <div
+            className="
       grid
       grid-cols-7
 
@@ -477,120 +312,77 @@ const handleExport =
 
       text-text-secondary
     "
-  >
+          >
+            <p>Customer</p>
 
-    <p>
-      Customer
-    </p>
+            <p>Orders</p>
 
-    <p>
-      Orders
-    </p>
+            <p>Revenue</p>
 
-    <p>
-      Revenue
-    </p>
+            <p>Tier</p>
 
-    <p>
-      Tier
-    </p>
+            <p>First Purchase</p>
 
-   <p>First Purchase</p>
+            <p>Activity</p>
 
-    <p>
-      Activity
-    </p>
+            <p className="text-right">Profile</p>
+          </div>
 
-    <p className="text-right">
-      Profile
-    </p>
+          {/* TABLE BODY */}
 
-  </div>
-
-
-
-  {/* TABLE BODY */}
-
-  <div>
-
-    {
-  customers?.length === 0 && (
-
-    <div
-      className="
+          <div>
+            {customers?.length === 0 && (
+              <div
+                className="
         flex
         items-center
         justify-center
 
         py-20
       "
-    >
-
-      <div
-        className="
+              >
+                <div
+                  className="
           text-center
         "
-      >
-
-        <p
-          className="
+                >
+                  <p
+                    className="
             text-lg
             font-semibold
 
             text-text-primary
           "
-        >
-          No customers found
-        </p>
+                  >
+                    No customers found
+                  </p>
 
-        <p
-          className="
+                  <p
+                    className="
             mt-2
 
             text-sm
 
             text-text-secondary
           "
-        >
-          Try adjusting filters or search query
-        </p>
+                  >
+                    Try adjusting filters or search query
+                  </p>
+                </div>
+              </div>
+            )}
 
-      </div>
+            {customers?.map((customer) => {
+              const daysAgo = Math.floor(
+                (new Date() - new Date(customer.lastOrderDate)) /
+                  (1000 * 60 * 60 * 24),
+              );
 
-    </div>
-
-  )
-}
-
-    {
-      customers?.map(
-        (customer) => {
-
-          const daysAgo =
-            Math.floor(
-
-              (
-                new Date() -
-
-                new Date(
-                  customer.lastOrderDate
-                )
-
-              ) /
-
-              (1000 * 60 * 60 * 24)
-
-            );
-
-
-
-          return (
-
-            <div
-              key={customer._id}
-              onClick={() => navigate(`/admin/customers/${customer._id}`)}
-
-              className="
+              return (
+                <div
+                  key={customer._id}
+                  onClick={() => navigate(`/admin/customers/${customer._id}`)}
+                  className="
                 grid
                 grid-cols-7
 
@@ -608,24 +400,22 @@ const handleExport =
 
                 hover:bg-surface-secondary
               "
-            >
+                >
+                  {/* CUSTOMER */}
 
-              {/* CUSTOMER */}
-
-              <div
-                className="
+                  <div
+                    className="
                   flex
                   items-center
                   gap-4
 
                   min-w-0
                 "
-              >
+                  >
+                    {/* AVATAR */}
 
-                {/* AVATAR */}
-
-                <div
-                  className="
+                    <div
+                      className="
                     flex
                     h-12
                     w-12
@@ -644,43 +434,31 @@ const handleExport =
 
                     text-brand
                   "
-                >
+                    >
+                      {customer.customerName?.charAt(0)}
+                    </div>
 
-                  {
-                    customer.customerName
-                      ?.charAt(0)
-                  }
+                    {/* INFO */}
 
-                </div>
-
-
-
-                {/* INFO */}
-
-                <div
-                  className="
+                    <div
+                      className="
                     min-w-0
                   "
-                >
-
-                  <p
-                    className="
+                    >
+                      <p
+                        className="
                       truncate
 
                       font-semibold
 
                       text-text-primary
                     "
-                  >
-                    {
-                      customer.customerName
-                    }
-                  </p>
+                      >
+                        {customer.customerName}
+                      </p>
 
-
-
-                  <p
-                    className="
+                      <p
+                        className="
                       mt-1
 
                       truncate
@@ -689,96 +467,71 @@ const handleExport =
 
                       text-text-secondary
                     "
-                  >
-                    {
-                      customer.customerEmail
-                    }
-                  </p>
+                      >
+                        {customer.customerEmail}
+                      </p>
+                    </div>
+                  </div>
 
-                </div>
+                  {/* ORDERS */}
 
-              </div>
-
-
-
-              {/* ORDERS */}
-
-              <div>
-
-                <p
-                  className="
+                  <div>
+                    <p
+                      className="
                     text-base
                     font-semibold
 
                     text-text-primary
                   "
-                >
-                  {
-                    customer.totalOrders
-                  }
-                </p>
+                    >
+                      {customer.totalOrders}
+                    </p>
 
-
-
-                <p
-                  className="
+                    <p
+                      className="
                     mt-1
 
                     text-xs
 
                     text-text-secondary
                   "
-                >
-                  Orders placed
-                </p>
+                    >
+                      Orders placed
+                    </p>
+                  </div>
 
-              </div>
+                  {/* REVENUE */}
 
-
-
-              {/* REVENUE */}
-
-              <div>
-
-                <p
-                  className="
+                  <div>
+                    <p
+                      className="
                     text-base
                     font-bold
 
                     text-text-primary
                   "
-                >
-                  ₹
-                  {
-                    customer.totalSpent
-                      ?.toLocaleString()
-                  }
-                </p>
+                    >
+                      ₹{customer.totalSpent?.toLocaleString()}
+                    </p>
 
-
-
-                <p
-                  className="
+                    <p
+                      className="
                     mt-1
 
                     text-xs
 
                     text-text-secondary
                   "
-                >
-                  Lifetime value
-                </p>
+                    >
+                      Lifetime value
+                    </p>
+                  </div>
 
-              </div>
+                  {/* STATUS */}
 
-
-
-              {/* STATUS */}
-
-              <div>
-
-              <span
-  className={`
+                  <div>
+                    <span
+                      className={`
     inline-flex
     items-center
 
@@ -791,125 +544,86 @@ const handleExport =
     font-semibold
 
     ${
-      customer.customerTier ===
-      "Platinum"
-
-        ? "bg-[#EEF2FF] text-[#4338CA] border border-[#C7D2FE]"
-
-        : customer.customerTier ===
-          "Gold"
-
-        ? "bg-[#FFF7E8] text-[#B7791F] border border-[#FDE3B0]"
-
-        : customer.customerTier ===
-          "Silver"
-
-        ? "bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB]"
-
-        : "bg-[#FFF4E8] text-[#C77700] border border-[#FFE1B4]"
+      customer.customerTier === "Platinum"
+        ? "bg-[#EEF2FF] text-indigo-400 border border-[#C7D2FE]"
+        : customer.customerTier === "Gold"
+          ? "bg-[#FFF7E8] text-[#B7791F] border border-[#FDE3B0]"
+          : customer.customerTier === "Silver"
+            ? "bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB]"
+            : "bg-[#FFF4E8] text-[#C77700] border border-[#FFE1B4]"
     }
   `}
->
+                    >
+                      {customer.customerTier}
+                    </span>
+                  </div>
 
-  {customer.customerTier}
+                  {/* JOINED */}
 
-</span>
-
-              </div>
-
-
-
-              {/* JOINED */}
-
-              <div>
-
-                <p
-                  className="
+                  <div>
+                    <p
+                      className="
                     font-medium
 
                     text-text-primary
                   "
-                >
-
-                  {
-
-                    new Date(
-                      customer.joinedAt
-                    ).toLocaleDateString(
-                      "en-IN",
-                      {
+                    >
+                      {new Date(customer.joinedAt).toLocaleDateString("en-IN", {
                         day: "2-digit",
                         month: "short",
                         year: "numeric",
-                      }
-                    )
+                      })}
+                    </p>
 
-                  }
-
-                </p>
-
-
-
-                <p
-                  className="
+                    <p
+                      className="
                     mt-1
 
                     text-xs
 
                     text-text-secondary
                   "
-                >
-                  Customer since
-                </p>
+                    >
+                      Customer since
+                    </p>
+                  </div>
 
-              </div>
+                  {/* ACTIVITY */}
 
-
-
-              {/* ACTIVITY */}
-
-              <div>
-
-                <p
-                  className="
+                  <div>
+                    <p
+                      className="
                     font-semibold
 
                     text-text-primary
                   "
-                >
-                  {daysAgo}
-                  d ago
-                </p>
+                    >
+                      {daysAgo}d ago
+                    </p>
 
-
-
-                <p
-                  className="
+                    <p
+                      className="
                     mt-1
 
                     text-xs
 
                     text-text-secondary
                   "
-                >
-                  Last purchase
-                </p>
+                    >
+                      Last purchase
+                    </p>
+                  </div>
 
-              </div>
+                  {/* ACTION */}
 
-
-
-              {/* ACTION */}
-
-              <div
-                className="
+                  <div
+                    className="
                   flex
                   justify-end
                 "
-              >
-
-                <button
-                  className="
+                  >
+                    <button
+                      className="
                     rounded-2xl
 
                     border
@@ -930,31 +644,21 @@ const handleExport =
                     hover:border-brand/20
                     hover:bg-brand/5
                   "
-                >
-                  View Profile
-                </button>
+                    >
+                      View Profile
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
 
-              </div>
+        {/* PAGINATION */}
 
-            </div>
-
-          );
-
-        }
-      )
-    }
-
-  </div>
-
-</div>
-
-{/* PAGINATION */}
-
-{
-  pagination && (
-
-    <div
-      className="
+        {pagination && (
+          <div
+            className="
         mt-6
 
         flex
@@ -963,62 +667,34 @@ const handleExport =
         gap-4
         flex-wrap
       "
-    >
+          >
+            {/* INFO */}
 
-      {/* INFO */}
-
-      <p
-        className="
+            <p
+              className="
           text-sm
 
           text-text-secondary
         "
-      >
+            >
+              Page {pagination.page} of {pagination.pages}
+            </p>
 
-        Page
-        {" "}
+            {/* CONTROLS */}
 
-        {
-          pagination.page
-        }
-
-        {" "}
-        of
-        {" "}
-
-        {
-          pagination.pages
-        }
-
-      </p>
-
-
-
-      {/* CONTROLS */}
-
-      <div
-        className="
+            <div
+              className="
           flex
           items-center
           gap-2
         "
-      >
+            >
+              {/* PREV */}
 
-        {/* PREV */}
-
-        <button
-          disabled={
-            page === 1
-          }
-
-          onClick={() =>
-            setPage(
-              (prev) =>
-                prev - 1
-            )
-          }
-
-          className="
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((prev) => prev - 1)}
+                className="
             h-11
 
             rounded-2xl
@@ -1036,16 +712,14 @@ const handleExport =
             disabled:cursor-not-allowed
             disabled:opacity-40
           "
-        >
-          Previous
-        </button>
+              >
+                Previous
+              </button>
 
+              {/* CURRENT */}
 
-
-        {/* CURRENT */}
-
-        <div
-          className="
+              <div
+                className="
             flex
             h-11
             min-w-[44px]
@@ -1064,28 +738,16 @@ const handleExport =
 
             text-white
           "
-        >
-          {page}
-        </div>
+              >
+                {page}
+              </div>
 
+              {/* NEXT */}
 
-
-        {/* NEXT */}
-
-        <button
-          disabled={
-            page ===
-            pagination.pages
-          }
-
-          onClick={() =>
-            setPage(
-              (prev) =>
-                prev + 1
-            )
-          }
-
-          className="
+              <button
+                disabled={page === pagination.pages}
+                onClick={() => setPage((prev) => prev + 1)}
+                className="
             h-11
 
             rounded-2xl
@@ -1103,18 +765,12 @@ const handleExport =
             disabled:cursor-not-allowed
             disabled:opacity-40
           "
-        >
-          Next
-        </button>
-
-      </div>
-
-    </div>
-
-  )
-}
-
-
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { Input } from "@/components/ui/input";
+
 import {
-  Clock3,
-  Filter,
-  PackageCheck,
-  Search,
-  Truck,
-  XCircle,
-} from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { Clock3, PackageCheck, Search, Truck, XCircle } from "lucide-react";
 
 import {
   exportOrdersReport,
@@ -122,7 +125,7 @@ export default function Orders() {
         rounded-full
 
         border
-        border-[#E8DADF]
+        border-border
 
         bg-[#F8EEF1]
 
@@ -132,7 +135,7 @@ export default function Orders() {
         text-xs
         font-medium
 
-        text-[#6B1A2A]
+        text-brand
       "
           >
             Order Management
@@ -218,10 +221,7 @@ export default function Orders() {
         {/* TOTAL ORDERS */}
         <div
           className="
-      relative
-      overflow-hidden
-
-      rounded-[28px]
+      rounded-3xl
 
       border
       border-border
@@ -231,85 +231,61 @@ export default function Orders() {
       p-6
 
       shadow-sm
-
-      transition
-      hover:-translate-y-1
-      hover:shadow-xl
-      hover:shadow-black/[0.03]
     "
         >
           <div
             className="
-        absolute
-        right-0
-        top-0
-
-        h-28
-        w-28
-
-        rounded-full
-
-        bg-[#F8EEF1]
-
-        blur-2xl
+        flex
+        items-start
+        justify-between
       "
-          />
+          >
+            <div>
+              <p
+                className="
+            text-xs
+            font-medium
+            uppercase
+            tracking-wide
 
-          <div className="relative z-10">
+            text-[#6B7280]
+          "
+              >
+                Total Orders
+              </p>
+
+              <h2
+                className="
+            mt-4
+
+            text-3xl
+            font-bold
+            tracking-tight
+
+            text-text-primary
+          "
+              >
+                {stats.totalOrders}
+              </h2>
+            </div>
+
             <div
               className="
           flex
-          items-start
-          justify-between
+          h-12
+          w-12
+
+          items-center
+          justify-center
+
+          rounded-2xl
+
+          bg-[#F8EEF1]
+
+          text-brand
         "
             >
-              <div>
-                <p
-                  className="
-              text-xs
-              font-medium
-              uppercase
-              tracking-wide
-
-              text-[#9CA3AF]
-            "
-                >
-                  Total Orders
-                </p>
-
-                <h2
-                  className="
-              mt-4
-
-              text-4xl
-              font-bold
-              tracking-tight
-
-              text-text-primary
-            "
-                >
-                  {stats.totalOrders}
-                </h2>
-              </div>
-
-              <div
-                className="
-            flex
-            h-12
-            w-12
-
-            items-center
-            justify-center
-
-            rounded-2xl
-
-            bg-[#F8EEF1]
-
-            text-[#6B1A2A]
-          "
-              >
-                <PackageCheck size={20} />
-              </div>
+              <PackageCheck size={20} />
             </div>
           </div>
         </div>
@@ -317,10 +293,7 @@ export default function Orders() {
         {/* PROCESSING */}
         <div
           className="
-      relative
-      overflow-hidden
-
-      rounded-[28px]
+      rounded-3xl
 
       border
       border-border
@@ -330,85 +303,61 @@ export default function Orders() {
       p-6
 
       shadow-sm
-
-      transition
-      hover:-translate-y-1
-      hover:shadow-xl
-      hover:shadow-black/[0.03]
     "
         >
           <div
             className="
-        absolute
-        right-0
-        top-0
-
-        h-28
-        w-28
-
-        rounded-full
-
-        bg-[#FFF7EB]
-
-        blur-2xl
+        flex
+        items-start
+        justify-between
       "
-          />
+          >
+            <div>
+              <p
+                className="
+            text-xs
+            font-medium
+            uppercase
+            tracking-wide
 
-          <div className="relative z-10">
+            text-[#6B7280]
+          "
+              >
+                Processing
+              </p>
+
+              <h2
+                className="
+            mt-4
+
+            text-3xl
+            font-bold
+            tracking-tight
+
+            text-text-primary
+          "
+              >
+                {stats.processingOrders}
+              </h2>
+            </div>
+
             <div
               className="
           flex
-          items-start
-          justify-between
+          h-12
+          w-12
+
+          items-center
+          justify-center
+
+          rounded-2xl
+
+          bg-[#FFF5E8]
+
+          text-[#D97706]
         "
             >
-              <div>
-                <p
-                  className="
-              text-xs
-              font-medium
-              uppercase
-              tracking-wide
-
-              text-[#9CA3AF]
-            "
-                >
-                  Processing
-                </p>
-
-                <h2
-                  className="
-              mt-4
-
-              text-4xl
-              font-bold
-              tracking-tight
-
-              text-text-primary
-            "
-                >
-                  {stats.processingOrders}
-                </h2>
-              </div>
-
-              <div
-                className="
-            flex
-            h-12
-            w-12
-
-            items-center
-            justify-center
-
-            rounded-2xl
-
-            bg-[#FFF5E8]
-
-            text-[#D97706]
-          "
-              >
-                <Clock3 size={20} />
-              </div>
+              <Clock3 size={20} />
             </div>
           </div>
         </div>
@@ -416,10 +365,7 @@ export default function Orders() {
         {/* SHIPPED */}
         <div
           className="
-      relative
-      overflow-hidden
-
-      rounded-[28px]
+      rounded-3xl
 
       border
       border-border
@@ -429,85 +375,61 @@ export default function Orders() {
       p-6
 
       shadow-sm
-
-      transition
-      hover:-translate-y-1
-      hover:shadow-xl
-      hover:shadow-black/[0.03]
     "
         >
           <div
             className="
-        absolute
-        right-0
-        top-0
-
-        h-28
-        w-28
-
-        rounded-full
-
-        bg-[#EEF6FF]
-
-        blur-2xl
+        flex
+        items-start
+        justify-between
       "
-          />
+          >
+            <div>
+              <p
+                className="
+            text-xs
+            font-medium
+            uppercase
+            tracking-wide
 
-          <div className="relative z-10">
+            text-[#6B7280]
+          "
+              >
+                Shipped
+              </p>
+
+              <h2
+                className="
+            mt-4
+
+            text-3xl
+            font-bold
+            tracking-tight
+
+            text-text-primary
+          "
+              >
+                {stats.shippedOrders}
+              </h2>
+            </div>
+
             <div
               className="
           flex
-          items-start
-          justify-between
+          h-12
+          w-12
+
+          items-center
+          justify-center
+
+          rounded-2xl
+
+          bg-[#EEF6FF]
+
+          text-[#2563EB]
         "
             >
-              <div>
-                <p
-                  className="
-              text-xs
-              font-medium
-              uppercase
-              tracking-wide
-
-              text-[#9CA3AF]
-            "
-                >
-                  Shipped
-                </p>
-
-                <h2
-                  className="
-              mt-4
-
-              text-4xl
-              font-bold
-              tracking-tight
-
-              text-text-primary
-            "
-                >
-                  {stats.shippedOrders}
-                </h2>
-              </div>
-
-              <div
-                className="
-            flex
-            h-12
-            w-12
-
-            items-center
-            justify-center
-
-            rounded-2xl
-
-            bg-[#EEF6FF]
-
-            text-[#2563EB]
-          "
-              >
-                <Truck size={20} />
-              </div>
+              <Truck size={20} />
             </div>
           </div>
         </div>
@@ -515,10 +437,7 @@ export default function Orders() {
         {/* CANCELLED */}
         <div
           className="
-      relative
-      overflow-hidden
-
-      rounded-[28px]
+      rounded-3xl
 
       border
       border-border
@@ -528,85 +447,61 @@ export default function Orders() {
       p-6
 
       shadow-sm
-
-      transition
-      hover:-translate-y-1
-      hover:shadow-xl
-      hover:shadow-black/[0.03]
     "
         >
           <div
             className="
-        absolute
-        right-0
-        top-0
-
-        h-28
-        w-28
-
-        rounded-full
-
-        bg-[#FFF1F2]
-
-        blur-2xl
+        flex
+        items-start
+        justify-between
       "
-          />
+          >
+            <div>
+              <p
+                className="
+            text-xs
+            font-medium
+            uppercase
+            tracking-wide
 
-          <div className="relative z-10">
+            text-[#6B7280]
+          "
+              >
+                Cancelled
+              </p>
+
+              <h2
+                className="
+            mt-4
+
+            text-3xl
+            font-bold
+            tracking-tight
+
+            text-text-primary
+          "
+              >
+                {stats.cancelledOrders}
+              </h2>
+            </div>
+
             <div
               className="
           flex
-          items-start
-          justify-between
+          h-12
+          w-12
+
+          items-center
+          justify-center
+
+          rounded-2xl
+
+          bg-[#FFF1F2]
+
+          text-[#E11D48]
         "
             >
-              <div>
-                <p
-                  className="
-              text-xs
-              font-medium
-              uppercase
-              tracking-wide
-
-              text-[#9CA3AF]
-            "
-                >
-                  Cancelled
-                </p>
-
-                <h2
-                  className="
-              mt-4
-
-              text-4xl
-              font-bold
-              tracking-tight
-
-              text-text-primary
-            "
-                >
-                  {stats.cancelledOrders}
-                </h2>
-              </div>
-
-              <div
-                className="
-            flex
-            h-12
-            w-12
-
-            items-center
-            justify-center
-
-            rounded-2xl
-
-            bg-[#FFF1F2]
-
-            text-[#E11D48]
-          "
-              >
-                <XCircle size={20} />
-              </div>
+              <XCircle size={20} />
             </div>
           </div>
         </div>
@@ -650,7 +545,7 @@ export default function Orders() {
       "
           >
             {/* SEARCH */}
-            <div className="relative flex-1">
+            <div className="relative flex-[2]">
               <Search
                 size={18}
                 className="
@@ -659,20 +554,20 @@ export default function Orders() {
             top-1/2
             -translate-y-1/2
 
-            text-[#9CA3AF]
+            text-text-secondary
           "
               />
 
-              <input
+              <Input
                 type="text"
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value);
+
                   setPage(1);
                 }}
                 placeholder="
-            Search orders,
-            customers or order IDs...
+            Search orders, customers or order IDs...
           "
                 className="
             h-12
@@ -680,7 +575,6 @@ export default function Orders() {
 
             rounded-2xl
 
-            border
             border-border
 
             bg-surface-secondary
@@ -691,48 +585,14 @@ export default function Orders() {
             text-sm
             text-text-primary
 
-            outline-none
+            placeholder:text-text-secondary
 
-            transition
-
-            placeholder:text-[#9CA3AF]
-
-            focus:border-[#D8C7CD]
-            focus:bg-surface
+            focus-visible:ring-0
+            focus-visible:border-[#D8C7CD]
+            focus-visible:bg-surface
           "
               />
             </div>
-
-            {/* FILTER BUTTON */}
-            <button
-              className="
-          inline-flex
-          items-center
-          justify-center
-          gap-2
-
-          rounded-2xl
-
-          border
-          border-border
-
-          bg-surface-secondary
-
-          px-5
-          py-3
-
-          text-sm
-          font-semibold
-
-          text-text-primary
-
-          transition
-          hover:bg-[#F8EEF1]
-        "
-            >
-              <Filter size={16} className="text-[#6B1A2A]" />
-              Filters
-            </button>
           </div>
 
           {/* RIGHT */}
@@ -746,90 +606,100 @@ export default function Orders() {
       "
           >
             {/* STATUS */}
-            <select
-              value={status}
-              onChange={(e) => {
-                setStatus(e.target.value);
+            <Select
+              value={status || "all"}
+              onValueChange={(value) => {
+                setStatus(value === "all" ? "" : value);
+
                 setPage(1);
               }}
-              className="
-          h-12
-
-          rounded-2xl
-
-          border
-          border-border
-
-          bg-surface-secondary
-
-          px-4
-
-          text-sm
-          font-medium
-
-          text-text-primary
-
-          outline-none
-
-          transition
-
-          focus:border-[#D8C7CD]
-          focus:bg-surface
-        "
             >
-              <option value="">All Status</option>
+              <SelectTrigger
+                className="
+            h-12
+            shrink-0
 
-              <option value="PLACED">Placed</option>
+            rounded-2xl
 
-              <option value="CONFIRMED">Confirmed</option>
+            border-border
 
-              <option value="SHIPPED">Shipped</option>
+            bg-surface-secondary
 
-              <option value="DELIVERED">Delivered</option>
+            px-4
 
-              <option value="CANCELLED">Cancelled</option>
-            </select>
+            text-sm
+            font-medium
+
+            text-text-primary
+
+            focus:ring-0
+            focus:border-border-[#D8C7CD]
+            focus:bg-surface
+          "
+              >
+                <SelectValue placeholder="All Status" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+
+                <SelectItem value="PLACED">Placed</SelectItem>
+
+                <SelectItem value="CONFIRMED">Confirmed</SelectItem>
+
+                <SelectItem value="SHIPPED">Shipped</SelectItem>
+
+                <SelectItem value="DELIVERED">Delivered</SelectItem>
+
+                <SelectItem value="CANCELLED">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
 
             {/* SORT */}
-            <select
+            <Select
               value={sort}
-              onChange={(e) => {
-                setSort(e.target.value);
+              onValueChange={(value) => {
+                setSort(value);
+
                 setPage(1);
               }}
-              className="
-          h-12
-
-          rounded-2xl
-
-          border
-          border-border
-
-          bg-surface-secondary
-
-          px-4
-
-          text-sm
-          font-medium
-
-          text-text-primary
-
-          outline-none
-
-          transition
-
-          focus:border-[#D8C7CD]
-          focus:bg-surface
-        "
             >
-              <option value="-createdAt">Newest First</option>
+              <SelectTrigger
+                className="
+            h-12
+            shrink-0
 
-              <option value="createdAt">Oldest First</option>
+            rounded-2xl
 
-              <option value="-totalPrice">Highest Value</option>
+            border-border
 
-              <option value="totalPrice">Lowest Value</option>
-            </select>
+            bg-surface-secondary
+
+            px-4
+
+            text-sm
+            font-medium
+
+            text-text-primary
+
+            focus:ring-0
+            focus:border-border-[#D8C7CD]
+            focus:bg-surface
+          "
+              >
+                <SelectValue placeholder="Sort Orders" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="-createdAt">Newest First</SelectItem>
+
+                <SelectItem value="createdAt">Oldest First</SelectItem>
+
+                <SelectItem value="-totalPrice">Highest Value</SelectItem>
+
+                <SelectItem value="totalPrice">Lowest Value</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
@@ -855,7 +725,7 @@ export default function Orders() {
               <tr
                 className="
             border-b
-            border-[#F1ECEE]
+
 
             bg-surface-secondary
 
@@ -881,7 +751,7 @@ export default function Orders() {
                 uppercase
                 tracking-[0.14em]
 
-                text-[#9CA3AF]
+                text-[#6B7280]
               "
                   >
                     {heading}
@@ -930,7 +800,8 @@ export default function Orders() {
   cursor-pointer
 
   border-b
-  border-[#F5F1F2]
+
+  dark:border-white/[0.06]
 
   transition-all
   duration-200
@@ -959,7 +830,7 @@ export default function Orders() {
                           className="
                 mt-1
                 text-sm
-                text-[#8A8F98]
+                text-text-secondary
               "
                         >
                           {order.items.length} items
@@ -992,7 +863,7 @@ export default function Orders() {
                 text-sm
                 font-semibold
 
-                text-[#6B1A2A]
+                text-brand
               "
                         >
                           {order.user?.name?.charAt(0)}
@@ -1002,7 +873,7 @@ export default function Orders() {
                           <h3
                             className="
                   font-medium
-                  text-[#111]
+                 text-text-primary
                 "
                           >
                             {order.user?.name}
@@ -1012,7 +883,7 @@ export default function Orders() {
                             className="
                   mt-1
                   text-sm
-                  text-[#8A8F98]
+                  text-text-secondary
                 "
                           >
                             {order.user?.email}
@@ -1118,8 +989,8 @@ export default function Orders() {
     flex-col
     gap-4
 
-    border-t
-    border-[#F1ECEE]
+    dark:border-white/[0.06]
+
 
     bg-surface-secondary
 
@@ -1171,7 +1042,7 @@ export default function Orders() {
         ${
           page === 1
             ? "cursor-not-allowed bg-[#F5F5F5] text-[#A1A1AA]"
-            : "bg-surface text-[#111] hover:bg-[#FAFAFA]"
+            : "bg-surface text-text-primary hover:bg-[#FAFAFA]"
         }
       `}
             >
@@ -1214,7 +1085,7 @@ export default function Orders() {
                   border-border
 
                   bg-surface
-                  text-[#111]
+                 text-text-primary
 
                   hover:bg-[#FAFAFA]
                 `
@@ -1248,7 +1119,7 @@ export default function Orders() {
         ${
           page === pagination?.totalPages
             ? "cursor-not-allowed bg-[#F5F5F5] text-[#A1A1AA]"
-            : "bg-surface text-[#111] hover:bg-[#FAFAFA]"
+            : "bg-surface text-text-primary hover:bg-[#FAFAFA]"
         }
       `}
             >

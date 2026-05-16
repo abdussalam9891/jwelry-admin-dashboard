@@ -1,81 +1,38 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
-import {
-  Link,
-  useParams,
-} from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
-import {
-  ArrowLeft,
-  Package,
-  User,
-  CreditCard,
-  Truck,
-} from "lucide-react";
+import { ArrowLeft, CreditCard, Package, Truck, User } from "lucide-react";
 
-import {
-  getOrderDetails,
-  updateOrderStatus,
-} from "../services/orderService";
-
-
+import { getOrderDetails, updateOrderStatus } from "../services/orderService";
 
 export default function OrderDetailsPage() {
+  const { id } = useParams();
 
-  const { id } =
-    useParams();
+  const [loading, setLoading] = useState(true);
 
+  const [order, setOrder] = useState(null);
 
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [order, setOrder] =
-    useState(null);
-
-console.log(order);
+  console.log(order);
 
   useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        const data = await getOrderDetails(id);
 
-    const fetchOrder =
-      async () => {
-
-        try {
-
-          const data =
-            await getOrderDetails(id);
-
-          setOrder(
-            data.order
-          );
-
-        } catch (error) {
-
-          console.error(error);
-
-        } finally {
-
-          setLoading(false);
-
-        }
-
-      };
-
-
+        setOrder(data.order);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchOrder();
-
   }, [id]);
 
-
-
   if (loading) {
-
     return (
-
       <div
         className="
           p-10
@@ -84,17 +41,11 @@ console.log(order);
       >
         Loading order...
       </div>
-
     );
-
   }
 
-
-
   if (!order) {
-
     return (
-
       <div
         className="
           p-10
@@ -103,21 +54,15 @@ console.log(order);
       >
         Order not found
       </div>
-
     );
-
   }
 
-
-
   return (
-
     <div
       className="
         space-y-8
       "
     >
-
       {/* HEADER */}
 
       <div
@@ -129,14 +74,9 @@ console.log(order);
           flex-wrap
         "
       >
-
-
-
         <div>
-
           <Link
             to="/admin/orders"
-
             className="
               group
               inline-flex
@@ -148,7 +88,7 @@ console.log(order);
               border
               border-border
 
-              bg-white
+              bg-surface
 
               px-4
               py-2.5
@@ -163,17 +103,12 @@ console.log(order);
               transition-all
 
               hover:border-[#6B1A2A]/20
-              hover:text-[#6B1A2A]
+              hover:text-brand
             "
           >
-
             <ArrowLeft size={16} />
-
             Back to Orders
-
           </Link>
-
-
 
           <h1
             className="
@@ -190,8 +125,6 @@ console.log(order);
             Order Details
           </h1>
 
-
-
           <p
             className="
               mt-2
@@ -199,40 +132,28 @@ console.log(order);
               text-text-secondary
             "
           >
-            Order ID:
-            {" "}
-           {
-  order.orderNumber ||
-
-  `#${order._id
-    ?.slice(-8)
-    ?.toUpperCase()}`
-}
+            Order ID:{" "}
+            {order.orderNumber || `#${order._id?.slice(-8)?.toUpperCase()}`}
           </p>
-
         </div>
 
-
-
-<div
-  className="
+        <div
+          className="
     flex
     items-center
     gap-3
   "
->
+        >
+          {/* LABEL */}
 
-  {/* LABEL */}
-
-  <div
-    className="
+          <div
+            className="
       hidden
       sm:block
     "
-  >
-
-    <p
-      className="
+          >
+            <p
+              className="
         text-[11px]
         font-medium
         uppercase
@@ -240,56 +161,43 @@ console.log(order);
 
         text-text-secondary
       "
-    >
-      Order Status
-    </p>
+            >
+              Order Status
+            </p>
 
-    <p
-      className="
+            <p
+              className="
         mt-1
 
         text-sm
 
         text-text-primary
       "
-    >
-      Manage status workflow
-    </p>
+            >
+              Manage status workflow
+            </p>
+          </div>
 
-  </div>
+          {/* SELECT WRAPPER */}
 
-
-
-  {/* SELECT WRAPPER */}
-
-  <div
-    className="
+          <div
+            className="
       relative
     "
-  >
+          >
+            <select
+              value={order.orderStatus}
+              onChange={async (e) => {
+                const newStatus = e.target.value;
 
-    <select
-      value={order.orderStatus}
+                await updateOrderStatus(order._id, newStatus);
 
-      onChange={async (e) => {
-
-        const newStatus =
-          e.target.value;
-
-        await updateOrderStatus(
-          order._id,
-          newStatus
-        );
-
-        setOrder((prev) => ({
-          ...prev,
-          orderStatus:
-            newStatus,
-        }));
-
-      }}
-
-      className={`
+                setOrder((prev) => ({
+                  ...prev,
+                  orderStatus: newStatus,
+                }));
+              }}
+              className={`
         appearance-none
 
         rounded-2xl
@@ -315,59 +223,33 @@ console.log(order);
         focus:ring-brand/20
 
         ${
-          order.orderStatus ===
-          "DELIVERED"
-
+          order.orderStatus === "DELIVERED"
             ? "border-[#CFEAD9] bg-[#EEF8F1] text-[#0F9F61]"
-
-            : order.orderStatus ===
-              "CANCELLED"
-
-            ? "border-[#FFD5DC] bg-[#FFF1F2] text-[#E11D48]"
-
-            : order.orderStatus ===
-              "SHIPPED"
-
-            ? "border-[#D6E4FF] bg-[#EEF4FF] text-[#2563EB]"
-
-            : order.orderStatus ===
-              "CONFIRMED"
-
-            ? "border-[#DDD6FE] bg-[#F5F3FF] text-[#7C3AED]"
-
-            : "border-[#FDE7C3] bg-[#FFF5E8] text-[#D97706]"
+            : order.orderStatus === "CANCELLED"
+              ? "border-[#FFD5DC] bg-[#FFF1F2] text-[#E11D48]"
+              : order.orderStatus === "SHIPPED"
+                ? "border-[#D6E4FF] bg-[#EEF4FF] text-[#2563EB]"
+                : order.orderStatus === "CONFIRMED"
+                  ? "border-[#DDD6FE] bg-[#F5F3FF] text-[#7C3AED]"
+                  : "border-[#FDE7C3] bg-[#FFF5E8] text-[#D97706]"
         }
       `}
-    >
+            >
+              <option value="PLACED">PLACED</option>
 
-      <option value="PLACED">
-        PLACED
-      </option>
+              <option value="CONFIRMED">CONFIRMED</option>
 
-      <option value="CONFIRMED">
-        CONFIRMED
-      </option>
+              <option value="SHIPPED">SHIPPED</option>
 
-      <option value="SHIPPED">
-        SHIPPED
-      </option>
+              <option value="DELIVERED">DELIVERED</option>
 
-      <option value="DELIVERED">
-        DELIVERED
-      </option>
+              <option value="CANCELLED">CANCELLED</option>
+            </select>
 
-      <option value="CANCELLED">
-        CANCELLED
-      </option>
+            {/* CHEVRON */}
 
-    </select>
-
-
-
-    {/* CHEVRON */}
-
-    <div
-      className="
+            <div
+              className="
         pointer-events-none
 
         absolute
@@ -379,36 +261,28 @@ console.log(order);
         text-current
         opacity-70
       "
-    >
-
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={2}
-        stroke="currentColor"
-        className="
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="
           h-4
           w-4
         "
-      >
-
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="m19 9-7 7-7-7"
-        />
-
-      </svg>
-
-    </div>
-
-  </div>
-
-</div>
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m19 9-7 7-7-7"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
-
-
 
       {/* GRID */}
 
@@ -421,7 +295,6 @@ console.log(order);
           xl:grid-cols-3
         "
       >
-
         {/* LEFT */}
 
         <div
@@ -431,11 +304,10 @@ console.log(order);
             xl:col-span-2
           "
         >
+          {/* ORDER ITEMS */}
 
-       {/* ORDER ITEMS */}
-
-<div
-  className="
+          <div
+            className="
     rounded-3xl
 
     border
@@ -445,12 +317,11 @@ console.log(order);
 
     p-6
   "
->
+          >
+            {/* HEADER */}
 
-  {/* HEADER */}
-
-  <div
-    className="
+            <div
+              className="
       mb-6
 
       flex
@@ -459,18 +330,16 @@ console.log(order);
       gap-4
       flex-wrap
     "
-  >
-
-    <div
-      className="
+            >
+              <div
+                className="
         flex
         items-center
         gap-3
       "
-    >
-
-      <div
-        className="
+              >
+                <div
+                  className="
           flex
           h-10
           w-10
@@ -484,44 +353,35 @@ console.log(order);
 
           text-brand
         "
-      >
+                >
+                  <Package size={18} />
+                </div>
 
-        <Package size={18} />
-
-      </div>
-
-
-
-      <div>
-
-        <h2
-          className="
+                <div>
+                  <h2
+                    className="
             text-lg
             font-semibold
 
             text-text-primary
           "
-        >
-          Order Items
-        </h2>
+                  >
+                    Order Items
+                  </h2>
 
-        <p
-          className="
+                  <p
+                    className="
             text-sm
             text-text-secondary
           "
-        >
-          Products included in this order
-        </p>
+                  >
+                    Products included in this order
+                  </p>
+                </div>
+              </div>
 
-      </div>
-
-    </div>
-
-
-
-    <div
-      className="
+              <div
+                className="
         rounded-2xl
 
         bg-brand/10
@@ -534,35 +394,23 @@ console.log(order);
 
         text-brand
       "
-    >
-      {order.items?.length}
-      {" "}
-      item
-      {order.items?.length > 1
-        ? "s"
-        : ""}
-    </div>
+              >
+                {order.items?.length} item
+                {order.items?.length > 1 ? "s" : ""}
+              </div>
+            </div>
 
-  </div>
+            {/* ITEMS */}
 
-
-
-  {/* ITEMS */}
-
-  <div
-    className="
+            <div
+              className="
       space-y-4
     "
-  >
-
-    {
-      order.items.map(
-        (item) => (
-
-          <div
-            key={item._id}
-
-            className="
+            >
+              {order.items.map((item) => (
+                <div
+                  key={item._id}
+                  className="
               flex
               gap-4
 
@@ -575,22 +423,18 @@ console.log(order);
 
               p-4
             "
-          >
+                >
+                  {/* IMAGE */}
 
-            {/* IMAGE */}
-
-            <div
-              className="
+                  <div
+                    className="
                 shrink-0
               "
-            >
-
-              <img
-                src={item.image}
-
-                alt={item.name}
-
-                className="
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="
                   h-24
                   w-24
 
@@ -598,44 +442,38 @@ console.log(order);
 
                   object-cover
                 "
-              />
+                    />
+                  </div>
 
-            </div>
+                  {/* CONTENT */}
 
-
-
-            {/* CONTENT */}
-
-            <div
-              className="
+                  <div
+                    className="
                 flex-1
                 min-w-0
               "
-            >
+                  >
+                    {/* TOP */}
 
-              {/* TOP */}
-
-              <div
-                className="
+                    <div
+                      className="
                   flex
                   items-start
                   justify-between
                   gap-4
                 "
-              >
+                    >
+                      {/* LEFT */}
 
-                {/* LEFT */}
-
-                <div
-                  className="
+                      <div
+                        className="
                     min-w-0
                   "
-                >
+                      >
+                        {/* NAME */}
 
-                  {/* NAME */}
-
-                  <h3
-                    className="
+                        <h3
+                          className="
                       truncate
 
                       text-sm
@@ -643,118 +481,86 @@ console.log(order);
 
                       text-text-primary
                     "
-                  >
-                    {item.name}
-                  </h3>
+                        >
+                          {item.name}
+                        </h3>
 
+                        {/* SKU */}
 
-
-                  {/* SKU */}
-
-                  {
-                    item.variant?.sku && (
-
-                      <p
-                        className="
+                        {item.variant?.sku && (
+                          <p
+                            className="
                           mt-1
 
                           text-xs
 
                           text-text-secondary
                         "
-                      >
-
-                        SKU:
-                        {" "}
-
-                        <span
-                          className="
+                          >
+                            SKU:{" "}
+                            <span
+                              className="
                             font-medium
 
                             text-text-primary
                           "
-                        >
-                          {item.variant.sku}
-                        </span>
+                            >
+                              {item.variant.sku}
+                            </span>
+                          </p>
+                        )}
+                      </div>
 
-                      </p>
+                      {/* PRICE */}
 
-                    )
-                  }
-
-                </div>
-
-
-
-                {/* PRICE */}
-
-                <div
-                  className="
+                      <div
+                        className="
                     shrink-0
                     text-right
                   "
-                >
-
-                  <p
-                    className="
+                      >
+                        <p
+                          className="
                       text-base
                       font-bold
 
                       text-text-primary
                     "
-                  >
-                    ₹
-                    {item.price?.toLocaleString()}
-                  </p>
+                        >
+                          ₹{item.price?.toLocaleString()}
+                        </p>
 
-
-
-                  <p
-                    className="
+                        <p
+                          className="
                       mt-1
 
                       text-xs
 
                       text-text-secondary
                     "
-                  >
-                    Qty:
-                    {" "}
-                    {item.quantity}
-                  </p>
+                        >
+                          Qty: {item.quantity}
+                        </p>
+                      </div>
+                    </div>
 
-                </div>
+                    {/* VARIANTS */}
 
-              </div>
-
-
-
-              {/* VARIANTS */}
-
-              {
-                (
-                  item.variant?.size ||
-
-                  item.variant?.material
-                ) && (
-
-                  <div
-                    className="
+                    {(item.variant?.size || item.variant?.material) && (
+                      <div
+                        className="
                       mt-4
 
                       flex
                       flex-wrap
                       gap-2
                     "
-                  >
+                      >
+                        {/* SIZE */}
 
-                    {/* SIZE */}
-
-                    {
-                      item.variant?.size && (
-
-                        <div
-                          className="
+                        {item.variant?.size && (
+                          <div
+                            className="
                             rounded-full
 
                             border
@@ -770,27 +576,16 @@ console.log(order);
 
                             text-text-primary
                           "
-                        >
+                          >
+                            Size: {item.variant.size}
+                          </div>
+                        )}
 
-                          Size:
-                          {" "}
+                        {/* MATERIAL */}
 
-                          {item.variant.size}
-
-                        </div>
-
-                      )
-                    }
-
-
-
-                    {/* MATERIAL */}
-
-                    {
-                      item.variant?.material && (
-
-                        <div
-                          className="
+                        {item.variant?.material && (
+                          <div
+                            className="
                             rounded-full
 
                             border
@@ -806,40 +601,22 @@ console.log(order);
 
                             text-text-primary
                           "
-                        >
-
-                          {
-                            item.variant.material
-                          }
-
-                        </div>
-
-                      )
-                    }
-
+                          >
+                            {item.variant.material}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-
-                )
-              }
-
+                </div>
+              ))}
             </div>
-
           </div>
 
-        )
-      )
-    }
+          {/* SHIPPING */}
 
-  </div>
-
-</div>
-
-
-
-        {/* SHIPPING */}
-
-<div
-  className="
+          <div
+            className="
     rounded-3xl
 
     border
@@ -849,22 +626,20 @@ console.log(order);
 
     p-6
   "
->
+          >
+            {/* HEADER */}
 
-  {/* HEADER */}
-
-  <div
-    className="
+            <div
+              className="
       mb-6
 
       flex
       items-center
       gap-3
     "
-  >
-
-    <div
-      className="
+            >
+              <div
+                className="
         flex
         h-10
         w-10
@@ -878,54 +653,44 @@ console.log(order);
 
         text-brand
       "
-    >
+              >
+                <Truck size={18} />
+              </div>
 
-      <Truck size={18} />
-
-    </div>
-
-
-
-    <div>
-
-      <h2
-        className="
+              <div>
+                <h2
+                  className="
           text-lg
           font-semibold
 
           text-text-primary
         "
-      >
-        Shipping Address
-      </h2>
+                >
+                  Shipping Address
+                </h2>
 
-      <p
-        className="
+                <p
+                  className="
           text-sm
           text-text-secondary
         "
-      >
-        Delivery information
-      </p>
+                >
+                  Delivery information
+                </p>
+              </div>
+            </div>
 
-    </div>
+            {/* CONTENT */}
 
-  </div>
-
-
-
-  {/* CONTENT */}
-
-  <div
-    className="
+            <div
+              className="
       space-y-4
     "
-  >
+            >
+              {/* RECIPIENT */}
 
-    {/* RECIPIENT */}
-
-    <div
-      className="
+              <div
+                className="
         rounded-2xl
 
         border
@@ -936,10 +701,9 @@ console.log(order);
         px-4
         py-3
       "
-    >
-
-      <p
-        className="
+              >
+                <p
+                  className="
           mb-1
 
           text-[11px]
@@ -949,30 +713,24 @@ console.log(order);
 
           text-text-secondary
         "
-      >
-        Recipient
-      </p>
+                >
+                  Recipient
+                </p>
 
-      <p
-        className="
+                <p
+                  className="
           font-medium
           text-text-primary
         "
-      >
-        {
-          order.shippingAddress
-            ?.fullName
-        }
-      </p>
+                >
+                  {order.shippingAddress?.fullName}
+                </p>
+              </div>
 
-    </div>
+              {/* PHONE */}
 
-
-
-    {/* PHONE */}
-
-    <div
-      className="
+              <div
+                className="
         rounded-2xl
 
         border
@@ -983,10 +741,9 @@ console.log(order);
         px-4
         py-3
       "
-    >
-
-      <p
-        className="
+              >
+                <p
+                  className="
           mb-1
 
           text-[11px]
@@ -996,30 +753,24 @@ console.log(order);
 
           text-text-secondary
         "
-      >
-        Contact Number
-      </p>
+                >
+                  Contact Number
+                </p>
 
-      <p
-        className="
+                <p
+                  className="
           font-medium
           text-text-primary
         "
-      >
-        {
-          order.shippingAddress
-            ?.phone
-        }
-      </p>
+                >
+                  {order.shippingAddress?.phone}
+                </p>
+              </div>
 
-    </div>
+              {/* ADDRESS */}
 
-
-
-    {/* ADDRESS */}
-
-    <div
-      className="
+              <div
+                className="
         rounded-2xl
 
         border
@@ -1030,10 +781,9 @@ console.log(order);
         px-4
         py-3
       "
-    >
-
-      <p
-        className="
+              >
+                <p
+                  className="
           mb-2
 
           text-[11px]
@@ -1043,14 +793,12 @@ console.log(order);
 
           text-text-secondary
         "
-      >
-        Address
-      </p>
+                >
+                  Address
+                </p>
 
-
-
-      <div
-        className="
+                <div
+                  className="
           space-y-1
 
           text-sm
@@ -1058,104 +806,38 @@ console.log(order);
 
           text-text-primary
         "
-      >
+                >
+                  <p>{order.shippingAddress?.addressLine1}</p>
 
-        <p>
-          {
-            order.shippingAddress
-              ?.addressLine1
-          }
-        </p>
+                  {order.shippingAddress?.addressLine2 && (
+                    <p>{order.shippingAddress?.addressLine2}</p>
+                  )}
 
+                  <p>
+                    {order.shippingAddress?.city},{" "}
+                    {order.shippingAddress?.state}
+                  </p>
 
+                  <p>PIN: {order.shippingAddress?.pincode}</p>
 
-        {
-          order.shippingAddress
-            ?.addressLine2 && (
-
-            <p>
-              {
-                order.shippingAddress
-                  ?.addressLine2
-              }
-            </p>
-
-          )
-        }
-
-
-
-        <p>
-
-          {
-            order.shippingAddress
-              ?.city
-          }
-
-          ,
-          {" "}
-
-          {
-            order.shippingAddress
-              ?.state
-          }
-
-        </p>
-
-
-
-        <p>
-
-          PIN:
-          {" "}
-
-          {
-            order.shippingAddress
-              ?.pincode
-          }
-
-        </p>
-
-
-
-        {
-          order.shippingAddress
-            ?.landmark && (
-
-            <p
-              className="
+                  {order.shippingAddress?.landmark && (
+                    <p
+                      className="
                 text-text-secondary
               "
-            >
+                    >
+                      Landmark: {order.shippingAddress?.landmark}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
 
-              Landmark:
-              {" "}
+          {/* ORDER TIMELINE */}
 
-              {
-                order.shippingAddress
-                  ?.landmark
-              }
-
-            </p>
-
-          )
-        }
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-
-
-{/* ORDER TIMELINE */}
-
-<div
-  className="
+          <div
+            className="
     rounded-3xl
 
     border
@@ -1165,22 +847,20 @@ console.log(order);
 
     p-6
   "
->
+          >
+            {/* HEADER */}
 
-  {/* HEADER */}
-
-  <div
-    className="
+            <div
+              className="
       mb-8
 
       flex
       items-center
       gap-3
     "
-  >
-
-    <div
-      className="
+            >
+              <div
+                className="
         flex
         h-10
         w-10
@@ -1194,109 +874,86 @@ console.log(order);
 
         text-brand
       "
-    >
-
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={2}
-        stroke="currentColor"
-        className="
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="
           h-5
           w-5
         "
-      >
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v6l4 2"
+                  />
+                </svg>
+              </div>
 
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 6v6l4 2"
-        />
-
-      </svg>
-
-    </div>
-
-
-
-    <div>
-
-      <h2
-        className="
+              <div>
+                <h2
+                  className="
           text-lg
           font-semibold
 
           text-text-primary
         "
-      >
-        Order Timeline
-      </h2>
+                >
+                  Order Timeline
+                </h2>
 
-      <p
-        className="
+                <p
+                  className="
           text-sm
           text-text-secondary
         "
-      >
-        Track order lifecycle & activity
-      </p>
+                >
+                  Track order lifecycle & activity
+                </p>
+              </div>
+            </div>
 
-    </div>
+            {/* TIMELINE */}
 
-  </div>
-
-
-
-  {/* TIMELINE */}
-
-  <div
-    className="
+            <div
+              className="
       relative
 
       space-y-8
     "
-  >
+            >
+              {order.statusHistory?.map((event, index) => {
+                const isLast = index === order.statusHistory.length - 1;
 
-    {
-      order.statusHistory?.map(
-        (event, index) => {
-
-          const isLast =
-            index ===
-            order.statusHistory.length - 1;
-
-
-
-          return (
-
-            <div
-              key={index}
-
-              className="
+                return (
+                  <div
+                    key={index}
+                    className="
                 relative
 
                 flex
                 gap-4
               "
-            >
+                  >
+                    {/* LEFT SIDE */}
 
-              {/* LEFT SIDE */}
-
-              <div
-                className="
+                    <div
+                      className="
                   relative
 
                   flex
                   flex-col
                   items-center
                 "
-              >
+                    >
+                      {/* DOT */}
 
-                {/* DOT */}
-
-                <div
-                  className={`
+                      <div
+                        className={`
                     z-10
 
                     h-4
@@ -1308,40 +965,24 @@ console.log(order);
                     ring-surface
 
                     ${
-                      event.status ===
-                      "DELIVERED"
-
+                      event.status === "DELIVERED"
                         ? "bg-[#0F9F61]"
-
-                        : event.status ===
-                          "CANCELLED"
-
-                        ? "bg-[#E11D48]"
-
-                        : event.status ===
-                          "SHIPPED"
-
-                        ? "bg-[#2563EB]"
-
-                        : event.status ===
-                          "CONFIRMED"
-
-                        ? "bg-[#7C3AED]"
-
-                        : "bg-[#D97706]"
+                        : event.status === "CANCELLED"
+                          ? "bg-[#E11D48]"
+                          : event.status === "SHIPPED"
+                            ? "bg-[#2563EB]"
+                            : event.status === "CONFIRMED"
+                              ? "bg-[#7C3AED]"
+                              : "bg-[#D97706]"
                     }
                   `}
-                />
+                      />
 
+                      {/* LINE */}
 
-
-                {/* LINE */}
-
-                {
-                  !isLast && (
-
-                    <div
-                      className="
+                      {!isLast && (
+                        <div
+                          className="
                         mt-1
 
                         h-full
@@ -1349,19 +990,14 @@ console.log(order);
 
                         bg-border
                       "
-                    />
+                        />
+                      )}
+                    </div>
 
-                  )
-                }
+                    {/* CONTENT */}
 
-              </div>
-
-
-
-              {/* CONTENT */}
-
-              <div
-                className="
+                    <div
+                      className="
                   flex-1
 
                   rounded-2xl
@@ -1374,128 +1010,92 @@ console.log(order);
                   px-4
                   py-4
                 "
-              >
+                    >
+                      {/* TOP */}
 
-                {/* TOP */}
-
-                <div
-                  className="
+                      <div
+                        className="
                     flex
                     items-start
                     justify-between
                     gap-4
                     flex-wrap
                   "
-                >
-
-                  <div>
-
-                    <p
-                      className="
+                      >
+                        <div>
+                          <p
+                            className="
                         text-sm
                         font-semibold
 
                         text-text-primary
                       "
-                    >
-                      {event.status}
-                    </p>
+                          >
+                            {event.status}
+                          </p>
 
-
-
-                    <p
-                      className="
+                          <p
+                            className="
                         mt-1
 
                         text-xs
 
                         text-text-secondary
                       "
-                    >
-                      Status updated
-                    </p>
+                          >
+                            Status updated
+                          </p>
+                        </div>
 
-                  </div>
-
-
-
-                  <div
-                    className="
+                        <div
+                          className="
                       text-right
                     "
-                  >
-
-                    <p
-                      className="
+                        >
+                          <p
+                            className="
                         text-sm
                         font-medium
 
                         text-text-primary
                       "
-                    >
-                      {
+                          >
+                            {new Date(event.changedAt).toLocaleDateString(
+                              "en-IN",
+                              {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )}
+                          </p>
 
-                        new Date(
-                          event.changedAt
-                        ).toLocaleDateString(
-                          "en-IN",
-                          {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          }
-                        )
-
-                      }
-                    </p>
-
-
-
-                    <p
-                      className="
+                          <p
+                            className="
                         mt-1
 
                         text-xs
 
                         text-text-secondary
                       "
-                    >
-                      {
-
-                        new Date(
-                          event.changedAt
-                        ).toLocaleTimeString(
-                          "en-IN",
-                          {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          }
-                        )
-
-                      }
-                    </p>
-
+                          >
+                            {new Date(event.changedAt).toLocaleTimeString(
+                              "en-IN",
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              },
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-
-                </div>
-
-              </div>
-
+                );
+              })}
             </div>
-
-          );
-
-        }
-      )
-    }
-
-  </div>
-
-</div>
-
+          </div>
         </div>
-
-
 
         {/* RIGHT */}
 
@@ -1504,11 +1104,10 @@ console.log(order);
             space-y-6
           "
         >
+          {/* CUSTOMER */}
 
-       {/* CUSTOMER */}
-
-<div
-  className="
+          <div
+            className="
     rounded-3xl
 
     border
@@ -1518,22 +1117,20 @@ console.log(order);
 
     p-6
   "
->
+          >
+            {/* HEADER */}
 
-  {/* HEADER */}
-
-  <div
-    className="
+            <div
+              className="
       mb-6
 
       flex
       items-center
       gap-3
     "
-  >
-
-    <div
-      className="
+            >
+              <div
+                className="
         flex
         h-10
         w-10
@@ -1547,54 +1144,44 @@ console.log(order);
 
         text-brand
       "
-    >
+              >
+                <User size={18} />
+              </div>
 
-      <User size={18} />
-
-    </div>
-
-
-
-    <div>
-
-      <h2
-        className="
+              <div>
+                <h2
+                  className="
           text-lg
           font-semibold
 
           text-text-primary
         "
-      >
-        Customer
-      </h2>
+                >
+                  Customer
+                </h2>
 
-      <p
-        className="
+                <p
+                  className="
           text-sm
           text-text-secondary
         "
-      >
-        Customer information
-      </p>
+                >
+                  Customer information
+                </p>
+              </div>
+            </div>
 
-    </div>
+            {/* INFO */}
 
-  </div>
-
-
-
-  {/* INFO */}
-
-  <div
-    className="
+            <div
+              className="
       space-y-4
     "
-  >
+            >
+              {/* NAME */}
 
-    {/* NAME */}
-
-    <div
-      className="
+              <div
+                className="
         rounded-2xl
 
         border
@@ -1605,10 +1192,9 @@ console.log(order);
         px-4
         py-3
       "
-    >
-
-      <p
-        className="
+              >
+                <p
+                  className="
           mb-1
 
           text-[11px]
@@ -1618,27 +1204,24 @@ console.log(order);
 
           text-text-secondary
         "
-      >
-        Full Name
-      </p>
+                >
+                  Full Name
+                </p>
 
-      <p
-        className="
+                <p
+                  className="
           font-medium
           text-text-primary
         "
-      >
-        {order.customerName}
-      </p>
+                >
+                  {order.customerName}
+                </p>
+              </div>
 
-    </div>
+              {/* EMAIL */}
 
-
-
-    {/* EMAIL */}
-
-    <div
-      className="
+              <div
+                className="
         rounded-2xl
 
         border
@@ -1649,10 +1232,9 @@ console.log(order);
         px-4
         py-3
       "
-    >
-
-      <p
-        className="
+              >
+                <p
+                  className="
           mb-1
 
           text-[11px]
@@ -1662,30 +1244,27 @@ console.log(order);
 
           text-text-secondary
         "
-      >
-        Email Address
-      </p>
+                >
+                  Email Address
+                </p>
 
-      <p
-        className="
+                <p
+                  className="
           break-all
 
           font-medium
 
           text-brand
         "
-      >
-        {order.customerEmail}
-      </p>
+                >
+                  {order.customerEmail}
+                </p>
+              </div>
 
-    </div>
+              {/* PHONE */}
 
-
-
-    {/* PHONE */}
-
-    <div
-      className="
+              <div
+                className="
         rounded-2xl
 
         border
@@ -1696,10 +1275,9 @@ console.log(order);
         px-4
         py-3
       "
-    >
-
-      <p
-        className="
+              >
+                <p
+                  className="
           mb-1
 
           text-[11px]
@@ -1709,31 +1287,26 @@ console.log(order);
 
           text-text-secondary
         "
-      >
-        Phone Number
-      </p>
+                >
+                  Phone Number
+                </p>
 
-      <p
-        className="
+                <p
+                  className="
           font-medium
           text-text-primary
         "
-      >
-        {order.customerPhone}
-      </p>
+                >
+                  {order.customerPhone}
+                </p>
+              </div>
+            </div>
+          </div>
 
-    </div>
+          {/* PAYMENT */}
 
-  </div>
-
-</div>
-
-
-
-{/* PAYMENT */}
-
-<div
-  className="
+          <div
+            className="
     rounded-3xl
 
     border
@@ -1743,22 +1316,20 @@ console.log(order);
 
     p-6
   "
->
+          >
+            {/* HEADER */}
 
-  {/* HEADER */}
-
-  <div
-    className="
+            <div
+              className="
       mb-6
 
       flex
       items-center
       gap-3
     "
-  >
-
-    <div
-      className="
+            >
+              <div
+                className="
         flex
         h-10
         w-10
@@ -1772,54 +1343,44 @@ console.log(order);
 
         text-brand
       "
-    >
+              >
+                <CreditCard size={18} />
+              </div>
 
-      <CreditCard size={18} />
-
-    </div>
-
-
-
-    <div>
-
-      <h2
-        className="
+              <div>
+                <h2
+                  className="
           text-lg
           font-semibold
 
           text-text-primary
         "
-      >
-        Payment
-      </h2>
+                >
+                  Payment
+                </h2>
 
-      <p
-        className="
+                <p
+                  className="
           text-sm
           text-text-secondary
         "
-      >
-        Payment summary & pricing details
-      </p>
+                >
+                  Payment summary & pricing details
+                </p>
+              </div>
+            </div>
 
-    </div>
+            {/* CONTENT */}
 
-  </div>
-
-
-
-  {/* CONTENT */}
-
-  <div
-    className="
+            <div
+              className="
       space-y-4
     "
-  >
+            >
+              {/* PAYMENT METHOD */}
 
-    {/* PAYMENT METHOD */}
-
-    <div
-      className="
+              <div
+                className="
         rounded-2xl
 
         border
@@ -1830,10 +1391,9 @@ console.log(order);
         px-4
         py-3
       "
-    >
-
-      <p
-        className="
+              >
+                <p
+                  className="
           mb-1
 
           text-[11px]
@@ -1843,27 +1403,24 @@ console.log(order);
 
           text-text-secondary
         "
-      >
-        Payment Method
-      </p>
+                >
+                  Payment Method
+                </p>
 
-      <p
-        className="
+                <p
+                  className="
           font-medium
           text-text-primary
         "
-      >
-        {order.paymentMethod}
-      </p>
+                >
+                  {order.paymentMethod}
+                </p>
+              </div>
 
-    </div>
+              {/* PAYMENT STATUS */}
 
-
-
-    {/* PAYMENT STATUS */}
-
-    <div
-      className="
+              <div
+                className="
         rounded-2xl
 
         border
@@ -1874,10 +1431,9 @@ console.log(order);
         px-4
         py-3
       "
-    >
-
-      <p
-        className="
+              >
+                <p
+                  className="
           mb-2
 
           text-[11px]
@@ -1887,14 +1443,12 @@ console.log(order);
 
           text-text-secondary
         "
-      >
-        Payment Status
-      </p>
+                >
+                  Payment Status
+                </p>
 
-
-
-      <span
-        className={`
+                <span
+                  className={`
           inline-flex
           items-center
 
@@ -1907,38 +1461,24 @@ console.log(order);
           font-semibold
 
           ${
-            order.paymentStatus ===
-            "PAID"
-
+            order.paymentStatus === "PAID"
               ? "bg-[#EEF8F1] text-[#0F9F61]"
-
-              : order.paymentStatus ===
-                "FAILED"
-
-              ? "bg-[#FFF1F2] text-[#E11D48]"
-
-              : order.paymentStatus ===
-                "REFUNDED"
-
-              ? "bg-[#F3F4F6] text-[#6B7280]"
-
-              : "bg-[#FFF5E8] text-[#D97706]"
+              : order.paymentStatus === "FAILED"
+                ? "bg-[#FFF1F2] text-[#E11D48]"
+                : order.paymentStatus === "REFUNDED"
+                  ? "bg-[#F3F4F6] text-[#6B7280]"
+                  : "bg-[#FFF5E8] text-[#D97706]"
           }
         `}
-      >
+                >
+                  {order.paymentStatus}
+                </span>
+              </div>
 
-        {order.paymentStatus}
+              {/* PRICE BREAKDOWN */}
 
-      </span>
-
-    </div>
-
-
-
-    {/* PRICE BREAKDOWN */}
-
-    <div
-      className="
+              <div
+                className="
         rounded-2xl
 
         border
@@ -1949,22 +1489,19 @@ console.log(order);
         px-4
         py-4
       "
-    >
-
-      <div
-        className="
+              >
+                <div
+                  className="
           mb-4
 
           flex
           items-center
           justify-between
         "
-      >
-
-        <div>
-
-          <p
-            className="
+                >
+                  <div>
+                    <p
+                      className="
               text-[11px]
               font-medium
               uppercase
@@ -1972,28 +1509,25 @@ console.log(order);
 
               text-text-secondary
             "
-          >
-            Price Breakdown
-          </p>
+                    >
+                      Price Breakdown
+                    </p>
 
-          <p
-            className="
+                    <p
+                      className="
               mt-1
 
               text-sm
 
               text-text-secondary
             "
-          >
-            Detailed order pricing
-          </p>
+                    >
+                      Detailed order pricing
+                    </p>
+                  </div>
 
-        </div>
-
-
-
-        <div
-          className="
+                  <div
+                    className="
             rounded-2xl
 
             bg-brand/10
@@ -2006,215 +1540,182 @@ console.log(order);
 
             text-brand
           "
-        >
-          {order.items?.length}
-          {" "}
-          item
-          {order.items?.length > 1
-            ? "s"
-            : ""}
-        </div>
+                  >
+                    {order.items?.length} item
+                    {order.items?.length > 1 ? "s" : ""}
+                  </div>
+                </div>
 
-      </div>
+                {/* BREAKDOWN ROWS */}
 
-
-
-      {/* BREAKDOWN ROWS */}
-
-      <div
-        className="
+                <div
+                  className="
           space-y-3
         "
-      >
+                >
+                  {/* SUBTOTAL */}
 
-        {/* SUBTOTAL */}
-
-        <div
-          className="
+                  <div
+                    className="
             flex
             items-center
             justify-between
           "
-        >
-
-          <span
-            className="
+                  >
+                    <span
+                      className="
               text-sm
               text-text-secondary
             "
-          >
-            Subtotal
-          </span>
+                    >
+                      Subtotal
+                    </span>
 
-          <span
-            className="
+                    <span
+                      className="
               text-sm
               font-medium
 
               text-text-primary
             "
-          >
-            ₹
-            {order.itemsPrice?.toLocaleString()}
-          </span>
+                    >
+                      ₹{order.itemsPrice?.toLocaleString()}
+                    </span>
+                  </div>
 
-        </div>
+                  {/* SHIPPING */}
 
-
-
-        {/* SHIPPING */}
-
-        <div
-          className="
+                  <div
+                    className="
             flex
             items-center
             justify-between
           "
-        >
-
-          <span
-            className="
+                  >
+                    <span
+                      className="
               text-sm
               text-text-secondary
             "
-          >
-            Shipping
-          </span>
+                    >
+                      Shipping
+                    </span>
 
-          <span
-            className="
+                    <span
+                      className="
               text-sm
               font-medium
 
               text-text-primary
             "
-          >
-            ₹
-            {order.shippingPrice?.toLocaleString()}
-          </span>
+                    >
+                      ₹{order.shippingPrice?.toLocaleString()}
+                    </span>
+                  </div>
 
-        </div>
+                  {/* TAX */}
 
-
-
-        {/* TAX */}
-
-        <div
-          className="
+                  <div
+                    className="
             flex
             items-center
             justify-between
           "
-        >
-
-          <span
-            className="
+                  >
+                    <span
+                      className="
               text-sm
               text-text-secondary
             "
-          >
-            Tax
-          </span>
+                    >
+                      Tax
+                    </span>
 
-          <span
-            className="
+                    <span
+                      className="
               text-sm
               font-medium
 
               text-text-primary
             "
-          >
-            ₹
-            {order.taxPrice?.toLocaleString()}
-          </span>
+                    >
+                      ₹{order.taxPrice?.toLocaleString()}
+                    </span>
+                  </div>
 
-        </div>
+                  {/* DISCOUNT */}
 
-
-
-        {/* DISCOUNT */}
-
-        <div
-          className="
+                  <div
+                    className="
             flex
             items-center
             justify-between
           "
-        >
-
-          <span
-            className="
+                  >
+                    <span
+                      className="
               text-sm
               text-text-secondary
             "
-          >
-            Discount
-          </span>
+                    >
+                      Discount
+                    </span>
 
-          <span
-            className="
+                    <span
+                      className="
               text-sm
               font-medium
 
               text-[#0F9F61]
             "
-          >
-            - ₹0
-          </span>
+                    >
+                      - ₹0
+                    </span>
+                  </div>
 
-        </div>
+                  {/* DIVIDER */}
 
-
-
-        {/* DIVIDER */}
-
-        <div
-          className="
+                  <div
+                    className="
             border-t
             border-border
             pt-4
           "
-        >
-
-          <div
-            className="
+                  >
+                    <div
+                      className="
               flex
               items-end
               justify-between
             "
-          >
-
-            <div>
-
-              <p
-                className="
+                    >
+                      <div>
+                        <p
+                          className="
                   text-sm
                   font-semibold
 
                   text-text-primary
                 "
-              >
-                Grand Total
-              </p>
+                        >
+                          Grand Total
+                        </p>
 
-              <p
-                className="
+                        <p
+                          className="
                   mt-1
 
                   text-xs
 
                   text-text-secondary
                 "
-              >
-                Including all charges
-              </p>
+                        >
+                          Including all charges
+                        </p>
+                      </div>
 
-            </div>
-
-
-
-            <p
-              className="
+                      <p
+                        className="
                 text-2xl
                 font-bold
 
@@ -2222,28 +1723,20 @@ console.log(order);
 
                 text-text-primary
               "
-            >
-              ₹
-              {order.totalPrice?.toLocaleString()}
-            </p>
-
+                      >
+                        ₹{order.totalPrice?.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
 
           {/* SHIPPING & NOTES */}
 
-<div
-  className="
+          <div
+            className="
     rounded-3xl
 
     border
@@ -2253,33 +1746,28 @@ console.log(order);
 
     p-6
   "
->
-
-  <h2
-    className="
+          >
+            <h2
+              className="
       mb-6
 
       text-lg
       font-semibold
     "
-  >
-    Shipping & Notes
-  </h2>
+            >
+              Shipping & Notes
+            </h2>
 
-
-
-  <div
-    className="
+            <div
+              className="
       space-y-5
     "
-  >
+            >
+              {/* TRACKING */}
 
-    {/* TRACKING */}
-
-    <div>
-
-      <p
-        className="
+              <div>
+                <p
+                  className="
           mb-1
 
           text-xs
@@ -2289,12 +1777,12 @@ console.log(order);
 
           text-text-secondary
         "
-      >
-        Tracking Number
-      </p>
+                >
+                  Tracking Number
+                </p>
 
-      <div
-        className="
+                <div
+                  className="
           rounded-2xl
 
           border
@@ -2307,26 +1795,16 @@ console.log(order);
 
           text-sm
         "
-      >
-        {
+                >
+                  {order.trackingNumber || "Not assigned"}
+                </div>
+              </div>
 
-          order.trackingNumber ||
+              {/* SHIPPING CARRIER */}
 
-          "Not assigned"
-
-        }
-      </div>
-
-    </div>
-
-
-
-    {/* SHIPPING CARRIER */}
-
-    <div>
-
-      <p
-        className="
+              <div>
+                <p
+                  className="
           mb-1
 
           text-xs
@@ -2336,12 +1814,12 @@ console.log(order);
 
           text-text-secondary
         "
-      >
-        Shipping Carrier
-      </p>
+                >
+                  Shipping Carrier
+                </p>
 
-      <div
-        className="
+                <div
+                  className="
           rounded-2xl
 
           border
@@ -2354,26 +1832,16 @@ console.log(order);
 
           text-sm
         "
-      >
-        {
+                >
+                  {order.shippingCarrier || "Pending"}
+                </div>
+              </div>
 
-          order.shippingCarrier ||
+              {/* ADMIN NOTES */}
 
-          "Pending"
-
-        }
-      </div>
-
-    </div>
-
-
-
-    {/* ADMIN NOTES */}
-
-    <div>
-
-      <p
-        className="
+              <div>
+                <p
+                  className="
           mb-1
 
           text-xs
@@ -2383,12 +1851,12 @@ console.log(order);
 
           text-text-secondary
         "
-      >
-        Admin Notes
-      </p>
+                >
+                  Admin Notes
+                </p>
 
-      <div
-        className="
+                <div
+                  className="
           min-h-[100px]
 
           rounded-2xl
@@ -2404,28 +1872,14 @@ console.log(order);
           text-sm
           leading-relaxed
         "
-      >
-        {
-
-          order.adminNotes ||
-
-          "No notes added"
-
-        }
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
+                >
+                  {order.adminNotes || "No notes added"}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-
       </div>
-
     </div>
-
   );
-
 }

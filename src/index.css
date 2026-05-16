@@ -1,7 +1,10 @@
 @import "tailwindcss";
- 
 
 @import "@fontsource-variable/geist";
+
+@import "tw-animate-css";
+
+@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -146,36 +149,32 @@
 
   /* APP */
 
-  --bg:
-    22 18 21;
+--bg: 15 15 17;
 
   /* CARDS */
 
-  --surface:
-    33 27 31;
+--surface: 24 24 27;
 
-  /* INPUTS */
-
-  --surface-secondary:
-    42 35 40;
+/* input */
+--surface-secondary: 30 30 34;
 
   /* BORDERS */
 
-  --border:
-    oklch(1 0 0 / 10%);
+ --border: oklch(1 0 0 / 14%);
+
+
+ 
 
   /* TEXT */
 
   --text-primary:
     248 244 245;
 
-  --text-secondary:
-    188 174 180;
+ --text-secondary: 161 161 170;
 
   /* BRAND */
 
-  --brand:
-    145 45 65;
+--brand: 120 42 58;
 
   /* STATUS */
 

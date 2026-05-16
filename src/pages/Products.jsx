@@ -1,3 +1,29 @@
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import { Badge } from "@/components/ui/badge";
+
+import { Button } from "@/components/ui/button";
+
+import { Skeleton } from "@/components/ui/skeleton";
+
+import StatCard from "@/components/products/StatCard";
+
 import {
   AlertTriangle,
   LayoutGrid,
@@ -121,7 +147,7 @@ export default function Products() {
         rounded-full
 
         border
-        border-[#E8DADF]
+        border-border
 
         bg-[#F8EEF1]
 
@@ -131,7 +157,7 @@ export default function Products() {
         text-xs
         font-medium
 
-        text-[#6B1A2A]
+        text-brand
       "
           >
             Inventory Management
@@ -244,424 +270,41 @@ export default function Products() {
     xl:grid-cols-4
   "
       >
-        {/* TOTAL PRODUCTS */}
-        <div
-          className="
-      relative
-      overflow-hidden
-
-      rounded-[28px]
-
-      border
-      border-border
-
-      bg-surface
-
-      p-6
-
-      shadow-sm
-
-      transition
-      hover:-translate-y-1
-      hover:shadow-xl
-      hover:shadow-black/[0.03]
-    "
-        >
-          <div
-            className="
-        absolute
-        right-0
-        top-0
-
-        h-28
-        w-28
-
-        rounded-full
-
-        bg-[#F8EEF1]
-
-        blur-2xl
-      "
-          />
-
-          <div className="relative z-10">
-            <div
-              className="
-          flex
-          items-start
-          justify-between
-        "
-            >
-              <div>
-                <p
-                  className="
-              text-xs
-              font-medium
-              uppercase
-              tracking-wide
-
-              text-[#9CA3AF]
-            "
-                >
-                  Total Products
-                </p>
-
-                <h2
-                  className="
-              mt-4
-
-              text-4xl
-              font-bold
-              tracking-tight
-
-              text-text-primary
-            "
-                >
-                  {stats.totalProducts}
-                </h2>
-              </div>
-
-              <div
-                className="
-            flex
-            h-12
-            w-12
-
-            items-center
-            justify-center
-
-            rounded-2xl
-
-            bg-[#F8EEF1]
-
-            text-[#6B1A2A]
-          "
-              >
-                <Package size={20} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* LOW STOCK */}
-        <div
-          className="
-      relative
-      overflow-hidden
-
-      rounded-[28px]
-
-      border
-      border-border
-
-      bg-surface
-
-      p-6
-
-      shadow-sm
-
-      transition
-      hover:-translate-y-1
-      hover:shadow-xl
-      hover:shadow-black/[0.03]
-    "
-        >
-          <div
-            className="
-        absolute
-        right-0
-        top-0
-
-        h-28
-        w-28
-
-        rounded-full
-
-        bg-[#FFF5E8]
-
-        blur-2xl
-      "
-          />
-
-          <div className="relative z-10">
-            <div
-              className="
-          flex
-          items-start
-          justify-between
-        "
-            >
-              <div>
-                <p
-                  className="
-              text-xs
-              font-medium
-              uppercase
-              tracking-wide
-
-              text-[#9CA3AF]
-            "
-                >
-                  Low Stock
-                </p>
-
-                <h2
-                  className="
-              mt-4
-
-              text-4xl
-              font-bold
-              tracking-tight
-
-              text-text-primary
-            "
-                >
-                  {stats.lowStockProducts}
-                </h2>
-              </div>
-
-              <div
-                className="
-            flex
-            h-12
-            w-12
-
-            items-center
-            justify-center
-
-            rounded-2xl
-
-            bg-[#FFF5E8]
-
-            text-[#D97706]
-          "
-              >
-                <AlertTriangle size={20} />
-              </div>
-            </div>
-
-            {/* alert */}
-            <div
-              className="
-          mt-6
-          inline-flex
-          items-center
-
-          rounded-full
-
-          bg-[#FFF5E8]
-
-          px-3
-          py-1
-
-          text-xs
-          font-semibold
-
-          text-[#D97706]
-        "
-            >
-              Needs attention
-            </div>
-          </div>
-        </div>
-
-        {/* OUT OF STOCK */}
-        <div
-          className="
-      relative
-      overflow-hidden
-
-      rounded-[28px]
-
-      border
-      border-border
-
-      bg-surface
-
-      p-6
-
-      shadow-sm
-
-      transition
-      hover:-translate-y-1
-      hover:shadow-xl
-      hover:shadow-black/[0.03]
-    "
-        >
-          <div
-            className="
-        absolute
-        right-0
-        top-0
-
-        h-28
-        w-28
-
-        rounded-full
-
-        bg-[#FFF1F2]
-
-        blur-2xl
-      "
-          />
-
-          <div className="relative z-10">
-            <div
-              className="
-          flex
-          items-start
-          justify-between
-        "
-            >
-              <div>
-                <p
-                  className="
-              text-xs
-              font-medium
-              uppercase
-              tracking-wide
-
-              text-[#9CA3AF]
-            "
-                >
-                  Out of Stock
-                </p>
-
-                <h2
-                  className="
-              mt-4
-
-              text-4xl
-              font-bold
-              tracking-tight
-
-              text-text-primary
-            "
-                >
-                  {stats.outOfStockProducts}
-                </h2>
-              </div>
-
-              <div
-                className="
-            flex
-            h-12
-            w-12
-
-            items-center
-            justify-center
-
-            rounded-2xl
-
-            bg-[#FFF1F2]
-
-            text-[#E11D48]
-          "
-              >
-                <PackageX size={20} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CATEGORIES */}
-        <div
-          className="
-      relative
-      overflow-hidden
-
-      rounded-[28px]
-
-      border
-      border-border
-
-      bg-surface
-
-      p-6
-
-      shadow-sm
-
-      transition
-      hover:-translate-y-1
-      hover:shadow-xl
-      hover:shadow-black/[0.03]
-    "
-        >
-          <div
-            className="
-        absolute
-        right-0
-        top-0
-
-        h-28
-        w-28
-
-        rounded-full
-
-        bg-[#EEF6FF]
-
-        blur-2xl
-      "
-          />
-
-          <div className="relative z-10">
-            <div
-              className="
-          flex
-          items-start
-          justify-between
-        "
-            >
-              <div>
-                <p
-                  className="
-              text-xs
-              font-medium
-              uppercase
-              tracking-wide
-
-              text-[#9CA3AF]
-            "
-                >
-                  Categories
-                </p>
-
-                <h2
-                  className="
-              mt-4
-
-              text-4xl
-              font-bold
-              tracking-tight
-
-              text-text-primary
-            "
-                >
-                  {stats.totalCategories}
-                </h2>
-              </div>
-
-              <div
-                className="
-            flex
-            h-12
-            w-12
-
-            items-center
-            justify-center
-
-            rounded-2xl
-
-            bg-[#EEF6FF]
-
-            text-[#2563EB]
-          "
-              >
-                <LayoutGrid size={20} />
-              </div>
-            </div>
-          </div>
-        </div>
+        <StatCard
+          title="Total Products"
+          value={stats.totalProducts}
+          icon={Package}
+          glowColor="#F8EEF1"
+          iconBg="#F8EEF1"
+          iconColor="#6B1A2A"
+        />
+
+        <StatCard
+          title="Low Stock"
+          value={stats.lowStockProducts}
+          icon={AlertTriangle}
+          glowColor="#FFF5E8"
+          iconBg="#FFF5E8"
+          iconColor="#D97706"
+        />
+
+        <StatCard
+          title="Out of Stock"
+          value={stats.outOfStockProducts}
+          icon={PackageX}
+          glowColor="#FFF1F2"
+          iconBg="#FFF1F2"
+          iconColor="#E11D48"
+        />
+
+        <StatCard
+          title="Categories"
+          value={stats.totalCategories}
+          icon={LayoutGrid}
+          glowColor="#EEF6FF"
+          iconBg="#EEF6FF"
+          iconColor="#2563EB"
+        />
       </div>
 
       {/*FILTER BAR*/}
@@ -716,11 +359,11 @@ export default function Products() {
             top-1/2
             -translate-y-1/2
 
-            text-[#9CA3AF]
+            text-text-secondary
           "
               />
 
-              <input
+              <Input
                 value={search}
                 onChange={(e) => {
                   setPage(1);
@@ -729,173 +372,175 @@ export default function Products() {
                 }}
                 type="text"
                 placeholder="
-            Search products, materials or collections...
-          "
+    Search products, materials or collections...
+  "
                 className="
-            h-12
-            w-full
+    h-12
 
-            rounded-2xl
+    rounded-2xl
 
-            border
-            border-border
+    border-border
 
-            bg-surface-secondary
+    bg-surface-secondary
 
-            pl-11
-            pr-4
+    pl-11
+    pr-4
 
-            text-sm
-            text-text-primary
+    text-sm
+    text-text-primary
 
-            outline-none
+    placeholder:text-text-secondary
 
-            transition
-
-            placeholder:text-[#9CA3AF]
-
-            focus:border-[#D8C7CD]
-            focus:bg-surface
-          "
+    focus-visible:ring-0
+    focus-visible:border-[#D8C7CD]
+    focus-visible:bg-surface
+  "
               />
             </div>
 
             {/* CATEGORY */}
 
-            <select
+            <Select
               value={category}
-              onChange={(e) => {
+              onValueChange={(value) => {
                 setPage(1);
 
-                setCategory(e.target.value);
+                setCategory(value === "all" ? "" : value);
               }}
-              className="
-          h-12
-
-          rounded-2xl
-
-          border
-          border-border
-
-          bg-surface-secondary
-
-          px-4
-
-          text-sm
-          font-medium
-
-          text-text-primary
-
-          outline-none
-
-          transition
-
-          focus:border-[#D8C7CD]
-          focus:bg-surface
-        "
             >
-              <option value="">All Categories</option>
+              <SelectTrigger
+                className="
+      h-12
 
-              <option value="rings">Rings</option>
+      rounded-2xl
 
-              <option value="bracelets">Bracelets</option>
+      border-border
 
-              <option value="earrings">Earrings</option>
+      bg-surface-secondary
 
-              <option value="necklaces">Necklaces</option>
-            </select>
+      px-4
+
+      text-sm
+      font-medium
+      text-text-primary
+
+      focus:ring-2
+    focus:ring-[#7b1e2b]/20
+    "
+              >
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+
+                <SelectItem value="rings">Rings</SelectItem>
+
+                <SelectItem value="bracelets">Bracelets</SelectItem>
+
+                <SelectItem value="earrings">Earrings</SelectItem>
+
+                <SelectItem value="necklaces">Necklaces</SelectItem>
+              </SelectContent>
+            </Select>
 
             {/* MATERIAL */}
 
-            <select
-              value={material}
-              onChange={(e) => {
+            <Select
+              value={material || "all"}
+              onValueChange={(value) => {
                 setPage(1);
 
-                setMaterial(e.target.value);
+                setMaterial(value === "all" ? "" : value);
               }}
-              className="
-          h-12
-
-          rounded-2xl
-
-          border
-          border-border
-
-          bg-surface-secondary
-
-          px-4
-
-          text-sm
-          font-medium
-
-          text-text-primary
-
-          outline-none
-
-          transition
-
-          focus:border-[#D8C7CD]
-          focus:bg-surface
-        "
             >
-              <option value="">All Materials</option>
+              <SelectTrigger
+                className="
+      h-12
 
-              <option value="18K Gold">18K Gold</option>
+      rounded-2xl
 
-              <option value="22K Gold">22K Gold</option>
+      border-border
 
-              <option value="Silver">Silver</option>
+      bg-surface-secondary
 
-              <option value="Diamond">Diamond</option>
+      px-4
 
-              <option value="Rose Gold">Rose Gold</option>
+      text-sm
+      font-medium
 
-              <option value="White Gold">White Gold</option>
+      text-text-primary
 
-              <option value="Platinum">Platinum</option>
+      focus:ring-0
+      focus:border-border-[#D8C7CD]
+      focus:bg-surface
+    "
+              >
+                <SelectValue placeholder="All Materials" />
+              </SelectTrigger>
 
-              <option value="Gemstone">Gemstone</option>
-            </select>
+              <SelectContent>
+                <SelectItem value="all">All Materials</SelectItem>
+
+                <SelectItem value="18K Gold">18K Gold</SelectItem>
+
+                <SelectItem value="22K Gold">22K Gold</SelectItem>
+
+                <SelectItem value="Silver">Silver</SelectItem>
+
+                <SelectItem value="Diamond">Diamond</SelectItem>
+
+                <SelectItem value="Rose Gold">Rose Gold</SelectItem>
+
+                <SelectItem value="White Gold">White Gold</SelectItem>
+
+                <SelectItem value="Platinum">Platinum</SelectItem>
+
+                <SelectItem value="Gemstone">Gemstone</SelectItem>
+              </SelectContent>
+            </Select>
 
             {/* SORT */}
 
-            <select
+            <Select
               value={sort}
-              onChange={(e) => {
-                setSort(e.target.value);
+              onValueChange={(value) => {
+                setSort(value);
               }}
-              className="
-          h-12
-
-          rounded-2xl
-
-          border
-          border-border
-
-          bg-surface-secondary
-
-          px-4
-
-          text-sm
-          font-medium
-
-          text-text-primary
-
-          outline-none
-
-          transition
-
-          focus:border-[#D8C7CD]
-          focus:bg-surface
-        "
             >
-              <option value="-createdAt">Newest First</option>
+              <SelectTrigger
+                className="
+      h-12
 
-              <option value="price">Price Low to High</option>
+      rounded-2xl
 
-              <option value="-price">Price High to Low</option>
-            </select>
+      border-border
+
+      bg-surface-secondary
+
+      px-4
+
+      text-sm
+      font-medium
+
+      text-text-primary
+
+      focus:ring-0
+      focus:border-border-[#D8C7CD]
+      focus:bg-surface
+    "
+              >
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="-createdAt">Newest First</SelectItem>
+
+                <SelectItem value="price">Price Low to High</SelectItem>
+
+                <SelectItem value="-price">Price High to Low</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
@@ -917,34 +562,22 @@ export default function Products() {
       >
         <div className="overflow-x-auto">
           {loading ? (
-            <div
-              className="
-          flex
-          items-center
-          justify-center
-
-          py-24
-
-          text-sm
-          font-medium
-
-          text-text-secondary
-        "
-            >
-              Loading products...
+            <div className="space-y-4 p-6">
+              {[...Array(6)].map((_, index) => (
+                <Skeleton key={index} className="h-16 w-full rounded-2xl" />
+              ))}
             </div>
           ) : (
-            <table className="min-w-full border-collapse">
+            <Table>
               {/* HEAD */}
-              <thead>
-                <tr
+              <TableHeader>
+                <TableRow
                   className="
-              border-b
-              border-[#F1ECEE]
+
 
               bg-surface-secondary
 
-              text-left
+              hover:bg-surface-secondary
             "
                 >
                   {[
@@ -955,7 +588,7 @@ export default function Products() {
                     "Stock",
                     "Status",
                   ].map((heading) => (
-                    <th
+                    <TableHead
                       key={heading}
                       className="
                   px-6
@@ -966,14 +599,14 @@ export default function Products() {
                   uppercase
                   tracking-[0.14em]
 
-                  text-[#9CA3AF]
+                  text-text-secondary
                 "
                     >
                       {heading}
-                    </th>
+                    </TableHead>
                   ))}
 
-                  <th
+                  <TableHead
                     className="
                 px-6
                 py-5
@@ -985,38 +618,35 @@ export default function Products() {
                 uppercase
                 tracking-[0.14em]
 
-                text-[#9CA3AF]
+                text-text-secondary
               "
                   >
                     Actions
-                  </th>
-                </tr>
-              </thead>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
 
               {/* BODY */}
-              <tbody>
+              <TableBody>
                 {products.map((product) => {
                   return (
-                    <tr
-                      onClick={() => navigate(`/admin/products/${product._id}`)}
+                    <TableRow
                       key={product._id}
+                      onClick={() => navigate(`/admin/products/${product._id}`)}
                       className="
-  cursor-pointer
+                  cursor-pointer
 
-  border-b
-  border-[#F5F1F2]
 
-  transition-all
-  duration-200
+                  dark:border-white/[0.06]
 
-  hover:bg-surface-secondary
-  hover:shadow-[inset_4px_0_0_#6B1A2A]
+                  transition-colors
+                  duration-200
 
-  active:scale-[0.998]
-"
+                  hover:bg-surface-secondary
+                "
                     >
                       {/* PRODUCT */}
-                      <td className="px-6 py-5">
+                      <TableCell className="px-6 py-5">
                         <div
                           className="
                       flex
@@ -1036,7 +666,7 @@ export default function Products() {
                         rounded-2xl
 
                         border
-                        border-[#F1ECEE]
+                        border-border
 
                         object-cover
                       "
@@ -1060,17 +690,17 @@ export default function Products() {
 
                           text-xs
 
-                          text-[#8A8F98]
+                          text-text-secondary
                         "
                             >
                               #{product._id.slice(-6)}
                             </p>
                           </div>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* CATEGORY */}
-                      <td
+                      <TableCell
                         className="
                     px-6
                     py-5
@@ -1082,10 +712,10 @@ export default function Products() {
                   "
                       >
                         {product.category}
-                      </td>
+                      </TableCell>
 
                       {/* SKU */}
-                      <td
+                      <TableCell
                         className="
                     px-6
                     py-5
@@ -1096,10 +726,10 @@ export default function Products() {
                   "
                       >
                         {product.sku || `SKU-${product._id.slice(-6)}`}
-                      </td>
+                      </TableCell>
 
                       {/* PRICE */}
-                      <td
+                      <TableCell
                         className="
                     px-6
                     py-5
@@ -1111,10 +741,10 @@ export default function Products() {
                   "
                       >
                         ₹{product.price.toLocaleString()}
-                      </td>
+                      </TableCell>
 
                       {/* STOCK */}
-                      <td
+                      <TableCell
                         className="
                     px-6
                     py-5
@@ -1125,10 +755,10 @@ export default function Products() {
                   "
                       >
                         {product.totalStock}
-                      </td>
+                      </TableCell>
 
                       {/* STATUS */}
-                      <td className="px-6 py-5">
+                      <TableCell className="px-6 py-5">
                         <div
                           className="
                       flex
@@ -1137,9 +767,8 @@ export default function Products() {
                     "
                         >
                           {/* BUSINESS STATUS */}
-                          <span
+                          <Badge
                             className={`
-                        inline-flex
                         w-fit
 
                         rounded-full
@@ -1149,6 +778,8 @@ export default function Products() {
 
                         text-[11px]
                         font-semibold
+
+                        hover:bg-transparent
 
                         ${
                           product.status === "ACTIVE"
@@ -1160,12 +791,11 @@ export default function Products() {
                       `}
                           >
                             {product.status}
-                          </span>
+                          </Badge>
 
                           {/* INVENTORY STATUS */}
-                          <span
+                          <Badge
                             className={`
-                        inline-flex
                         w-fit
 
                         rounded-full
@@ -1176,25 +806,28 @@ export default function Products() {
                         text-[11px]
                         font-semibold
 
+                        hover:bg-transparent
+
                         ${
                           product.inventoryStatus === "IN STOCK"
                             ? "bg-[#EEF8F1] text-[#0F9F61]"
-                            : product.inventoryStatus === "IN STOCK"
+                            : product.inventoryStatus === "LOW STOCK"
                               ? "bg-[#FFF5E8] text-[#D97706]"
                               : "bg-[#FFF1F2] text-[#E11D48]"
                         }
                       `}
                           >
                             {product.inventoryStatus}
-                          </span>
+                          </Badge>
                         </div>
-                      </td>
+                      </TableCell>
 
                       {/* ACTIONS */}
-                      <td
+                      <TableCell
                         className="
                     px-6
                     py-5
+
                     text-right
                   "
                       >
@@ -1203,44 +836,40 @@ export default function Products() {
                       flex
                       items-center
                       justify-end
-                      gap-2
                     "
                         >
-                          {/* EDIT */}
-                          <button
+                          <Button
                             onClick={(e) => {
                               e.stopPropagation();
 
                               navigate(`/admin/products/${product._id}/edit`);
                             }}
                             className="
-    rounded-2xl
+                        rounded-2xl
 
-    bg-brand
+                        bg-brand
 
-    px-5
-    py-3
+                        px-5
+                        py-3
 
-    text-sm
-    font-semibold
-    text-white
+                        text-sm
+                        font-semibold
+                        text-white
 
-    shadow-lg
-    shadow-[#6B1A2A]/15
-cursor-pointer
-    transition
-    hover:opacity-90
-  "
+                        shadow-[#6B1A2A]/15
+
+                        hover:bg-brand/90
+                      "
                           >
                             Edit
-                          </button>
+                          </Button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           )}
         </div>
       </div>
@@ -1253,8 +882,7 @@ cursor-pointer
       flex-col
       gap-4
 
-      border-t
-      border-[#F1ECEE]
+
 
       bg-surface-secondary
 
@@ -1294,13 +922,13 @@ cursor-pointer
       "
           >
             {/* PREVIOUS */}
-            <button
+            <Button
+              variant="outline"
               disabled={page === 1}
               onClick={() => setPage((prev) => prev - 1)}
               className="
           rounded-2xl
 
-          border
           border-border
 
           bg-surface
@@ -1315,7 +943,6 @@ cursor-pointer
 
           shadow-sm
 
-          transition
           hover:bg-[#FAFAFA]
 
           disabled:cursor-not-allowed
@@ -1323,7 +950,7 @@ cursor-pointer
         "
             >
               Previous
-            </button>
+            </Button>
 
             {/* CURRENT PAGE */}
             <div
@@ -1353,13 +980,13 @@ cursor-pointer
             </div>
 
             {/* NEXT */}
-            <button
+            <Button
+              variant="outline"
               disabled={page === pagination.totalPages}
               onClick={() => setPage((prev) => prev + 1)}
               className="
           rounded-2xl
 
-          border
           border-border
 
           bg-surface
@@ -1374,7 +1001,6 @@ cursor-pointer
 
           shadow-sm
 
-          transition
           hover:bg-[#FAFAFA]
 
           disabled:cursor-not-allowed
@@ -1382,7 +1008,7 @@ cursor-pointer
         "
             >
               Next
-            </button>
+            </Button>
           </div>
         </div>
       )}

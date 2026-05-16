@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import ConfirmModal from "../components/ConfirmModal";
-import { archiveProduct, getProductDetails,   deleteProduct,
- } from "../services/productService";
-
- import toast
-from "react-hot-toast";
-
 import {
-  useNavigate
-} from "react-router-dom";
+  archiveProduct,
+  deleteProduct,
+  getProductDetails,
+} from "../services/productService";
+
+import toast from "react-hot-toast";
+
+import { useNavigate } from "react-router-dom";
 
 import {
   AlertTriangle,
@@ -19,30 +19,23 @@ import {
   ArrowLeft,
   Boxes,
   IndianRupee,
-   Pencil,
-  Trash2,
+  Pencil,
   ShoppingBag,
+  Trash2,
   TrendingUp,
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
 
 const ProductDetailsPage = () => {
-
-
-  const navigate =
-  useNavigate();
+  const navigate = useNavigate();
   const { id } = useParams();
 
   const [loading, setLoading] = useState(true);
   const [showArchiveModal, setShowArchiveModal] = useState(false);
-  const [showDeleteModal,
-setShowDeleteModal] =
-  useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const [deleteLoading,
-setDeleteLoading] =
-  useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [productData, setProductData] = useState(null);
 
@@ -147,62 +140,35 @@ setDeleteLoading] =
     }
   };
 
-  const handleDelete =
-  async () => {
-
+  const handleDelete = async () => {
     try {
-
       setDeleteLoading(true);
 
+      await deleteProduct(id);
 
+      toast.success("Product deleted successfully");
 
-    await deleteProduct(id);
-
-
-
-      toast.success(
-        "Product deleted successfully"
-      );
-
-
-
-      navigate(
-        "/admin/products"
-      );
-
+      navigate("/admin/products");
     } catch (error) {
-
       console.error(error);
 
-      toast.error(
-
-        error.response?.data?.message ||
-
-        "Failed to delete product"
-      );
-
+      toast.error(error.response?.data?.message || "Failed to delete product");
     } finally {
-
       setDeleteLoading(false);
 
       setShowDeleteModal(false);
-
     }
-
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F8] p-6">
-
+    <div className="min-h-screen bg-bg p-6">
       {/* TOP BAR */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-         <div className="mb-8">
-
-  <Link
-    to="/admin/products"
-
-    className="
+          <div className="mb-8">
+            <Link
+              to="/admin/products"
+              className="
       group
       inline-flex
       items-center
@@ -213,7 +179,7 @@ setDeleteLoading] =
       border
       border-border
 
-      bg-white
+     bg-surface
 
       px-4
       py-2.5
@@ -230,13 +196,12 @@ setDeleteLoading] =
 
       hover:-translate-y-[1px]
       hover:border-[#6B1A2A]/20
-      hover:text-[#6B1A2A]
+      hover:text-brand
       hover:shadow-md
     "
-  >
-
-    <div
-      className="
+            >
+              <div
+                className="
         flex
         h-8
         w-8
@@ -248,31 +213,27 @@ setDeleteLoading] =
 
         bg-[#F8EEF1]
 
-        text-[#6B1A2A]
+        text-brand
 
         transition-transform
         duration-200
 
         group-hover:-translate-x-0.5
       "
-    >
-      <ArrowLeft size={16} />
-    </div>
+              >
+                <ArrowLeft size={16} />
+              </div>
 
-    <span>
-      Back to Products
-    </span>
-
-  </Link>
-
-</div>
+              <span>Back to Products</span>
+            </Link>
+          </div>
 
           <h1 className="mt-4 text-4xl font-bold tracking-tight text-text-primary">
             {product.name}
           </h1>
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <div className="rounded-full bg-[#F8EEF1] px-4 py-2 text-xs font-semibold text-[#6B1A2A]">
+            <div className="rounded-full bg-[#F8EEF1] px-4 py-2 text-xs font-semibold text-brand">
               {product.category}
             </div>
 
@@ -306,25 +267,19 @@ setDeleteLoading] =
             >
               {product.status}
             </div>
-
-
           </div>
         </div>
 
+
+
         {/* ACTIONS */}
 
-      {/* ACTIONS */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* ARCHIVE */}
 
-<div className="flex flex-wrap items-center gap-3">
-
-  {/* ARCHIVE */}
-
-  <button
-    onClick={() =>
-      setShowArchiveModal(true)
-    }
-
-    className="
+          <button
+            onClick={() => setShowArchiveModal(true)}
+            className="
       flex
       items-center
       gap-2
@@ -348,28 +303,21 @@ setDeleteLoading] =
 
       transition
 
-      hover:bg-[#FAFAFA]
+      
     "
-  >
+          >
+            <Archive size={18} />
 
-    <Archive size={18} />
+            {product.status === "ARCHIVED"
+              ? "Restore Product"
+              : "Archive Product"}
+          </button>
 
-    {product.status === "ARCHIVED"
+          {/* EDIT */}
 
-      ? "Restore Product"
-
-      : "Archive Product"}
-
-  </button>
-
-
-
-  {/* EDIT */}
-
-  <Link
-    to={`/admin/products/${id}/edit`}
-
-    className="
+          <Link
+            to={`/admin/products/${id}/edit`}
+            className="
       flex
       items-center
       gap-2
@@ -393,24 +341,16 @@ setDeleteLoading] =
 
       hover:opacity-90
     "
-  >
+          >
+            <Pencil size={18} />
+            Edit Product
+          </Link>
 
-    <Pencil size={18} />
+          {/* DELETE */}
 
-    Edit Product
-
-  </Link>
-
-
-
-  {/* DELETE */}
-
-  <button
-    onClick={() =>
-  setShowDeleteModal(true)
-}
-
-    className="
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="
       flex
       items-center
       gap-2
@@ -436,17 +376,11 @@ setDeleteLoading] =
 
       hover:bg-red-100
     "
-  >
-
-    <Trash2 size={18} />
-
-    Delete Product
-
-  </button>
-
-</div>
-
-
+          >
+            <Trash2 size={18} />
+            Delete Product
+          </button>
+        </div>
       </div>
 
       {/* GRID */}
@@ -512,7 +446,7 @@ setDeleteLoading] =
         text-xs
         font-semibold
 
-        text-[#6B1A2A]
+        text-brand
       "
               >
                 {product.images?.length || 0} Images
@@ -545,7 +479,7 @@ setDeleteLoading] =
               object-cover
 
               border
-              border-black/5
+              border-border
             "
                   />
                 ))
@@ -567,7 +501,7 @@ setDeleteLoading] =
           bg-[#FAFAFA]
 
           text-sm
-          text-[#9CA3AF]
+          text-text-secondary
         "
                 >
                   No product images uploaded
@@ -598,11 +532,13 @@ setDeleteLoading] =
       justify-between
     "
             >
-              <div>
+              <div >
                 <h2
                   className="
           text-xl
           font-semibold
+
+
 
           text-text-primary
         "
@@ -629,7 +565,7 @@ setDeleteLoading] =
 
       rounded-3xl
 
-      bg-[#FAFAFA]
+      bg-surface
 
       p-6
     "
@@ -747,7 +683,7 @@ setDeleteLoading] =
           {/* VARIANTS */}
 
           <div className="rounded-[28px] border border-border bg-surface shadow-sm">
-            <div className="border-b border-black/5 p-6">
+            <div className="border-b border-border p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-semibold text-text-primary">
@@ -763,7 +699,7 @@ setDeleteLoading] =
 
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
-                <thead className="border-b border-black/5 bg-[#FAFAFA] text-left text-text-secondary">
+                <thead className=" border-border bg-surface  text-left text-text-secondary">
                   <tr>
                     <th className="px-6 py-4 font-medium">SKU</th>
                     <th className="px-6 py-4 font-medium">Material</th>
@@ -777,7 +713,7 @@ setDeleteLoading] =
 
                 <tbody>
                   {variants.map((variant, index) => (
-                    <tr key={index} className="border-b border-black/5">
+                    <tr key={index} className="border-b border-border">
                       <td className="px-6 py-5 font-medium text-text-primary">
                         {variant.sku}
                       </td>
@@ -817,7 +753,7 @@ setDeleteLoading] =
           {/* RECENT ORDERS */}
 
           <div className="rounded-[28px] border border-border bg-surface shadow-sm">
-            <div className="border-b border-black/5 p-6">
+            <div className="border-b border-border p-6">
               <h2 className="text-xl font-semibold text-text-primary">
                 Recent Orders
               </h2>
@@ -936,7 +872,7 @@ setDeleteLoading] =
 
               bg-[#F8EEF1]
 
-              text-[#6B1A2A]
+              text-brand
             "
                     >
                       <Icon size={22} />
@@ -982,7 +918,7 @@ setDeleteLoading] =
 
         bg-[#F8EEF1]
 
-        text-[#6B1A2A]
+        text-brand
       "
               >
                 <TrendingUp size={22} />
@@ -1024,7 +960,7 @@ setDeleteLoading] =
                 className="
         rounded-3xl
 
-        bg-[#FAFAFA]
+        bg-surface-secondary
 
         p-5
       "
@@ -1056,7 +992,7 @@ setDeleteLoading] =
                 className="
         rounded-3xl
 
-        bg-[#FAFAFA]
+        bg-surface-secondary
 
         p-5
       "
@@ -1092,7 +1028,7 @@ setDeleteLoading] =
       rounded-3xl
 
       border
-      border-black/5
+      border-border
 
       bg-surface-secondary
 
@@ -1142,7 +1078,7 @@ setDeleteLoading] =
           text-sm
           font-semibold
 
-          text-[#6B1A2A]
+          text-brand
         "
                 >
                   Live Analytics
@@ -1152,8 +1088,6 @@ setDeleteLoading] =
           </div>
 
           {/* PRODUCT INFO */}
-
-
 
           <div
             className="
@@ -1291,11 +1225,7 @@ setDeleteLoading] =
               </div>
             </div>
           </div>
-
-
-
         </div>
-
       </div>
 
       <ConfirmModal
@@ -1321,32 +1251,21 @@ setDeleteLoading] =
         confirmText={product.status === "ARCHIVED" ? "Restore" : "Archive"}
       />
 
-
       <ConfirmModal
-
-  open={showDeleteModal}
-
-  onClose={() =>
-    setShowDeleteModal(false)
-  }
-
-  onConfirm={handleDelete}
-
-  loading={deleteLoading}
-
-  title="Delete Product"
-
-  description={`
+        open={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        loading={deleteLoading}
+        title="Delete Product"
+        description={`
     This action cannot be undone.
 
     The product, variants,
     inventory data and analytics
     associations will be permanently deleted.
   `}
-
-  confirmText="Delete Product"
-
-/>
+        confirmText="Delete Product"
+      />
     </div>
   );
 };

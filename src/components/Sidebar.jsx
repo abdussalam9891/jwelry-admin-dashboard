@@ -80,7 +80,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
       {/* sidebar */}
 
       <aside
-  className={`
+        className={`
     fixed
     top-0
     left-0
@@ -107,13 +107,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     md:translate-x-0
 
-    ${
-      sidebarOpen
-        ? "translate-x-0"
-        : "-translate-x-full"
-    }
+    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
   `}
->
+      >
         {/* top */}
 
         <div
@@ -148,7 +144,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   text-[14px]
                   font-semibold
                   tracking-wide
-                  text-[#1A1A1A]
+                  text-text-primary
                 "
               >
                 Gemora
@@ -157,7 +153,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
               <span
                 className="
                   text-[11px]
-                  text-black/45
+                 text-text-secondary
                   mt-0.5
                 "
               >
@@ -184,7 +180,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
               items-center
               justify-center
 
-              text-black/60
+             text-text-secondary
             "
           >
             <X size={18} />
@@ -214,7 +210,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   uppercase
                   tracking-[0.12em]
 
-                  text-black/35
+                 text-text-secondary
                 "
               >
                 {section.title}
@@ -261,7 +257,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           isActive
                             ? `
                               bg-brand/10
-                              text-[#6B1A2A]
+                              text-brand
 
                               border
                               border-[#6B1A2A]/10
@@ -269,9 +265,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               shadow-sm
                             `
                             : `
-                              text-black/70
+                              text-text-secondary
 
-                              hover:bg-black/[0.04]
+                            hover:bg-surface-secondary
                               hover:text-black
                             `
                         }
@@ -355,7 +351,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             mt-3
 
             border-t
-            border-black/5
+           border-border
           "
         >
           {/* settings */}
@@ -374,9 +370,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
               text-sm
               font-medium
-              text-black/70
+             text-text-secondary
 
-              hover:bg-black/[0.04]
+              hover:bg-surface-secondary
               hover:text-black
 
               transition-all
@@ -406,7 +402,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
               text-red-500
 
-              hover:bg-red-50
+             hover:bg-red-500/10
 
               transition-all
             "
@@ -423,10 +419,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
               rounded-2xl
 
-              bg-surface
+            bg-surface-secondary
 
               border
-              border-black/5
+              border-border
 
               p-4
 
@@ -485,7 +481,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     bg-green-500
 
                     border-2
-                    border-white
+                 border-surface
                   "
                 />
               </div>
@@ -497,7 +493,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   className="
                     text-sm
                     font-semibold
-                    text-black
+                   text-text-primary
 
                     truncate
                   "
@@ -508,7 +504,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 <p
                   className="
                     text-xs
-                    text-black/45
+                   text-text-secondary
                     mt-0.5
                   "
                 >

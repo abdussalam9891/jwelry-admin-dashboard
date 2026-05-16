@@ -62,7 +62,7 @@ const ConfirmModal = ({
             right-5
             top-5
 
-            text-[#9CA3AF]
+            text-text-secondary
 
             transition
 

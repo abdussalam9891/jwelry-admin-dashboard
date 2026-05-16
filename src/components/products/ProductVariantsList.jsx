@@ -1,13 +1,3 @@
- 
-
-
-
-
-
-
-
-
-
 const materialOptions = [
   "18K Gold",
   "22K Gold",
@@ -19,25 +9,17 @@ const materialOptions = [
   "Gemstone",
 ];
 
-
-
 export default function ProductVariantsList({
   formData,
   removeVariant,
   handleVariantChange,
 }) {
-
   return (
-
     <div className="mt-8 space-y-6">
-
-      {formData.variants.map(
-        (variant, index) => (
-
-          <div
-            key={index}
-
-            className="
+      {formData.variants.map((variant, index) => (
+        <div
+          key={index}
+          className="
               relative
 
               overflow-hidden
@@ -55,60 +37,47 @@ export default function ProductVariantsList({
 
               hover:border-[#E4D7DB]
             "
-          >
+        >
+          {/* TOP */}
 
-            {/* TOP */}
-
-            <div
-              className="
+          <div
+            className="
                 flex
                 items-center
                 justify-between
               "
-            >
-
-              <div>
-
-                <p
-                  className="
+          >
+            <div>
+              <p
+                className="
                     text-xs
                     font-semibold
                     uppercase
                     tracking-wide
 
-                    text-[#9CA3AF]
+                    text-text-secondary
                   "
-                >
-                  Variant
-                </p>
+              >
+                Variant
+              </p>
 
-
-
-                <h3
-                  className="
+              <h3
+                className="
                     mt-1
                     text-lg
                     font-semibold
                     text-text-primary
                   "
-                >
-                  #{index + 1}
-                </h3>
+              >
+                #{index + 1}
+              </h3>
+            </div>
 
-              </div>
-
-
-
-              {formData.variants.length > 1 && (
-
-                <button
-                  type="button"
-
-                  onClick={() =>
-                    removeVariant(index)
-                  }
-
-                  className="
+            {formData.variants.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeVariant(index)}
+                className="
                     rounded-xl
 
                     border
@@ -128,20 +97,16 @@ export default function ProductVariantsList({
 
                     hover:bg-red-100
                   "
-                >
-                  Remove
-                </button>
+              >
+                Remove
+              </button>
+            )}
+          </div>
 
-              )}
+          {/* FIELDS */}
 
-            </div>
-
-
-
-            {/* FIELDS */}
-
-            <div
-              className="
+          <div
+            className="
                 mt-6
 
                 grid
@@ -150,14 +115,12 @@ export default function ProductVariantsList({
 
                 md:grid-cols-2
               "
-            >
+          >
+            {/* MATERIAL */}
 
-              {/* MATERIAL */}
-
-              <div>
-
-                <label
-                  className="
+            <div>
+              <label
+                className="
                     mb-2
                     block
 
@@ -165,22 +128,16 @@ export default function ProductVariantsList({
                     font-medium
                     text-text-primary
                   "
-                >
-                  Material
-                </label>
+              >
+                Material
+              </label>
 
-                <select
-                  value={variant.material}
-
-                  onChange={(e) =>
-                    handleVariantChange(
-                      index,
-                      "material",
-                      e.target.value
-                    )
-                  }
-
-                  className="
+              <select
+                value={variant.material}
+                onChange={(e) =>
+                  handleVariantChange(index, "material", e.target.value)
+                }
+                className="
                     h-12
                     w-full
 
@@ -197,37 +154,21 @@ export default function ProductVariantsList({
 
                     outline-none
                   "
-                >
+              >
+                {materialOptions.map((material) => (
+                  <option key={material} value={material}>
+                    {material}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-                  {materialOptions.map(
-                    (material) => (
+            {/* SIZE */}
 
-                      <option
-                        key={material}
-                        value={material}
-                      >
-                        {material}
-                      </option>
-
-                    )
-                  )}
-
-                </select>
-
-              </div>
-
-
-
-              {/* SIZE */}
-
-              {["rings", "bracelets"].includes(
-                formData.category
-              ) && (
-
-                <div>
-
-                  <label
-                    className="
+            {["rings", "bracelets"].includes(formData.category) && (
+              <div>
+                <label
+                  className="
                       mb-2
                       block
 
@@ -235,12 +176,12 @@ export default function ProductVariantsList({
                       font-medium
                       text-text-primary
                     "
-                  >
-                    Size
-                  </label>
+                >
+                  Size
+                </label>
 
                 <div
-  className="
+                  className="
     flex
     h-12
     items-center
@@ -259,22 +200,17 @@ export default function ProductVariantsList({
 
     text-text-primary
   "
->
-  {variant.size || "—"}
-</div>
-
+                >
+                  {variant.size || "—"}
                 </div>
+              </div>
+            )}
 
-              )}
+            {/* SKU */}
 
-
-
-              {/* SKU */}
-
-              <div>
-
-                <label
-                  className="
+            <div>
+              <label
+                className="
                     mb-2
                     block
 
@@ -282,18 +218,15 @@ export default function ProductVariantsList({
                     font-medium
                     text-text-primary
                   "
-                >
-                  SKU
-                </label>
+              >
+                SKU
+              </label>
 
-                <input
-                  type="text"
-
-                  value={variant.sku}
-
-                  readOnly
-
-                  className="
+              <input
+                type="text"
+                value={variant.sku}
+                readOnly
+                className="
                     h-12
                     w-full
 
@@ -310,135 +243,99 @@ export default function ProductVariantsList({
 
                     text-text-secondary
                   "
-                />
-
-              </div>
-
-
-
-              {/* PRICE */}
-
-              <div>
-
-                <label
-                  className="
-                    mb-2
-                    block
-
-                    text-sm
-                    font-medium
-                    text-text-primary
-                  "
-                >
-                  Variant Price
-                </label>
-
-                <input
-                 type="text"
-inputMode="numeric"
-
-                  placeholder="Price"
-
-
-
-
-
-                  value={variant.price}
-
-                  onChange={(e) =>
-                    handleVariantChange(
-                      index,
-                      "price",
-                      e.target.value
-                    )
-                  }
-
-                  className="
-                    h-12
-                    w-full
-
-                    rounded-2xl
-
-                    border
-                    border-border
-
-                    bg-surface
-
-                    px-4
-
-                    text-sm
-
-                    outline-none
-                  "
-                />
-
-              </div>
-
-
-
-              {/* STOCK */}
-
-              <div>
-
-                <label
-                  className="
-                    mb-2
-                    block
-
-                    text-sm
-                    font-medium
-                    text-text-primary
-                  "
-                >
-                  Inventory Stock
-                </label>
-
-                <input
-                 type="text"
-inputMode="numeric"
-
-                  placeholder="Stock Quantity"
-
-                  value={variant.stock}
-
-                  onChange={(e) =>
-                    handleVariantChange(
-                      index,
-                      "stock",
-                      e.target.value
-                    )
-                  }
-
-                  className="
-                    h-12
-                    w-full
-
-                    rounded-2xl
-
-                    border
-                    border-border
-
-                    bg-surface
-
-                    px-4
-
-                    text-sm
-
-                    outline-none
-                  "
-                />
-
-              </div>
-
+              />
             </div>
 
+            {/* PRICE */}
+
+            <div>
+              <label
+                className="
+                    mb-2
+                    block
+
+                    text-sm
+                    font-medium
+                    text-text-primary
+                  "
+              >
+                Variant Price
+              </label>
+
+              <input
+                type="text"
+                inputMode="numeric"
+                placeholder="Price"
+                value={variant.price}
+                onChange={(e) =>
+                  handleVariantChange(index, "price", e.target.value)
+                }
+                className="
+                    h-12
+                    w-full
+
+                    rounded-2xl
+
+                    border
+                    border-border
+
+                    bg-surface
+
+                    px-4
+
+                    text-sm
+
+                    outline-none
+                  "
+              />
+            </div>
+
+            {/* STOCK */}
+
+            <div>
+              <label
+                className="
+                    mb-2
+                    block
+
+                    text-sm
+                    font-medium
+                    text-text-primary
+                  "
+              >
+                Inventory Stock
+              </label>
+
+              <input
+                type="text"
+                inputMode="numeric"
+                placeholder="Stock Quantity"
+                value={variant.stock}
+                onChange={(e) =>
+                  handleVariantChange(index, "stock", e.target.value)
+                }
+                className="
+                    h-12
+                    w-full
+
+                    rounded-2xl
+
+                    border
+                    border-border
+
+                    bg-surface
+
+                    px-4
+
+                    text-sm
+
+                    outline-none
+                  "
+              />
+            </div>
           </div>
-
-        )
-      )}
-
+        </div>
+      ))}
     </div>
-
   );
-
 }

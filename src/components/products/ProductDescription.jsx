@@ -3,81 +3,37 @@ export default function ProductDescription({
   handleChange,
   setFormData,
 }) {
+  const handleDetailChange = (index, value) => {
+    const updatedDetails = [...formData.details];
 
-  const handleDetailChange = (
-    index,
-    value
-  ) => {
-
-    const updatedDetails = [
-      ...formData.details,
-    ];
-
-
-
-    updatedDetails[index] =
-      value;
-
-
+    updatedDetails[index] = value;
 
     setFormData((prev) => ({
-
       ...prev,
 
       details: updatedDetails,
-
     }));
-
   };
-
-
-
 
   const addDetailField = () => {
-
     setFormData((prev) => ({
-
       ...prev,
 
-      details: [
-        ...prev.details,
-        "",
-      ],
-
+      details: [...prev.details, ""],
     }));
-
   };
 
-
-
-
-  const removeDetailField = (
-    index
-  ) => {
-
-    const filteredDetails =
-
-      formData.details.filter(
-        (_, i) => i !== index
-      );
-
-
+  const removeDetailField = (index) => {
+    const filteredDetails = formData.details.filter((_, i) => i !== index);
 
     setFormData((prev) => ({
-
       ...prev,
 
       details: filteredDetails,
-
     }));
-
   };
 
-
-
-
   return (
-
     <div
       className="
         rounded-3xl
@@ -92,11 +48,9 @@ export default function ProductDescription({
         shadow-sm
       "
     >
-
       {/* HEADER */}
 
       <div>
-
         <h2
           className="
             text-lg
@@ -107,8 +61,6 @@ export default function ProductDescription({
           Product Description
         </h2>
 
-
-
         <p
           className="
             mt-1
@@ -118,20 +70,14 @@ export default function ProductDescription({
             text-text-secondary
           "
         >
-          Structured storefront content and
-          product storytelling.
+          Structured storefront content and product storytelling.
         </p>
-
       </div>
 
-
-
       <div className="mt-8 space-y-8">
-
         {/* SHORT DESCRIPTION */}
 
         <div>
-
           <label
             className="
               mb-2
@@ -146,19 +92,12 @@ export default function ProductDescription({
             Short Description
           </label>
 
-
-
           <textarea
             rows={4}
-
             name="shortDescription"
-
             value={formData.shortDescription}
-
             onChange={handleChange}
-
             placeholder="A timeless ring crafted for modern elegance."
-
             className="
               w-full
 
@@ -179,12 +118,10 @@ export default function ProductDescription({
 
               resize-none
 
-              focus:border-[#D8C7CD]
+              focus:border-border-[#D8C7CD]
               focus:bg-surface
             "
           />
-
-
 
           <p
             className="
@@ -195,18 +132,13 @@ export default function ProductDescription({
               text-text-secondary
             "
           >
-            Used for product cards, previews and
-            storefront summaries.
+            Used for product cards, previews and storefront summaries.
           </p>
-
         </div>
-
-
 
         {/* DESIGN */}
 
         <div>
-
           <label
             className="
               mb-2
@@ -221,19 +153,12 @@ export default function ProductDescription({
             Design Story
           </label>
 
-
-
           <textarea
             rows={4}
-
             name="designDescription"
-
             value={formData.designDescription}
-
             onChange={handleChange}
-
             placeholder="Features precision-set stones with a refined finish."
-
             className="
               w-full
 
@@ -254,12 +179,10 @@ export default function ProductDescription({
 
               resize-none
 
-              focus:border-[#D8C7CD]
+              focus:border-border-[#D8C7CD]
               focus:bg-surface
             "
           />
-
-
 
           <p
             className="
@@ -270,18 +193,13 @@ export default function ProductDescription({
               text-text-secondary
             "
           >
-            Explain craftsmanship, finishing and
-            design inspiration.
+            Explain craftsmanship, finishing and design inspiration.
           </p>
-
         </div>
-
-
 
         {/* PRODUCT DETAILS */}
 
         <div>
-
           <div
             className="
               flex
@@ -289,9 +207,7 @@ export default function ProductDescription({
               justify-between
             "
           >
-
             <div>
-
               <label
                 className="
                   block
@@ -305,8 +221,6 @@ export default function ProductDescription({
                 Product Highlights
               </label>
 
-
-
               <p
                 className="
                   mt-1
@@ -316,19 +230,13 @@ export default function ProductDescription({
                   text-text-secondary
                 "
               >
-                Key selling points shown as bullet
-                highlights on the storefront.
+                Key selling points shown as bullet highlights on the storefront.
               </p>
-
             </div>
-
-
 
             <button
               type="button"
-
               onClick={addDetailField}
-
               className="
                 rounded-xl
 
@@ -349,41 +257,24 @@ export default function ProductDescription({
             >
               + Add Highlight
             </button>
-
           </div>
 
-
-
           <div className="mt-4 space-y-3">
-
-            {formData.details.map(
-              (detail, index) => (
-
-                <div
-                  key={index}
-
-                  className="
+            {formData.details.map((detail, index) => (
+              <div
+                key={index}
+                className="
                     flex
                     items-center
                     gap-3
                   "
-                >
-
-                  <input
-                    type="text"
-
-                    value={detail}
-
-                    onChange={(e) =>
-                      handleDetailChange(
-                        index,
-                        e.target.value
-                      )
-                    }
-
-                    placeholder="Premium jewelry craftsmanship"
-
-                    className="
+              >
+                <input
+                  type="text"
+                  value={detail}
+                  onChange={(e) => handleDetailChange(index, e.target.value)}
+                  placeholder="Premium jewelry craftsmanship"
+                  className="
                       h-12
                       w-full
 
@@ -402,26 +293,16 @@ export default function ProductDescription({
 
                       transition
 
-                      focus:border-[#D8C7CD]
+                      focus:border-border-[#D8C7CD]
                       focus:bg-surface
                     "
-                  />
+                />
 
-
-
-                  {formData.details.length >
-                    1 && (
-
-                    <button
-                      type="button"
-
-                      onClick={() =>
-                        removeDetailField(
-                          index
-                        )
-                      }
-
-                      className="
+                {formData.details.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeDetailField(index)}
+                    className="
                         rounded-xl
 
                         border
@@ -441,27 +322,18 @@ export default function ProductDescription({
 
                         hover:bg-red-100
                       "
-                    >
-                      Remove
-                    </button>
-
-                  )}
-
-                </div>
-
-              )
-            )}
-
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
-
         </div>
-
-
 
         {/* STYLING */}
 
         <div>
-
           <label
             className="
               mb-2
@@ -476,19 +348,12 @@ export default function ProductDescription({
             Styling Notes
           </label>
 
-
-
           <textarea
             rows={3}
-
             name="stylingDescription"
-
             value={formData.stylingDescription}
-
             onChange={handleChange}
-
             placeholder="Perfect for daily wear and special occasions."
-
             className="
               w-full
 
@@ -509,12 +374,10 @@ export default function ProductDescription({
 
               resize-none
 
-              focus:border-[#D8C7CD]
+              focus:border-border-[#D8C7CD]
               focus:bg-surface
             "
           />
-
-
 
           <p
             className="
@@ -525,16 +388,10 @@ export default function ProductDescription({
               text-text-secondary
             "
           >
-            Helps customers understand where and
-            how this piece can be styled.
+            Helps customers understand where and how this piece can be styled.
           </p>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }

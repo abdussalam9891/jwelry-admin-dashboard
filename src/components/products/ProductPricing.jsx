@@ -1,10 +1,5 @@
-export default function ProductPricing({
-  formData,
-  handleChange,
-}) {
-
+export default function ProductPricing({ formData, handleChange }) {
   return (
-
     <div
       className="
         rounded-3xl
@@ -19,7 +14,6 @@ export default function ProductPricing({
         shadow-sm
       "
     >
-
       <h2
         className="
           text-lg
@@ -29,8 +23,6 @@ export default function ProductPricing({
       >
         Pricing & Inventory
       </h2>
-
-
 
       <div
         className="
@@ -43,11 +35,9 @@ export default function ProductPricing({
           md:grid-cols-2
         "
       >
-
         {/* PRICE */}
 
         <div>
-
           <label
             className="
               mb-2
@@ -63,8 +53,8 @@ export default function ProductPricing({
           </label>
 
           <input
-           type="text"
-inputMode="numeric"
+            type="text"
+            inputMode="numeric"
             name="price"
             value={formData.price}
             onChange={handleChange}
@@ -89,23 +79,19 @@ inputMode="numeric"
 
               transition
 
-              focus:border-[#D8C7CD]
+              focus:border-border-[#D8C7CD]
               focus:bg-surface
             "
           />
 
           <p className="mt-1 text-xs text-text-secondary">
-  Used as the starting product price in listings.
-</p>
-
+            Used as the starting product price in listings.
+          </p>
         </div>
-
-
 
         {/* ORIGINAL PRICE */}
 
         <div>
-
           <label
             className="
               mb-2
@@ -121,8 +107,8 @@ inputMode="numeric"
           </label>
 
           <input
-           type="text"
-inputMode="numeric"
+            type="text"
+            inputMode="numeric"
             name="originalPrice"
             value={formData.originalPrice}
             onChange={handleChange}
@@ -147,22 +133,18 @@ inputMode="numeric"
 
               transition
 
-              focus:border-[#D8C7CD]
+              focus:border-border-[#D8C7CD]
               focus:bg-surface
             "
           />
           <p className="mt-1 text-xs text-text-secondary">
-  Original price before discount for this specific variant.
-</p>
-
+            Original price before discount for this specific variant.
+          </p>
         </div>
-
-
 
         {/* STOCK */}
 
         <div>
-
           <label
             className="
               mb-2
@@ -174,12 +156,12 @@ inputMode="numeric"
               text-text-primary
             "
           >
-           Total Inventory
+            Total Inventory
           </label>
 
           <input
-           type="text"
-inputMode="numeric"
+            type="text"
+            inputMode="numeric"
             name="stock"
             value={formData.stock}
             onChange={handleChange}
@@ -204,22 +186,18 @@ inputMode="numeric"
 
               transition
 
-              focus:border-[#D8C7CD]
+              focus:border-border-[#D8C7CD]
               focus:bg-surface
             "
           />
           <p className="mt-1 text-xs text-text-secondary">
-  Combined inventory across all variants.
-</p>
-
+            Combined inventory across all variants.
+          </p>
         </div>
-
-
 
         {/* LOW STOCK */}
 
         <div>
-
           <label
             className="
               mb-2
@@ -235,8 +213,8 @@ inputMode="numeric"
           </label>
 
           <input
-           type="text"
-inputMode="numeric"
+            type="text"
+            inputMode="numeric"
             name="lowStockThreshold"
             value={formData.lowStockThreshold}
             onChange={handleChange}
@@ -260,20 +238,16 @@ inputMode="numeric"
 
               transition
 
-              focus:border-[#D8C7CD]
+              focus:border-border-[#D8C7CD]
               focus:bg-surface
             "
           />
           <p className="mt-1 text-xs text-text-secondary">
-  Shows low inventory warning when total stock falls below this number.
-</p>
-
+            Shows low inventory warning when total stock falls below this
+            number.
+          </p>
         </div>
-
       </div>
-
     </div>
-
   );
-
 }

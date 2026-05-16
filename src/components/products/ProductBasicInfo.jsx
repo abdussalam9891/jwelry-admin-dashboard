@@ -1,11 +1,5 @@
-export default function ProductBasicInfo({
-  formData,
-  handleChange,
-  
-}) {
-
+export default function ProductBasicInfo({ formData, handleChange }) {
   return (
-
     <div
       className="
         rounded-3xl
@@ -20,7 +14,6 @@ export default function ProductBasicInfo({
         shadow-sm
       "
     >
-
       <h2
         className="
           text-lg
@@ -31,8 +24,6 @@ export default function ProductBasicInfo({
         Basic Information
       </h2>
 
-
-
       <div
         className="
           mt-6
@@ -41,11 +32,9 @@ export default function ProductBasicInfo({
           gap-5
         "
       >
-
         {/* NAME */}
 
         <div>
-
           <label
             className="
               mb-2
@@ -85,19 +74,15 @@ export default function ProductBasicInfo({
 
               transition
 
-              focus:border-[#D8C7CD]
+              focus:border-border-[#D8C7CD]
               focus:bg-surface
             "
           />
-
         </div>
-
-
 
         {/* SLUG */}
 
         <div>
-
           <label
             className="
               mb-2
@@ -137,24 +122,12 @@ export default function ProductBasicInfo({
 
               transition
 
-              focus:border-[#D8C7CD]
+              focus:border-border-[#D8C7CD]
               focus:bg-surface
             "
           />
-
         </div>
-
-
-
-
-
-
-
-
       </div>
-
     </div>
-
   );
-
 }

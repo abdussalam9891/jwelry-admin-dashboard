@@ -1,11 +1,10 @@
-import {ImagePlus,
-  
+import {
+  ChevronLeft,
+  ChevronRight,
+  ImagePlus,
   Star,
-  Trash2, ChevronLeft,
-  ChevronRight, }
-from "lucide-react";
-
-
+  Trash2,
+} from "lucide-react";
 
 export default function ProductImages({
   formData,
@@ -13,9 +12,7 @@ export default function ProductImages({
   removeImage,
   moveImage,
 }) {
-
   return (
-
     <div
       className="
         rounded-3xl
@@ -30,7 +27,6 @@ export default function ProductImages({
         shadow-sm
       "
     >
-
       <h2
         className="
           text-lg
@@ -41,10 +37,7 @@ export default function ProductImages({
         Product Images
       </h2>
 
-
-
       <div className="mt-6 space-y-5">
-
         {/* UPLOAD BOX */}
 
         <label
@@ -70,7 +63,6 @@ export default function ProductImages({
             hover:border-[#6B1A2A]
           "
         >
-
           <input
             type="file"
             multiple
@@ -79,12 +71,9 @@ export default function ProductImages({
             onChange={handleImageUpload}
           />
 
-
-
-         <div className="text-center">
-
-  <div
-    className="
+          <div className="text-center">
+            <div
+              className="
       mx-auto
 
       flex
@@ -98,18 +87,14 @@ export default function ProductImages({
 
       bg-[#F8EEF1]
 
-      text-[#6B1A2A]
+      text-brand
     "
-  >
+            >
+              <ImagePlus size={26} />
+            </div>
 
-    <ImagePlus size={26} />
-
-  </div>
-
-
-
-  <p
-    className="
+            <p
+              className="
       mt-5
 
       text-sm
@@ -117,14 +102,12 @@ export default function ProductImages({
 
       text-text-primary
     "
-  >
-    Upload Product Images
-  </p>
+            >
+              Upload Product Images
+            </p>
 
-
-
-  <p
-    className="
+            <p
+              className="
       mt-2
 
       text-xs
@@ -132,15 +115,12 @@ export default function ProductImages({
 
       text-text-secondary
     "
-  >
-    Drag and drop images here
-    or click to browse
-  </p>
+            >
+              Drag and drop images here or click to browse
+            </p>
 
-
-
-  <div
-    className="
+            <div
+              className="
       mt-5
 
       inline-flex
@@ -151,7 +131,7 @@ export default function ProductImages({
       border
       border-border
 
-      bg-white
+      bg-surface
 
       px-3
       py-1.5
@@ -161,20 +141,15 @@ export default function ProductImages({
 
       text-text-secondary
     "
-  >
-    Up to 5 images • PNG • WEBP
-  </div>
-
-</div>
-
+            >
+              Up to 5 images • PNG • WEBP
+            </div>
+          </div>
         </label>
-
-
 
         {/* IMAGE PREVIEW GRID */}
 
         {formData.images?.length > 0 && (
-
           <div
             className="
               grid
@@ -185,14 +160,10 @@ export default function ProductImages({
               xl:grid-cols-5
             "
           >
-
-            {formData.images.map(
-              (image, index) => (
-
+            {formData.images.map((image, index) => (
               <div
-  key={image.public_id}
-
-  className="
+                key={image.public_id}
+                className="
     group
     relative
 
@@ -211,30 +182,25 @@ export default function ProductImages({
     hover:-translate-y-1
     hover:shadow-xl
   "
->
+              >
+                {/* IMAGE */}
 
-  {/* IMAGE */}
-
-  <img
-    src={image.url}
-    alt={`Product ${index + 1}`}
-
-    className="
+                <img
+                  src={image.url}
+                  alt={`Product ${index + 1}`}
+                  className="
       h-40
       w-full
 
       object-cover
     "
-  />
+                />
 
+                {/* PRIMARY BADGE */}
 
-
-  {/* PRIMARY BADGE */}
-
-  {index === 0 && (
-
-    <div
-      className="
+                {index === 0 && (
+                  <div
+                    className="
         absolute
         left-3
         top-3
@@ -245,7 +211,7 @@ export default function ProductImages({
 
         rounded-full
 
-        bg-white/90
+        bg-surface/90
 
         px-5
         py-1.5
@@ -253,30 +219,21 @@ export default function ProductImages({
         text-[11px]
         font-semibold
 
-        text-[#6B1A2A]
+        text-brand
 
         shadow-lg
         backdrop-blur-md
       "
-    >
+                  >
+                    <Star size={12} />
+                    Primary
+                  </div>
+                )}
 
-      <Star size={12} />
+                {/* REORDER CONTROLS */}
 
-      Primary
-
-    </div>
-
-  )}
-
-
-
-
-
-
-  {/* REORDER CONTROLS */}
-
-<div
-  className="
+                <div
+                  className="
     absolute
     bottom-3
     left-1/2
@@ -297,23 +254,14 @@ export default function ProductImages({
     group-hover:translate-y-0
     group-hover:opacity-100
   "
->
+                >
+                  {/* MOVE LEFT */}
 
-  {/* MOVE LEFT */}
-
-  {index > 0 && (
-
-    <button
-      type="button"
-
-      onClick={() =>
-        moveImage(
-          index,
-          index - 1
-        )
-      }
-
-      className="
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => moveImage(index, index - 1)}
+                      className="
         flex
         h-8
         w-8
@@ -323,7 +271,7 @@ export default function ProductImages({
 
         rounded-full
 
-        bg-white/90
+        bg-surface/90
 
         text-text-primary
 
@@ -334,32 +282,18 @@ export default function ProductImages({
 
         hover:scale-105
       "
-    >
+                    >
+                      <ChevronLeft size={14} />
+                    </button>
+                  )}
 
-      <ChevronLeft size={14} />
+                  {/* MOVE RIGHT */}
 
-    </button>
-
-  )}
-
-
-
-  {/* MOVE RIGHT */}
-
-  {index <
-    formData.images.length - 1 && (
-
-    <button
-      type="button"
-
-      onClick={() =>
-        moveImage(
-          index,
-          index + 1
-        )
-      }
-
-      className="
+                  {index < formData.images.length - 1 && (
+                    <button
+                      type="button"
+                      onClick={() => moveImage(index, index + 1)}
+                      className="
         flex
         h-8
         w-8
@@ -369,7 +303,7 @@ export default function ProductImages({
 
         rounded-full
 
-        bg-white/90
+        bg-surface/90
 
         text-text-primary
 
@@ -380,32 +314,18 @@ export default function ProductImages({
 
         hover:scale-105
       "
-    >
+                    >
+                      <ChevronRight size={14} />
+                    </button>
+                  )}
+                </div>
 
-      <ChevronRight size={14} />
+                {/* REMOVE BUTTON */}
 
-    </button>
-
-  )}
-
-</div>
-
-
-
-
-
-
-
-  {/* REMOVE BUTTON */}
-
-  <button
-    type="button"
-
-    onClick={() =>
-      removeImage(image)
-    }
-
-    className="
+                <button
+                  type="button"
+                  onClick={() => removeImage(image)}
+                  className="
       absolute
       top-3
       right-3
@@ -439,25 +359,14 @@ export default function ProductImages({
       hover:scale-105
       hover:bg-red-600
     "
-  >
-
-    <Trash2 size={16} />
-
-  </button>
-
-</div>
-
-              )
-            )}
-
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))}
           </div>
-
         )}
-
       </div>
-
     </div>
-
   );
-
 }
