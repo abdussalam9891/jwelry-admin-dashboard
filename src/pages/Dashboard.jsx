@@ -133,10 +133,7 @@ export default function Dashboard() {
     border
     border-[#E9E3E5]
 
-    bg-gradient-to-br
-    from-white
-    via-[#FCFAFB]
-    to-[#F8EEF1]
+     
 
     p-8
 

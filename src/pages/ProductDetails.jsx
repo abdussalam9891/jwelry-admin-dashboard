@@ -197,13 +197,75 @@ setDeleteLoading] =
       {/* TOP BAR */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <Link
-            to="/admin/products"
-            className="inline-flex items-center gap-2 text-sm text-text-secondary"
-          >
-            <ArrowLeft size={16} />
-            Back to products
-          </Link>
+         <div className="mb-8">
+
+  <Link
+    to="/admin/products"
+
+    className="
+      group
+      inline-flex
+      items-center
+      gap-2
+
+      rounded-2xl
+
+      border
+      border-border
+
+      bg-white
+
+      px-4
+      py-2.5
+
+      text-sm
+      font-medium
+
+      text-text-secondary
+
+      shadow-sm
+
+      transition-all
+      duration-200
+
+      hover:-translate-y-[1px]
+      hover:border-[#6B1A2A]/20
+      hover:text-[#6B1A2A]
+      hover:shadow-md
+    "
+  >
+
+    <div
+      className="
+        flex
+        h-8
+        w-8
+
+        items-center
+        justify-center
+
+        rounded-xl
+
+        bg-[#F8EEF1]
+
+        text-[#6B1A2A]
+
+        transition-transform
+        duration-200
+
+        group-hover:-translate-x-0.5
+      "
+    >
+      <ArrowLeft size={16} />
+    </div>
+
+    <span>
+      Back to Products
+    </span>
+
+  </Link>
+
+</div>
 
           <h1 className="mt-4 text-4xl font-bold tracking-tight text-text-primary">
             {product.name}

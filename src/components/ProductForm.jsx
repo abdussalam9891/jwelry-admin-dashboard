@@ -14,6 +14,10 @@ import ProductVariants from "../components/products/ProductVariantGenerator";
 
 import ProductVariantsList from "../components/products/ProductVariantsList";
 
+import { Link } from "react-router-dom";
+
+import { ArrowLeft } from "lucide-react";
+
 
 
 export default function ProductForm({
@@ -86,6 +90,76 @@ export default function ProductForm({
       >
 
         <div>
+
+       <div className="mb-8">
+
+  <Link
+    to="/admin/products"
+
+    className="
+      group
+      inline-flex
+      items-center
+      gap-2
+
+      rounded-2xl
+
+      border
+      border-border
+
+      bg-white
+
+      px-4
+      py-2.5
+
+      text-sm
+      font-medium
+
+      text-text-secondary
+
+      shadow-sm
+
+      transition-all
+      duration-200
+
+      hover:-translate-y-[1px]
+      hover:border-[#6B1A2A]/20
+      hover:text-[#6B1A2A]
+      hover:shadow-md
+    "
+  >
+
+    <div
+      className="
+        flex
+        h-8
+        w-8
+
+        items-center
+        justify-center
+
+        rounded-xl
+
+        bg-[#F8EEF1]
+
+        text-[#6B1A2A]
+
+        transition-transform
+        duration-200
+
+        group-hover:-translate-x-0.5
+      "
+    >
+      <ArrowLeft size={16} />
+    </div>
+
+    <span>
+      Back to Products
+    </span>
+
+  </Link>
+
+</div>
 
           <div
             className="
@@ -162,9 +236,17 @@ export default function ProductForm({
 
           </p>
 
+
+
         </div>
 
       </div>
+
+
+
+
+
+
 
 
 

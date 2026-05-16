@@ -44,3 +44,35 @@ export const exportOrdersReport =
     return res.data;
 
   };
+
+
+
+  export const getOrderDetails =
+  async (id) => {
+
+    const res =
+      await api.get(
+        `/admin/orders/${id}`
+      );
+
+    return res.data;
+
+  };
+
+
+  export const updateOrderStatus =
+  async (id, orderStatus) => {
+
+    const res =
+      await api.patch(
+
+        `/admin/orders/${id}/status`,
+
+        {
+          orderStatus,
+        }
+      );
+
+    return res.data;
+
+  };

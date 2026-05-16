@@ -1,55 +1,229 @@
-export default function CustomersPage() {
-  const customers = [
-    {
-      id: 1,
-      name: "Abdus",
-      email: "abdus@gmail.com",
-      orders: 14,
-      spent: "₹1,88,447",
-      status: "VIP",
-      joined: "Jan 2026",
-    },
-    {
-      id: 2,
-      name: "Ayesha Khan",
-      email: "ayesha@gmail.com",
-      orders: 5,
-      spent: "₹24,900",
-      status: "Active",
-      joined: "Mar 2026",
-    },
-    {
-      id: 3,
-      name: "Rahul Verma",
-      email: "rahul@gmail.com",
-      orders: 2,
-      spent: "₹8,200",
-      status: "New",
-      joined: "May 2026",
-    },
-  ];
+import { getCustomers,  exportCustomersReport,  } from "../services/customerService";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-  const stats = [
-    {
-      title: "Total Customers",
-      value: "1,284",
-    },
-    {
-      title: "Returning Customers",
-      value: "74%",
-    },
-    {
-      title: "VIP Customers",
-      value: "92",
-    },
-    {
-      title: "Average Order Value",
-      value: "₹12,440",
-    },
-  ];
+
+
+export default function CustomersPage() {
+
+
+const navigate = useNavigate();
+
+
+const [
+  search,
+  setSearch,
+] = useState("");
+
+
+
+const [
+  tier,
+  setTier,
+] = useState("All");
+
+
+
+const [
+  sort,
+  setSort,
+] = useState("Newest");
+
+
+
+const [
+  page,
+  setPage,
+] = useState(1);
+
+const [
+  pagination,
+  setPagination,
+] = useState(null);
+
+  const [
+  customers,
+  setCustomers,
+] = useState([]);
+
+const [
+  loading,
+  setLoading,
+] = useState(true);
+
+
+
+useEffect(() => {
+
+  const fetchCustomers =
+    async () => {
+
+      try {
+
+        setLoading(true);
+
+
+
+        const data =
+          await getCustomers({
+
+            search,
+
+            tier,
+
+            sort,
+
+            page,
+
+            limit: 8,
+
+          });
+
+
+
+        setCustomers(
+          data.customers
+        );
+
+
+
+        setPagination(
+          data.pagination
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+
+
+  fetchCustomers();
+
+}, [
+  search,
+  tier,
+  sort,
+  page,
+]);
+
+
+
+
+const stats = [
+
+  {
+    title:
+      "Total Customers",
+
+    value:
+      customers.length,
+  },
+
+  {
+    title:
+      "Platinum Tier",
+
+    value:
+      customers.filter(
+        (c) =>
+          c.customerTier ===
+          "Platinum"
+      ).length,
+  },
+
+  {
+    title:
+      "Gold Tier",
+
+    value:
+      customers.filter(
+        (c) =>
+          c.customerTier ===
+          "Gold"
+      ).length,
+  },
+
+  {
+    title:
+      "Revenue Generated",
+
+    value:
+      `₹${customers
+        .reduce(
+          (acc, customer) =>
+            acc +
+            customer.totalSpent,
+          0
+        )
+        .toLocaleString()}`,
+  },
+
+];
+
+
+
+const handleExport =
+  async () => {
+
+    try {
+
+      const data =
+        await exportCustomersReport();
+
+
+
+      const url =
+        window.URL.createObjectURL(
+          new Blob([data])
+        );
+
+
+
+      const link =
+        document.createElement("a");
+
+
+
+      link.href = url;
+
+      link.setAttribute(
+        "download",
+        "customers-report.xlsx"
+      );
+
+
+
+      document.body.appendChild(
+        link
+      );
+
+
+
+      link.click();
+
+
+
+      link.remove();
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  };
+
 
   return (
-    <div className="min-h-screen bg-[#f6f4f4] p-4 md:p-8">
+    <div className="min-h-screen  p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* TOP HEADER */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -69,13 +243,34 @@ export default function CustomersPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <button className="h-12 px-6 rounded-2xl border border-black/10 bg-surface font-medium hover:bg-black/5 transition">
-              Export
-            </button>
+           <button
 
-            <button className="h-12 px-6 rounded-2xl bg-[#7b1e2b] text-white font-medium hover:opacity-90 transition shadow-lg shadow-[#7b1e2b]/20">
-              Add Customer
-            </button>
+  onClick={handleExport}
+
+  className="
+    h-12
+    px-6
+
+    rounded-2xl
+
+    border
+    border-black/10
+
+    bg-surface
+
+    font-medium
+
+    transition
+
+    hover:bg-black/5
+  "
+>
+
+  Export
+
+</button>
+
+
           </div>
         </div>
 
@@ -100,157 +295,826 @@ export default function CustomersPage() {
           <div className="flex flex-col xl:flex-row gap-4">
             <div className="flex-1 relative">
               <input
-                type="text"
-                placeholder="Search customers by name, email or phone..."
-                className="w-full h-14 rounded-2xl border border-black/10 bg-[#fafafa] px-5 outline-none focus:ring-2 focus:ring-[#7b1e2b]/20"
-              />
+  type="text"
+
+  value={search}
+
+  onChange={(e) => {
+
+    setSearch(
+      e.target.value
+    );
+
+    setPage(1);
+
+  }}
+
+  placeholder="Search customers by name, email or phone..."
+
+  className="
+    w-full
+    h-14
+
+    rounded-2xl
+
+    border
+    border-black/10
+
+    bg-[#fafafa]
+
+    px-5
+
+    outline-none
+
+    focus:ring-2
+    focus:ring-[#7b1e2b]/20
+  "
+/>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <select className="h-14 rounded-2xl border border-black/10 bg-surface px-4 outline-none min-w-[170px]">
-                <option>All Status</option>
-                <option>VIP</option>
-                <option>Active</option>
-                <option>New</option>
-              </select>
+             <select
+  value={tier}
 
-              <select className="h-14 rounded-2xl border border-black/10 bg-surface px-4 outline-none min-w-[170px]">
-                <option>Newest First</option>
-                <option>Highest Spend</option>
-                <option>Most Orders</option>
-              </select>
+  onChange={(e) => {
+
+    setTier(
+      e.target.value
+    );
+
+    setPage(1);
+
+  }}
+
+  className="
+    h-14
+
+    rounded-2xl
+
+    border
+    border-black/10
+
+    bg-surface
+
+    px-4
+
+    outline-none
+
+    min-w-[170px]
+  "
+>
+
+  <option value="All">
+    All Tiers
+  </option>
+
+  <option value="Platinum">
+    Platinum
+  </option>
+
+  <option value="Gold">
+    Gold
+  </option>
+
+  <option value="Silver">
+    Silver
+  </option>
+
+  <option value="Bronze">
+    Bronze
+  </option>
+
+</select>
+
+              <select
+  value={sort}
+
+  onChange={(e) => {
+
+    setSort(
+      e.target.value
+    );
+
+    setPage(1);
+
+  }}
+
+  className="
+    h-14
+
+    rounded-2xl
+
+    border
+    border-black/10
+
+    bg-surface
+
+    px-4
+
+    outline-none
+
+    min-w-[170px]
+  "
+>
+
+  <option value="Newest">
+    Newest First
+  </option>
+
+  <option value="Highest Spend">
+    Highest Spend
+  </option>
+
+  <option value="Most Orders">
+    Most Orders
+  </option>
+
+</select>
             </div>
           </div>
         </div>
 
-        {/* DESKTOP TABLE */}
-        <div className="hidden lg:block bg-surface border border-black/5 rounded-[2rem] overflow-hidden shadow-sm">
-          <div className="grid grid-cols-6 gap-4 px-8 py-5 border-b border-black/5 text-xs uppercase tracking-[0.2em] text-black/40 font-semibold">
-            <p>Customer</p>
-            <p>Orders</p>
-            <p>Spent</p>
-            <p>Status</p>
-            <p>Joined</p>
-            <p className="text-right">Actions</p>
-          </div>
+      {/* DESKTOP TABLE */}
 
-          <div>
-            {customers.map((customer) => (
-              <div
-                key={customer.id}
-                className="grid grid-cols-6 gap-4 items-center px-8 py-6 border-b border-black/5 hover:bg-[#fafafa] transition"
-              >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-12 h-12 rounded-full bg-[#f5eaed] flex items-center justify-center font-semibold text-[#7b1e2b] shrink-0">
-                    {customer.name.charAt(0)}
-                  </div>
+<div
+  className="
+    hidden
+    lg:block
 
-                  <div className="min-w-0">
-                    <p className="font-semibold text-black truncate">
-                      {customer.name}
-                    </p>
+    overflow-hidden
 
-                    <p className="text-sm text-black/50 truncate">
-                      {customer.email}
-                    </p>
-                  </div>
-                </div>
+    rounded-[2rem]
 
-                <p className="font-medium text-black">{customer.orders}</p>
+    border
+    border-border
 
-                <p className="font-semibold text-black">{customer.spent}</p>
+    bg-surface
 
-                <div>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-                      customer.status === "VIP"
-                        ? "bg-[#f8eef1] text-[#7b1e2b] border-[#edd8de]"
-                        : customer.status === "Active"
-                          ? "bg-[#eef7f1] text-[#127a3f] border-[#d7edde]"
-                          : "bg-[#fff4e8] text-[#c77700] border-[#ffe1b4]"
-                    }`}
-                  >
-                    {customer.status}
-                  </span>
-                </div>
+    shadow-sm
+  "
+>
 
-                <p className="text-black/60 font-medium">{customer.joined}</p>
+  {/* TABLE HEADER */}
 
-                <div className="flex justify-end">
-                  <button className="h-11 px-5 rounded-xl border border-black/10 bg-surface hover:bg-black/5 transition font-medium">
-                    View Profile
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+  <div
+    className="
+      grid
+      grid-cols-7
 
-        {/* MOBILE CARDS */}
-        <div className="lg:hidden space-y-4">
-          {customers.map((customer) => (
+      gap-6
+
+      border-b
+      border-border
+
+      px-8
+      py-5
+
+      text-[11px]
+      font-semibold
+      uppercase
+
+      tracking-[0.18em]
+
+      text-text-secondary
+    "
+  >
+
+    <p>
+      Customer
+    </p>
+
+    <p>
+      Orders
+    </p>
+
+    <p>
+      Revenue
+    </p>
+
+    <p>
+      Tier
+    </p>
+
+   <p>First Purchase</p>
+
+    <p>
+      Activity
+    </p>
+
+    <p className="text-right">
+      Profile
+    </p>
+
+  </div>
+
+
+
+  {/* TABLE BODY */}
+
+  <div>
+
+    {
+  customers?.length === 0 && (
+
+    <div
+      className="
+        flex
+        items-center
+        justify-center
+
+        py-20
+      "
+    >
+
+      <div
+        className="
+          text-center
+        "
+      >
+
+        <p
+          className="
+            text-lg
+            font-semibold
+
+            text-text-primary
+          "
+        >
+          No customers found
+        </p>
+
+        <p
+          className="
+            mt-2
+
+            text-sm
+
+            text-text-secondary
+          "
+        >
+          Try adjusting filters or search query
+        </p>
+
+      </div>
+
+    </div>
+
+  )
+}
+
+    {
+      customers?.map(
+        (customer) => {
+
+          const daysAgo =
+            Math.floor(
+
+              (
+                new Date() -
+
+                new Date(
+                  customer.lastOrderDate
+                )
+
+              ) /
+
+              (1000 * 60 * 60 * 24)
+
+            );
+
+
+
+          return (
+
             <div
-              key={customer.id}
-              className="bg-surface rounded-[2rem] border border-black/5 p-5 shadow-sm"
+              key={customer._id}
+              onClick={() => navigate(`/admin/customers/${customer._id}`)}
+
+              className="
+                grid
+                grid-cols-7
+
+                items-center
+
+                gap-6
+
+                border-b
+                border-border
+
+                px-8
+                py-6
+
+                transition-all
+
+                hover:bg-surface-secondary
+              "
             >
-              <div className="flex items-start justify-between gap-4 mb-5">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-12 h-12 rounded-full bg-[#f5eaed] flex items-center justify-center font-semibold text-[#7b1e2b] shrink-0">
-                    {customer.name.charAt(0)}
-                  </div>
 
-                  <div className="min-w-0">
-                    <p className="font-semibold truncate">{customer.name}</p>
+              {/* CUSTOMER */}
 
-                    <p className="text-sm text-black/50 truncate">
-                      {customer.email}
-                    </p>
-                  </div>
+              <div
+                className="
+                  flex
+                  items-center
+                  gap-4
+
+                  min-w-0
+                "
+              >
+
+                {/* AVATAR */}
+
+                <div
+                  className="
+                    flex
+                    h-12
+                    w-12
+
+                    shrink-0
+
+                    items-center
+                    justify-center
+
+                    rounded-2xl
+
+                    bg-brand/10
+
+                    text-sm
+                    font-semibold
+
+                    text-brand
+                  "
+                >
+
+                  {
+                    customer.customerName
+                      ?.charAt(0)
+                  }
+
                 </div>
 
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[#f8eef1] text-[#7b1e2b] border border-[#edd8de] shrink-0">
-                  {customer.status}
-                </span>
+
+
+                {/* INFO */}
+
+                <div
+                  className="
+                    min-w-0
+                  "
+                >
+
+                  <p
+                    className="
+                      truncate
+
+                      font-semibold
+
+                      text-text-primary
+                    "
+                  >
+                    {
+                      customer.customerName
+                    }
+                  </p>
+
+
+
+                  <p
+                    className="
+                      mt-1
+
+                      truncate
+
+                      text-sm
+
+                      text-text-secondary
+                    "
+                  >
+                    {
+                      customer.customerEmail
+                    }
+                  </p>
+
+                </div>
+
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-5">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-black/40 mb-1">
-                    Orders
-                  </p>
 
-                  <p className="font-semibold text-lg">{customer.orders}</p>
-                </div>
 
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-black/40 mb-1">
-                    Total Spend
-                  </p>
+              {/* ORDERS */}
 
-                  <p className="font-semibold text-lg truncate">
-                    {customer.spent}
-                  </p>
-                </div>
+              <div>
+
+                <p
+                  className="
+                    text-base
+                    font-semibold
+
+                    text-text-primary
+                  "
+                >
+                  {
+                    customer.totalOrders
+                  }
+                </p>
+
+
+
+                <p
+                  className="
+                    mt-1
+
+                    text-xs
+
+                    text-text-secondary
+                  "
+                >
+                  Orders placed
+                </p>
+
               </div>
 
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-black/40 mb-1">
-                    Joined
-                  </p>
 
-                  <p className="text-sm font-medium text-black/65">
-                    {customer.joined}
-                  </p>
-                </div>
 
-                <button className="h-11 px-5 rounded-xl border border-black/10 bg-surface hover:bg-black/5 transition font-medium shrink-0">
-                  View
+              {/* REVENUE */}
+
+              <div>
+
+                <p
+                  className="
+                    text-base
+                    font-bold
+
+                    text-text-primary
+                  "
+                >
+                  ₹
+                  {
+                    customer.totalSpent
+                      ?.toLocaleString()
+                  }
+                </p>
+
+
+
+                <p
+                  className="
+                    mt-1
+
+                    text-xs
+
+                    text-text-secondary
+                  "
+                >
+                  Lifetime value
+                </p>
+
+              </div>
+
+
+
+              {/* STATUS */}
+
+              <div>
+
+              <span
+  className={`
+    inline-flex
+    items-center
+
+    rounded-full
+
+    px-3
+    py-1.5
+
+    text-xs
+    font-semibold
+
+    ${
+      customer.customerTier ===
+      "Platinum"
+
+        ? "bg-[#EEF2FF] text-[#4338CA] border border-[#C7D2FE]"
+
+        : customer.customerTier ===
+          "Gold"
+
+        ? "bg-[#FFF7E8] text-[#B7791F] border border-[#FDE3B0]"
+
+        : customer.customerTier ===
+          "Silver"
+
+        ? "bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB]"
+
+        : "bg-[#FFF4E8] text-[#C77700] border border-[#FFE1B4]"
+    }
+  `}
+>
+
+  {customer.customerTier}
+
+</span>
+
+              </div>
+
+
+
+              {/* JOINED */}
+
+              <div>
+
+                <p
+                  className="
+                    font-medium
+
+                    text-text-primary
+                  "
+                >
+
+                  {
+
+                    new Date(
+                      customer.joinedAt
+                    ).toLocaleDateString(
+                      "en-IN",
+                      {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }
+                    )
+
+                  }
+
+                </p>
+
+
+
+                <p
+                  className="
+                    mt-1
+
+                    text-xs
+
+                    text-text-secondary
+                  "
+                >
+                  Customer since
+                </p>
+
+              </div>
+
+
+
+              {/* ACTIVITY */}
+
+              <div>
+
+                <p
+                  className="
+                    font-semibold
+
+                    text-text-primary
+                  "
+                >
+                  {daysAgo}
+                  d ago
+                </p>
+
+
+
+                <p
+                  className="
+                    mt-1
+
+                    text-xs
+
+                    text-text-secondary
+                  "
+                >
+                  Last purchase
+                </p>
+
+              </div>
+
+
+
+              {/* ACTION */}
+
+              <div
+                className="
+                  flex
+                  justify-end
+                "
+              >
+
+                <button
+                  className="
+                    rounded-2xl
+
+                    border
+                    border-border
+
+                    bg-surface-secondary
+
+                    px-5
+                    py-3
+
+                    text-sm
+                    font-medium
+
+                    text-text-primary
+
+                    transition-all
+
+                    hover:border-brand/20
+                    hover:bg-brand/5
+                  "
+                >
+                  View Profile
                 </button>
+
               </div>
+
             </div>
-          ))}
+
+          );
+
+        }
+      )
+    }
+
+  </div>
+
+</div>
+
+{/* PAGINATION */}
+
+{
+  pagination && (
+
+    <div
+      className="
+        mt-6
+
+        flex
+        items-center
+        justify-between
+        gap-4
+        flex-wrap
+      "
+    >
+
+      {/* INFO */}
+
+      <p
+        className="
+          text-sm
+
+          text-text-secondary
+        "
+      >
+
+        Page
+        {" "}
+
+        {
+          pagination.page
+        }
+
+        {" "}
+        of
+        {" "}
+
+        {
+          pagination.pages
+        }
+
+      </p>
+
+
+
+      {/* CONTROLS */}
+
+      <div
+        className="
+          flex
+          items-center
+          gap-2
+        "
+      >
+
+        {/* PREV */}
+
+        <button
+          disabled={
+            page === 1
+          }
+
+          onClick={() =>
+            setPage(
+              (prev) =>
+                prev - 1
+            )
+          }
+
+          className="
+            h-11
+
+            rounded-2xl
+
+            border
+            border-border
+
+            bg-surface
+
+            px-4
+
+            text-sm
+            font-medium
+
+            disabled:cursor-not-allowed
+            disabled:opacity-40
+          "
+        >
+          Previous
+        </button>
+
+
+
+        {/* CURRENT */}
+
+        <div
+          className="
+            flex
+            h-11
+            min-w-[44px]
+
+            items-center
+            justify-center
+
+            rounded-2xl
+
+            bg-brand
+
+            px-4
+
+            text-sm
+            font-semibold
+
+            text-white
+          "
+        >
+          {page}
         </div>
+
+
+
+        {/* NEXT */}
+
+        <button
+          disabled={
+            page ===
+            pagination.pages
+          }
+
+          onClick={() =>
+            setPage(
+              (prev) =>
+                prev + 1
+            )
+          }
+
+          className="
+            h-11
+
+            rounded-2xl
+
+            border
+            border-border
+
+            bg-surface
+
+            px-4
+
+            text-sm
+            font-medium
+
+            disabled:cursor-not-allowed
+            disabled:opacity-40
+          "
+        >
+          Next
+        </button>
+
+      </div>
+
+    </div>
+
+  )
+}
+
+
       </div>
     </div>
   );

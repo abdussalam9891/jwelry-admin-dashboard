@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   Clock3,
-  Eye,
   Filter,
   PackageCheck,
   Search,
@@ -17,6 +17,8 @@ import {
 } from "../services/orderService";
 
 export default function Orders() {
+  const navigate = useNavigate();
+
   const [stats, setStats] = useState({
     totalOrders: 0,
     processingOrders: 0,
@@ -866,7 +868,7 @@ export default function Orders() {
                   "Date",
                   "Amount",
                   "Payment",
-                  "Fulfillment",
+                  "STATUS",
                 ].map((heading) => (
                   <th
                     key={heading}
@@ -885,24 +887,6 @@ export default function Orders() {
                     {heading}
                   </th>
                 ))}
-
-                <th
-                  className="
-              px-6
-              py-5
-
-              text-right
-
-              text-[11px]
-              font-semibold
-              uppercase
-              tracking-[0.14em]
-
-              text-[#9CA3AF]
-            "
-                >
-                  Actions
-                </th>
               </tr>
             </thead>
 
@@ -941,13 +925,21 @@ export default function Orders() {
                 orders.map((order) => (
                   <tr
                     key={order._id}
+                    onClick={() => navigate(`/admin/orders/${order._id}`)}
                     className="
-          border-b
-          border-[#F5F1F2]
+  cursor-pointer
 
-          transition
-          hover:bg-surface-secondary
-        "
+  border-b
+  border-[#F5F1F2]
+
+  transition-all
+  duration-200
+
+  hover:bg-surface-secondary
+  hover:shadow-[inset_4px_0_0_#6B1A2A]
+
+   group
+"
                   >
                     {/* ORDER */}
                     <td className="px-6 py-5">
@@ -958,7 +950,9 @@ export default function Orders() {
                 text-text-primary
               "
                         >
-                          #{order.orderNumber}
+                          #
+                          {order.orderNumber ||
+                            order._id?.slice(-6)?.toUpperCase()}
                         </h3>
 
                         <p
@@ -1050,7 +1044,7 @@ export default function Orders() {
             text-text-primary
           "
                     >
-                      ₹{order.totalPrice}
+                      ₹{order.totalPrice?.toLocaleString()}
                     </td>
 
                     {/* PAYMENT */}
@@ -1079,72 +1073,36 @@ export default function Orders() {
                       </span>
                     </td>
 
-                    {/* FULFILLMENT */}
+                    {/* STATUS */}
                     <td className="px-6 py-5">
                       <span
                         className={`
-              inline-flex
-              items-center
+      inline-flex
+      items-center
 
-              rounded-full
+      rounded-full
 
-              px-3
-              py-1.5
+      px-3
+      py-1.5
 
-              text-xs
-              font-semibold
+      text-xs
+      font-semibold
 
-              ${
-                order.orderStatus === "DELIVERED"
-                  ? "bg-[#EEF8F1] text-[#0F9F61]"
-                  : order.orderStatus === "CANCELLED"
-                    ? "bg-[#FFF1F2] text-[#E11D48]"
-                    : "bg-[#FFF5E8] text-[#D97706]"
-              }
-            `}
+      ${
+        order.orderStatus === "DELIVERED"
+          ? "bg-[#EEF8F1] text-[#0F9F61]"
+          : order.orderStatus === "CANCELLED"
+            ? "bg-[#FFF1F2] text-[#E11D48]"
+            : order.orderStatus === "SHIPPED"
+              ? "bg-[#EEF4FF] text-[#2563EB]"
+              : order.orderStatus === "CONFIRMED"
+                ? "bg-[#F5F3FF] text-[#7C3AED]"
+                : "bg-[#FFF5E8] text-[#D97706]"
+      }
+    `}
                       >
                         {order.orderStatus}
                       </span>
-                    </td>
-
-                    {/* ACTION */}
-                    <td
-                      className="
-            px-6
-            py-5
-            text-right
-          "
-                    >
-                      <button
-                        className="
-              inline-flex
-              items-center
-              gap-2
-
-              rounded-2xl
-
-              border
-              border-border
-
-              bg-surface
-
-              px-4
-              py-2.5
-
-              text-sm
-              font-semibold
-
-              text-text-primary
-
-              shadow-sm
-
-              transition
-              hover:bg-[#FAFAFA]
-            "
-                      >
-                        <Eye size={16} />
-                        View
-                      </button>
                     </td>
                   </tr>
                 ))
