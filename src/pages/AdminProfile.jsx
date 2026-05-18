@@ -3,7 +3,7 @@ import {
 } from "../context/AuthContext";
 import { useState } from "react";
 
-import { updateProfile } from "@/services/authService";
+import { updateProfile, updateAvatar } from "@/services/authService";
  import toast from "react-hot-toast";
 
 
@@ -69,6 +69,11 @@ const [formData,
       phone:
         profile.phone,
 
+      avatar: null,
+
+      avatarPreview:
+        profile.avatar,
+
     });
 
  const [saving, setSaving] =
@@ -116,14 +121,42 @@ handleUpdateProfile() {
 
     setSaving(true);
 
+
+    /* UPDATE TEXT FIELDS */
+
     const data =
-      await updateProfile(
-        formData
+      await updateProfile({
+
+        name:
+          formData.name,
+
+        phone:
+          formData.phone,
+
+      });
+
+
+    /* UPDATE AVATAR */
+
+    if (formData.avatar) {
+
+      const avatarData =
+        await updateAvatar(
+          formData.avatar
+        );
+
+      setUser(
+        avatarData.user
       );
 
-    setUser(
-      data.user
-    );
+    } else {
+
+      setUser(
+        data.user
+      );
+
+    }
+
 
     toast.success(
       "Profile updated"
@@ -144,7 +177,6 @@ handleUpdateProfile() {
   }
 
 }
-
 
 
   return (
@@ -200,68 +232,54 @@ handleUpdateProfile() {
 
         {/* avatar */}
 
-        <div
-          className="
-            relative
+   <div
+  className="
+    flex
+    h-30
+    w-30
+    shrink-0
+    items-center
+    justify-center
 
-            flex
-            h-20
-            w-20
-            shrink-0
-            items-center
-            justify-center
+    overflow-hidden
 
-            overflow-hidden
+    rounded-full
 
-            rounded-2xl
+    bg-brand/10
+  "
+>
 
-            bg-brand/10
-          "
-        >
+  {user?.avatar ? (
 
-          {profile.avatar && (
+    <img
+      src={user.avatar}
 
-            <img
-              src={profile.avatar}
+      alt={user.name}
 
-              alt={profile.name}
+      className="
+        h-full
+        w-full
+        object-cover
+      "
+    />
 
-              onError={(e) => {
-                e.target.style.display =
-                  "none";
-              }}
+  ) : (
 
-              className="
-                h-full
-                w-full
-                object-cover
-              "
-            />
+    <span
+      className="
+        text-sm
+        font-semibold
+        text-brand
+      "
+    >
+      {user?.name
+        ?.charAt(0)
+        ?.toUpperCase()}
+    </span>
 
-          )}
+  )}
 
-          <span
-            className="
-              absolute
-              inset-0
-
-              flex
-              items-center
-              justify-center
-
-              text-2xl
-              font-bold
-
-              text-brand
-            "
-          >
-            {profile.name
-              ?.charAt(0)
-              ?.toUpperCase()}
-          </span>
-
-        </div>
-
+</div>
 
         {/* user info */}
 
@@ -1046,6 +1064,134 @@ handleUpdateProfile() {
           />
 
         </div>
+
+
+        {/* avatar upload */}
+
+<div>
+
+  <label
+    className="
+      mb-3
+      block
+
+      text-sm
+      font-medium
+      text-text-secondary
+    "
+  >
+    Profile Photo
+  </label>
+
+
+  <div
+    className="
+      flex
+      items-center
+      gap-4
+    "
+  >
+
+    {/* preview */}
+
+    <div
+      className="
+        h-20
+        w-20
+
+        overflow-hidden
+
+        rounded-2xl
+
+        border
+        border-border
+
+        bg-surface-secondary
+      "
+    >
+
+      <img
+        src={
+          formData.avatarPreview
+        }
+
+        alt="Avatar"
+
+        className="
+          h-full
+          w-full
+          object-cover
+        "
+      />
+
+    </div>
+
+
+    {/* upload */}
+
+    <label
+      className="
+        cursor-pointer
+
+        rounded-2xl
+
+        border
+        border-border
+
+        bg-surface-secondary
+
+        px-4
+        py-3
+
+        text-sm
+        font-medium
+        text-text-primary
+
+        transition-all
+
+        hover:bg-brand/5
+      "
+    >
+
+      Upload Image
+
+      <input
+
+        type="file"
+
+        accept="image/*"
+
+        hidden
+
+        onChange={(e) => {
+
+          const file =
+            e.target.files[0];
+
+          if (!file) return;
+
+          setFormData({
+
+            ...formData,
+
+            avatar: file,
+
+            avatarPreview:
+              URL.createObjectURL(
+                file
+              ),
+
+          });
+
+        }}
+
+      />
+
+    </label>
+
+  </div>
+
+</div>
 
       </div>
 

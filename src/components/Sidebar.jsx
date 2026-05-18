@@ -476,10 +476,8 @@ const { user } =
 
   {/* avatar */}
 
-<div
+   <div
   className="
-    relative
-
     flex
     h-10
     w-10
@@ -495,21 +493,12 @@ const { user } =
   "
 >
 
-  {/* image */}
-
-  {user?.avatar && (
+  {user?.avatar ? (
 
     <img
       src={user.avatar}
 
-      alt={user?.name}
-
-      onError={(e) => {
-
-        e.target.style.display =
-          "none";
-
-      }}
+      alt={user.name}
 
       className="
         h-full
@@ -518,29 +507,21 @@ const { user } =
       "
     />
 
+  ) : (
+
+    <span
+      className="
+        text-sm
+        font-semibold
+        text-brand
+      "
+    >
+      {user?.name
+        ?.charAt(0)
+        ?.toUpperCase()}
+    </span>
+
   )}
-
-  {/* fallback initial */}
-
-  <span
-    className="
-      absolute
-      inset-0
-
-      flex
-      items-center
-      justify-center
-
-      text-sm
-      font-semibold
-
-      text-brand
-    "
-  >
-    {user?.name
-      ?.charAt(0)
-      ?.toUpperCase() || "A"}
-  </span>
 
 </div>
 

@@ -601,55 +601,57 @@ const [open,
   "
 >
 
-  {/* avatar */}
+   {/* avatar */}
 
-  <div
-    className="
-      flex
-      h-9
-      w-9
-      items-center
-      justify-center
+        <div
+  className="
+    flex
+    h-10
+    w-10
+    shrink-0
+    items-center
+    justify-center
 
-      overflow-hidden
+    overflow-hidden
 
-      rounded-full
+    rounded-full
 
-      bg-brand/10
-    "
-  >
+    bg-brand/10
+  "
+>
 
-    {user?.avatar ? (
+  {user?.avatar ? (
 
-      <img
-        src={user.avatar}
+    <img
+      src={user.avatar}
 
-        alt={user.name}
+      alt={user.name}
 
-        className="
-          h-full
-          w-full
-          object-cover
-        "
-      />
+      className="
+        h-full
+        w-full
+        object-cover
+      "
+    />
 
-    ) : (
+  ) : (
 
-      <span
-        className="
-          text-sm
-          font-semibold
-          text-brand
-        "
-      >
-        {user?.name
-          ?.charAt(0)
-          ?.toUpperCase()}
-      </span>
+    <span
+      className="
+        text-sm
+        font-semibold
+        text-brand
+      "
+    >
+      {user?.name
+        ?.charAt(0)
+        ?.toUpperCase()}
+    </span>
 
-    )}
+  )}
 
-  </div>
+</div>
+
 
 
   {/* info */}
