@@ -14,6 +14,14 @@ import {
 
 import toast from "react-hot-toast";
 
+import {
+
+  updateNotificationPreferences,
+
+} from "@/services/authService";
+
+import { useAuth } from "@/context/AuthContext";
+
 export default function SettingsPage() {
 
   const [theme, setTheme] =
@@ -22,17 +30,15 @@ export default function SettingsPage() {
       "light"
     );
 
-  const [notifications,
-    setNotifications] =
-      useState({
+ const { user } =
+  useAuth();
 
-        orders: true,
-
-        stockAlerts: true,
-
-        customers: false,
-
-      });
+const [notifications,
+  setNotifications] =
+    useState(
+      user
+      ?.notificationPreferences || {}
+    );
 
 
   // theme sync
@@ -74,22 +80,59 @@ export default function SettingsPage() {
   }
 
 
-  function toggleNotification(
-    key
-  ) {
+async function
+toggleNotification(
+  key
+) {
 
-    setNotifications(
-      (prev) => ({
+  const updated = {
 
-        ...prev,
+    ...notifications,
 
-        [key]:
-          !prev[key],
+    [key]:
+      !notifications[key],
 
-      })
+  };
+
+  setNotifications(
+    updated
+  );
+
+  try {
+
+    await updateNotificationPreferences(
+      updated
+    );
+
+    toast.success(
+      "Preference updated"
+    );
+
+  } catch {
+
+    toast.error(
+      "Failed to update preference"
     );
 
   }
+
+}
+
+  useEffect(() => {
+
+  if (
+    user?.notificationPreferences
+  ) {
+
+    setNotifications(
+
+      user.notificationPreferences
+
+    );
+
+  }
+
+}, [user]);
 
 
   return (

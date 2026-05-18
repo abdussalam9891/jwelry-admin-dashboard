@@ -61,3 +61,23 @@ updateAvatar(file) {
   return res.data;
 
 }
+
+
+
+export async function
+updateNotificationPreferences(
+  preferences
+) {
+
+  const res =
+    await api.put(
+
+      "/auth/preferences",
+
+      preferences
+
+    );
+
+  return res.data;
+
+}
