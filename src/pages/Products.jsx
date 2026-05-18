@@ -224,7 +224,7 @@ export default function Products() {
         shadow-sm
 
         transition
-        hover:bg-[#FAFAFA]
+         hover:bg-surface-secondary
       "
           >
             Export

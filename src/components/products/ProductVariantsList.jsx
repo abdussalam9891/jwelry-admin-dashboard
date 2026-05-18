@@ -191,14 +191,18 @@ export default function ProductVariantsList({
     border
     border-border
 
-    bg-[#FAFAFA]
+    bg-surface-secondary
+text-text-secondary
+opacity-80
+
+
 
     px-4
 
     text-sm
     font-medium
 
-    text-text-primary
+
   "
                 >
                   {variant.size || "—"}
@@ -235,13 +239,15 @@ export default function ProductVariantsList({
                     border
                     border-border
 
-                    bg-[#F5F5F5]
+                  bg-surface-secondary
+text-text-secondary
+opacity-80
 
                     px-4
 
                     text-sm
 
-                    text-text-secondary
+                    
                   "
               />
             </div>

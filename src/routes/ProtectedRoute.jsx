@@ -3,64 +3,24 @@ import {
 } from "react-router-dom";
 
 import {
-  useEffect,
-  useState,
-} from "react";
-
-import api from "../api/client";
+  useAuth,
+} from "../context/AuthContext";
 
 export default function ProtectedRoute({
   children,
 }) {
 
-  const [loading, setLoading] =
-    useState(true);
+  const {
+    user,
+    loading,
+  } = useAuth();
 
-  const [authorized, setAuthorized] =
-    useState(false);
 
-  useEffect(() => {
-
-    async function verifyAdmin() {
-
-      try {
-
-        const res =
-          await api.get(
-            "/auth/me"
-          );
-
-        const user =
-          res.data.user;
-
-        if (
-          user.role === "admin"
-        ) {
-
-          setAuthorized(true);
-
-        }
-
-      } catch (err) {
-
-        console.error(err);
-
-      } finally {
-
-        setLoading(false);
-
-      }
-
-    }
-
-    verifyAdmin();
-
-  }, []);
-
-  //  loading screen
+  // loading state
   if (loading) {
 
     return (
+
       <div
         className="
           min-h-screen
@@ -73,12 +33,14 @@ export default function ProtectedRoute({
       >
         Verifying access...
       </div>
+
     );
 
   }
 
-  //  reject non-admin
-  if (!authorized) {
+
+  // no user
+  if (!user) {
 
     return (
       <Navigate
@@ -88,6 +50,22 @@ export default function ProtectedRoute({
     );
 
   }
+
+
+  // not admin
+  if (
+    user.role !== "admin"
+  ) {
+
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+
+  }
+
 
   return children;
 

@@ -18,6 +18,9 @@ import ProductDetailsPage from "../pages/ProductDetails";
 import EditProductPage from "../pages/EditProductPage";
 import OrderDetailsPage from "../pages/OrderDetails";
 import CustomerDetailsPage from "../pages/CustomerDetails";
+import AdminProfilePage
+from "../pages/AdminProfile";
+import SettingsPage from "@/pages/Settings";
 
 export default function AppRoutes() {
   return (
@@ -50,6 +53,11 @@ export default function AppRoutes() {
     }
   >
 
+     <Route
+    path="profile"
+    element={<AdminProfilePage />}
+  />
+
     <Route
       index
       element={<Dashboard />}
@@ -62,14 +70,14 @@ export default function AppRoutes() {
 
 
     <Route
-  path="/admin/products/:id/edit"
+  path="products/:id/edit"
   element={<EditProductPage />}
 />
 
 
 
     <Route
-  path="/admin/products/:id"
+  path="products/:id"
   element={<ProductDetailsPage />}
 />
 
@@ -86,7 +94,7 @@ export default function AppRoutes() {
     />
 
     <Route
-  path="/admin/orders/:id"
+  path="orders/:id"
   element={<OrderDetailsPage />}
 />
 
@@ -96,9 +104,14 @@ export default function AppRoutes() {
     />
 
       <Route
-      path="/admin/customers/:id"
+      path="customers/:id"
       element={<CustomerDetailsPage />}
     />
+
+    <Route
+  path="settings"
+  element={<SettingsPage />}
+/>
 
   </Route>
 

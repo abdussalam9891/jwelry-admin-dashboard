@@ -287,7 +287,7 @@ const ProductDetailsPage = () => {
       rounded-2xl
 
       border
-      border-black/10
+      border-border
 
       bg-surface
 
@@ -302,8 +302,9 @@ const ProductDetailsPage = () => {
       shadow-sm
 
       transition
+       hover:bg-surface-secondary
 
-      
+
     "
           >
             <Archive size={18} />

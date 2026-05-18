@@ -1,4 +1,14 @@
 import { NavLink } from "react-router-dom";
+import useLogout
+from "../hooks/useLogout";
+
+import {
+  useAuth,
+} from "../context/AuthContext";
+
+import {
+  Link,
+} from "react-router-dom";
 
 import {
   ChevronRight,
@@ -10,6 +20,8 @@ import {
   Users,
   X,
 } from "lucide-react";
+
+
 
 const navSections = [
   {
@@ -38,7 +50,7 @@ const navSections = [
         label: "Orders",
         path: "/admin/orders",
         icon: ShoppingCart,
-        badge: 12,
+
       },
     ],
   },
@@ -57,6 +69,20 @@ const navSections = [
 ];
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
+
+
+  const logout =
+  useLogout();
+
+const { user } =
+  useAuth();
+
+
+
+
+
+
+
   return (
     <>
       {/* overlay */}
@@ -385,6 +411,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
           {/* logout */}
 
           <button
+
+          onClick={logout}
             className="
               w-full
 
@@ -411,108 +439,148 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             Logout
           </button>
 
-          {/* admin card */}
+      {/* admin card */}
 
-          <div
-            className="
-              mt-5
+<Link
+  to="/admin/profile"
+  className="
+    mt-5
+    block
 
-              rounded-2xl
+    rounded-2xl
 
-            bg-surface-secondary
+    border
+    border-border
 
-              border
-              border-border
+    bg-surface-secondary
 
-              p-4
+    p-4
 
-              shadow-sm
-            "
-          >
-            <div
-              className="
-                flex
-                items-center
-                gap-3
-              "
-            >
-              {/* avatar */}
+    shadow-sm
 
-              <div
-                className="
-                  relative
-                  shrink-0
-                "
-              >
-                <div
-                  className="
-                    h-11
-                    w-11
+    transition-all
+    duration-200
 
-                    rounded-full
+    hover:border-brand/20
+    hover:bg-brand/5
+  "
+>
 
-                    bg-brand
+  <div
+    className="
+      flex
+      items-center
+      gap-3
+    "
+  >
 
-                    flex
-                    items-center
-                    justify-center
+  {/* avatar */}
 
-                    text-white
-                    font-semibold
-                    text-sm
-                  "
-                >
-                  A
-                </div>
+<div
+  className="
+    relative
 
-                {/* online dot */}
+    flex
+    h-10
+    w-10
+    shrink-0
+    items-center
+    justify-center
 
-                <div
-                  className="
-                    absolute
-                    bottom-0
-                    right-0
+    overflow-hidden
 
-                    h-3
-                    w-3
+    rounded-full
 
-                    rounded-full
+    bg-brand/10
+  "
+>
 
-                    bg-green-500
+  {/* image */}
 
-                    border-2
-                 border-surface
-                  "
-                />
-              </div>
+  {user?.avatar && (
 
-              {/* info */}
+    <img
+      src={user.avatar}
 
-              <div className="min-w-0">
-                <p
-                  className="
-                    text-sm
-                    font-semibold
-                   text-text-primary
+      alt={user?.name}
 
-                    truncate
-                  "
-                >
-                  Abdus
-                </p>
+      onError={(e) => {
 
-                <p
-                  className="
-                    text-xs
-                   text-text-secondary
-                    mt-0.5
-                  "
-                >
-                  Super Admin
-                </p>
-              </div>
-            </div>
-          </div>
+        e.target.style.display =
+          "none";
+
+      }}
+
+      className="
+        h-full
+        w-full
+        object-cover
+      "
+    />
+
+  )}
+
+  {/* fallback initial */}
+
+  <span
+    className="
+      absolute
+      inset-0
+
+      flex
+      items-center
+      justify-center
+
+      text-sm
+      font-semibold
+
+      text-brand
+    "
+  >
+    {user?.name
+      ?.charAt(0)
+      ?.toUpperCase() || "A"}
+  </span>
+
+</div>
+
+
+    {/* info */}
+
+    <div className="min-w-0">
+
+      <p
+        className="
+          truncate
+
+          text-sm
+          font-semibold
+
+          text-text-primary
+        "
+      >
+        {user?.name || "Admin"}
+      </p>
+
+      <p
+        className="
+          mt-0.5
+
+          text-xs
+
+          capitalize
+
+          text-text-secondary
+        "
+      >
+        {user?.role || "admin"}
+      </p>
+
+    </div>
+
+  </div>
+
+</Link>
         </div>
       </aside>
     </>
