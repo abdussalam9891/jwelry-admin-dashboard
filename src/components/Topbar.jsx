@@ -33,6 +33,8 @@ const [profileOpen,
 
 const dropdownRef =
   useRef(null);
+  const notificationRef =
+  useRef(null);
 
 
   const toggleTheme = () => {
@@ -56,10 +58,12 @@ const [unreadCount,
   setUnreadCount] =
     useState(0);
 
-const [open,
-  setOpen] =
-    useState(false);
+const [
+  notificationOpen,
 
+  setNotificationOpen,
+
+] = useState(false);
 
 
 
@@ -94,20 +98,42 @@ const [open,
 }, []);
 
 
-  useEffect(() => {
+useEffect(() => {
 
   function handleClickOutside(
     event
   ) {
 
+    /* PROFILE */
+
     if (
+
       dropdownRef.current &&
+
       !dropdownRef.current.contains(
         event.target
       )
+
     ) {
 
       setProfileOpen(false);
+
+    }
+
+
+    /* NOTIFICATIONS */
+
+    if (
+
+      notificationRef.current &&
+
+      !notificationRef.current.contains(
+        event.target
+      )
+
+    ) {
+
+      setNotificationOpen(false);
 
     }
 
@@ -128,6 +154,8 @@ const [open,
   };
 
 }, []);
+
+
 
   return (
     <header
@@ -289,15 +317,18 @@ const [open,
         </button>
 
         {/* notification */}
-    <div className="relative">
+    <div  ref={notificationRef}
+  className="relative">
 
   {/* trigger */}
 
   <button
 
     onClick={() =>
-      setOpen(!open)
-    }
+  setNotificationOpen(
+    (prev) => !prev
+  )
+}
 
     className="
       relative
@@ -353,7 +384,7 @@ const [open,
 
   {/* dropdown */}
 
-  {open && (
+  {notificationOpen && (
 
     <div
       className="
@@ -574,11 +605,11 @@ const [open,
 
 <button
 
-  onClick={() =>
-    setProfileOpen(
-      !profileOpen
-    )
-  }
+ onClick={() =>
+  setProfileOpen(
+    (prev) => !prev
+  )
+}
 
   className="
     flex
