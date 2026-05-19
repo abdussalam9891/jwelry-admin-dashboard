@@ -284,31 +284,25 @@ export default function Dashboard() {
               Export Report
             </button>
 
-            <button
-              className="
-          rounded-2xl
-
-          border
-          border-black/10
-
-          bg-surface/70
-
-          px-5
-          py-3
-
-          text-sm
-          font-semibold
-
-          text-text-primary
-
-          backdrop-blur-xl
-
-          transition
-          hover:bg-surface
-        "
-            >
-              View Analytics
-            </button>
+           <Link
+  to="/admin/analytics"
+  className="
+    rounded-2xl
+    border
+    border-black/10
+    bg-surface/70
+    px-5
+    py-3
+    text-sm
+    font-semibold
+    text-text-primary
+    backdrop-blur-xl
+    transition
+    hover:bg-surface
+  "
+>
+  View Analytics
+</Link>
           </div>
         </div>
       </div>

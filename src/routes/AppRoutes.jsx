@@ -20,7 +20,8 @@ import OrderDetailsPage from "../pages/OrderDetails";
 import CustomerDetailsPage from "../pages/CustomerDetails";
 import AdminProfilePage
 from "../pages/AdminProfile";
-import SettingsPage from "@/pages/Settings";
+import SettingsPage from "../pages/Settings";
+import AnalyticsPage from "../pages/AnalyticsPage";
 
 export default function AppRoutes() {
   return (
@@ -62,6 +63,8 @@ export default function AppRoutes() {
       index
       element={<Dashboard />}
     />
+
+    <Route path="/admin/analytics" element={<AnalyticsPage />} />
 
     <Route
       path="products"
