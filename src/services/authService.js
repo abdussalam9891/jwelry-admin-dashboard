@@ -81,3 +81,28 @@ updateNotificationPreferences(
   return res.data;
 
 }
+
+
+
+/* OTP */
+export async function requestOtp(
+  phone
+) {
+  const res = await api.post(
+    "/auth/request-otp",
+    { phone }
+  );
+
+  return res.data;
+}
+
+export async function verifyAdminOtp(
+  payload
+) {
+  const res = await api.post(
+    "/auth/verify-otp-admin",
+    payload
+  );
+
+  return res.data;
+}

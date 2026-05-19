@@ -1,6 +1,99 @@
 import logo from "../assets/icon/logo.png";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import {
+  requestOtp,
+  verifyAdminOtp,
+} from "../services/authService";
 
 export default function Login() {
+
+
+  const [phone, setPhone] = useState("");
+const [otp, setOtp] = useState("");
+const [showOtp, setShowOtp] = useState(false);
+
+const [loading, setLoading] = useState(false);
+const [countdown, setCountdown] = useState(0);
+
+
+
+
+
+const handleRequestOtp = async () => {
+  try {
+    if (phone.length !== 10) {
+      return toast(
+        "Enter valid 10 digit mobile number"
+      );
+    }
+
+    setLoading(true);
+
+    await requestOtp(phone);
+
+    setShowOtp(true);
+    setCountdown(60);
+
+    toast.success(
+      "OTP sent successfully"
+    );
+
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  } catch (err) {
+    toast.error(
+      err?.response?.data?.message ||
+      "Failed to send OTP"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
+const handleVerifyOtp =
+  async () => {
+    try {
+      if (otp.length !== 6) {
+        return toast(
+          "Enter valid 6 digit OTP"
+        );
+      }
+
+      setLoading(true);
+
+      await verifyAdminOtp({
+        phone,
+        otp,
+      });
+
+      toast(
+        "Login successful"
+      );
+
+      window.location.href =
+        "/admin";
+    } catch (err) {
+      toast(
+        err?.response?.data
+          ?.message ||
+          "Invalid OTP"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0B0B0C] text-white">
       {/*  ambient gradients */}
@@ -91,59 +184,194 @@ export default function Login() {
             </p>
           </div>
 
-          {/*  login button */}
-          <button
-            onClick={() => {
-              window.location.href =
-                "http://localhost:5000/api/v1/auth/google/admin";
-            }}
-            className="
-              group
-              relative
-              w-full
-              overflow-hidden
-              rounded-2xl
-              bg-brand
-              px-5
-              py-4
-              font-medium
-              transition-all
-              duration-300
-              hover:scale-[1.01]
-              hover:bg-[#7A1D30]
-              active:scale-[0.99]
-            "
-          >
-            <div
-              className="
-                absolute inset-0
-                opacity-0
-                group-hover:opacity-100
-                transition
-                duration-300
-                bg-gradient-to-r
-                from-transparent
-                via-white/10
-                to-transparent
-                translate-x-[-100%]
-                group-hover:translate-x-[100%]
-              "
-            />
+        <div className="space-y-5">
+  {/* GOOGLE LOGIN */}
+  <button
+    onClick={() => {
+      window.location.href =
+        "http://localhost:5000/api/v1/auth/google/admin";
+    }}
+    className="
+      group
+      relative
+      w-full
+      overflow-hidden
+      rounded-2xl
+      bg-brand
+      px-5
+      py-4
+      font-medium
+      transition-all
+      duration-300
+      hover:scale-[1.01]
+      hover:bg-[#7A1D30]
+      active:scale-[0.99]
+    "
+  >
+    <div
+      className="
+        absolute inset-0
+        opacity-0
+        group-hover:opacity-100
+        transition
+        duration-300
+        bg-gradient-to-r
+        from-transparent
+        via-white/10
+        to-transparent
+        translate-x-[-100%]
+        group-hover:translate-x-[100%]
+      "
+    />
 
-            <span className="relative flex items-center justify-center gap-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 48 48"
-                className="w-5 h-5"
-              >
-                <path
-                  fill="#FFC107"
-                  d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12S17.4 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"
-                />
-              </svg>
-              Continue with Google
-            </span>
-          </button>
+    <span className="relative flex items-center justify-center gap-3">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 48 48"
+        className="w-5 h-5"
+      >
+        <path
+          fill="#FFC107"
+          d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12S17.4 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"
+        />
+      </svg>
+      Continue with Google
+    </span>
+  </button>
+
+  {/* DIVIDER */}
+  <div className="flex items-center gap-3">
+    <div className="h-px flex-1 bg-white/10" />
+    <span className="text-xs uppercase tracking-[0.2em] text-white/30">
+      Or continue with phone
+    </span>
+    <div className="h-px flex-1 bg-white/10" />
+  </div>
+
+  {/* PHONE */}
+  <div className="space-y-4">
+    <div
+      className="
+        flex
+        items-center
+        rounded-2xl
+        border
+        border-white/10
+        bg-white/5
+        px-4
+        h-14
+        focus-within:border-brand
+      "
+    >
+      <span className="text-sm text-white/50 mr-3">
+        +91
+      </span>
+
+      <input
+  type="tel"
+  value={phone}
+  maxLength={10}
+  inputMode="numeric"
+  placeholder="Enter mobile number"
+  onChange={(e) =>
+    setPhone(
+      e.target.value
+        .replace(/\D/g, "")
+        .slice(0, 10)
+    )
+  }
+  className="
+    flex-1
+    bg-transparent
+    outline-none
+    text-sm
+    placeholder:text-white/25
+  "
+/>
+    </div>
+
+    {/* REQUEST OTP */}
+   <button
+  onClick={handleRequestOtp}
+  disabled={loading || countdown > 0}
+  className="
+    w-full
+    h-14
+    rounded-2xl
+    border
+    border-white/10
+    bg-white/5
+    text-sm
+    font-medium
+    hover:bg-white/10
+    transition
+    disabled:opacity-50
+    disabled:cursor-not-allowed
+  "
+>
+  {loading
+    ? "Sending OTP..."
+    : showOtp
+      ? countdown > 0
+        ? `Resend OTP (${countdown}s)`
+        : "Resend OTP"
+      : "Request OTP"}
+</button>
+
+    {/* OTP */}
+   {showOtp && (
+  <div className="space-y-4">
+    <input
+      type="tel"
+      value={otp}
+      maxLength={6}
+      inputMode="numeric"
+      placeholder="Enter 6 digit OTP"
+      onChange={(e) =>
+        setOtp(
+          e.target.value
+            .replace(/\D/g, "")
+            .slice(0, 6)
+        )
+      }
+      className="
+        w-full
+        h-14
+        rounded-2xl
+        border
+        border-white/10
+        bg-white/5
+        px-4
+        outline-none
+        text-sm
+        placeholder:text-white/25
+        focus:border-brand
+      "
+    />
+
+    <button
+      onClick={handleVerifyOtp}
+      disabled={loading}
+      className="
+        w-full
+        h-14
+        rounded-2xl
+        bg-white
+        text-black
+        font-medium
+        hover:opacity-90
+        transition
+        disabled:opacity-50
+      "
+    >
+      {loading
+        ? "Verifying..."
+        : "Verify & Login"}
+    </button>
+  </div>
+)}
+  </div>
+</div>
 
           {/*  footer */}
           <div
