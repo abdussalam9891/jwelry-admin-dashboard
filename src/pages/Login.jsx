@@ -1,109 +1,121 @@
 import logo from "../assets/icon/logo.png";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import {
-  requestOtp,
-  verifyAdminOtp,
-} from "../services/authService";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
+  const navigate = useNavigate();
+
+  const { setUser } = useAuth();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] =
+    useState("");
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  const [forgotMode, setForgotMode] =
+    useState(false);
+
+  const [loading, setLoading] =
+    useState(false);
 
 
-  const [phone, setPhone] = useState("");
-const [otp, setOtp] = useState("");
-const [showOtp, setShowOtp] = useState(false);
-
-const [loading, setLoading] = useState(false);
-const [countdown, setCountdown] = useState(0);
 
 
-
-
-
-const handleRequestOtp = async () => {
+const handleLogin = async () => {
   try {
-    if (phone.length !== 10) {
-      return toast(
-        "Enter valid 10 digit mobile number"
+    if (!email || !password) {
+      return toast.error(
+        "Email & password required"
       );
     }
 
     setLoading(true);
 
-    await requestOtp(phone);
+    const { data } =
+      await axios.post(
+        "http://localhost:5000/api/v1/auth/login",
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
-    setShowOtp(true);
-    setCountdown(60);
+    if (
+      data?.user?.role !== "admin"
+    ) {
+      return toast.error(
+        "Unauthorized access"
+      );
+    }
+
+    // IMPORTANT: update auth context
+    setUser(data.user);
 
     toast.success(
-      "OTP sent successfully"
+      "Login successful"
     );
 
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    navigate("/admin", {
+      replace: true,
+    });
   } catch (err) {
     toast.error(
-      err?.response?.data?.message ||
-      "Failed to send OTP"
+      err?.response?.data
+        ?.message ||
+        "Login failed"
     );
   } finally {
     setLoading(false);
   }
 };
 
+  // FORGOT PASSWORD
+  const handleForgotPassword =
+    async () => {
+      try {
+        if (!email) {
+          return toast.error(
+            "Enter email"
+          );
+        }
 
+        setLoading(true);
 
-const handleVerifyOtp =
-  async () => {
-    try {
-      if (otp.length !== 6) {
-        return toast(
-          "Enter valid 6 digit OTP"
+        await axios.post(
+          "http://localhost:5000/api/v1/auth/forgot-password",
+          { email }
         );
+
+        toast.success(
+          "Reset link sent to email"
+        );
+      } catch (err) {
+        toast.error(
+          err?.response?.data
+            ?.message ||
+            "Failed to send reset link"
+        );
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(true);
-
-      await verifyAdminOtp({
-        phone,
-        otp,
-      });
-
-      toast(
-        "Login successful"
-      );
-
-      window.location.href =
-        "/admin";
-    } catch (err) {
-      toast(
-        err?.response?.data
-          ?.message ||
-          "Invalid OTP"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
+    };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0B0B0C] text-white">
-      {/*  ambient gradients */}
+      {/* gradients */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-[-120px] left-[-120px] w-[380px] h-[380px] rounded-full bg-brand/30 blur-3xl" />
-
         <div className="absolute bottom-[-150px] right-[-100px] w-[420px] h-[420px] rounded-full bg-[#D4AF37]/10 blur-3xl" />
       </div>
 
-      {/*  grid overlay */}
+      {/* grid */}
       <div
         className="
           absolute inset-0 opacity-[0.03]
@@ -112,7 +124,6 @@ const handleVerifyOtp =
         "
       />
 
-      {/*  content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center px-6">
         <div
           className="
@@ -126,269 +137,188 @@ const handleVerifyOtp =
             p-10
           "
         >
-          {/*  logo */}
+          {/* logo */}
           <div className="flex items-center gap-4 mb-10">
             <img
               src={logo}
               alt="Gemora"
-              className="
-      w-20
-      h-20
-      object-contain
-      drop-shadow-[0_4px_20px_rgba(255,255,255,0.08)]
-    "
+              className="w-20 h-20 object-contain"
             />
 
             <div>
-              <h1
-                className="
-        text-[1.05rem]
-        font-semibold
-        tracking-[0.18em]
-        text-white
-      "
-              >
+              <h1 className="text-[1.05rem] font-semibold tracking-[0.18em] text-white">
                 GEMORA
               </h1>
 
-              <p
-                className="
-        text-xs
-        uppercase
-        tracking-[0.22em]
-        text-white/35
-        mt-1
-      "
-              >
+              <p className="text-xs uppercase tracking-[0.22em] text-white/35 mt-1">
                 Admin Console
               </p>
             </div>
           </div>
 
-          {/*  heading */}
+          {/* heading */}
           <div className="mb-8">
-            <h2
-              className="
-                text-[2rem]
-                leading-tight
-                font-semibold
-                tracking-[-0.03em]
-              "
-            >
-              Welcome back
+            <h2 className="text-[2rem] font-semibold tracking-[-0.03em]">
+              {forgotMode
+                ? "Forgot Password"
+                : "Welcome Back"}
             </h2>
 
             <p className="text-white/50 text-sm mt-3 leading-relaxed">
-              Sign in securely to manage products, inventory, orders and
-              customer operations.
+              {forgotMode
+                ? "Reset your admin password securely."
+                : "Sign in securely to manage products, orders and dashboard."}
             </p>
           </div>
 
-        <div className="space-y-5">
-  {/* GOOGLE LOGIN */}
-  <button
-    onClick={() => {
-      window.location.href =
-        "http://localhost:5000/api/v1/auth/google/admin";
-    }}
-    className="
-      group
-      relative
-      w-full
-      overflow-hidden
-      rounded-2xl
-      bg-brand
-      px-5
-      py-4
-      font-medium
-      transition-all
-      duration-300
-      hover:scale-[1.01]
-      hover:bg-[#7A1D30]
-      active:scale-[0.99]
-    "
-  >
-    <div
-      className="
-        absolute inset-0
-        opacity-0
-        group-hover:opacity-100
-        transition
-        duration-300
-        bg-gradient-to-r
-        from-transparent
-        via-white/10
-        to-transparent
-        translate-x-[-100%]
-        group-hover:translate-x-[100%]
-      "
-    />
+          <div className="space-y-5">
+            {/* GOOGLE ADMIN LOGIN */}
+            {!forgotMode && (
+              <>
+                <button
+                  onClick={() => {
+                    window.location.href =
+                      "http://localhost:5000/api/v1/auth/google/admin";
+                  }}
+                  className="
+                    w-full
+                    rounded-2xl
+                    bg-brand
+                    px-5
+                    py-4
+                    font-medium
+                    hover:bg-[#7A1D30]
+                    transition
+                  "
+                >
+                  Continue with Google
+                </button>
 
-    <span className="relative flex items-center justify-center gap-3">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 48 48"
-        className="w-5 h-5"
-      >
-        <path
-          fill="#FFC107"
-          d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12S17.4 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"
-        />
-      </svg>
-      Continue with Google
-    </span>
-  </button>
+                <div className="flex items-center gap-3">
+                  <div className="h-px flex-1 bg-white/10" />
+                  <span className="text-xs uppercase tracking-[0.2em] text-white/30">
+                    Or continue with email
+                  </span>
+                  <div className="h-px flex-1 bg-white/10" />
+                </div>
+              </>
+            )}
 
-  {/* DIVIDER */}
-  <div className="flex items-center gap-3">
-    <div className="h-px flex-1 bg-white/10" />
-    <span className="text-xs uppercase tracking-[0.2em] text-white/30">
-      Or continue with phone
-    </span>
-    <div className="h-px flex-1 bg-white/10" />
-  </div>
+            {/* EMAIL */}
+            <input
+              type="email"
+              value={email}
+              placeholder="Enter email"
+              onChange={(e) =>
+                setEmail(
+                  e.target.value
+                )
+              }
+              className="
+                w-full
+                h-14
+                rounded-2xl
+                border border-white/10
+                bg-white/5
+                px-4
+                outline-none
+                text-sm
+                placeholder:text-white/25
+              "
+            />
 
-  {/* PHONE */}
-  <div className="space-y-4">
-    <div
-      className="
-        flex
-        items-center
-        rounded-2xl
-        border
-        border-white/10
-        bg-white/5
-        px-4
-        h-14
-        focus-within:border-brand
-      "
-    >
-      <span className="text-sm text-white/50 mr-3">
-        +91
-      </span>
+            {/* PASSWORD */}
+            {!forgotMode && (
+              <div className="relative">
+                <input
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
+                  value={password}
+                  placeholder="Enter password"
+                  onChange={(e) =>
+                    setPassword(
+                      e.target.value
+                    )
+                  }
+                  className="
+                    w-full
+                    h-14
+                    rounded-2xl
+                    border border-white/10
+                    bg-white/5
+                    px-4
+                    pr-16
+                    outline-none
+                    text-sm
+                  "
+                />
 
-      <input
-  type="tel"
-  value={phone}
-  maxLength={10}
-  inputMode="numeric"
-  placeholder="Enter mobile number"
-  onChange={(e) =>
-    setPhone(
-      e.target.value
-        .replace(/\D/g, "")
-        .slice(0, 10)
-    )
-  }
-  className="
-    flex-1
-    bg-transparent
-    outline-none
-    text-sm
-    placeholder:text-white/25
-  "
-/>
-    </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPassword(
+                      !showPassword
+                    )
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-white/50"
+                >
+                  {showPassword
+                    ? "Hide"
+                    : "Show"}
+                </button>
+              </div>
+            )}
 
-    {/* REQUEST OTP */}
-   <button
-  onClick={handleRequestOtp}
-  disabled={loading || countdown > 0}
-  className="
-    w-full
-    h-14
-    rounded-2xl
-    border
-    border-white/10
-    bg-white/5
-    text-sm
-    font-medium
-    hover:bg-white/10
-    transition
-    disabled:opacity-50
-    disabled:cursor-not-allowed
-  "
->
-  {loading
-    ? "Sending OTP..."
-    : showOtp
-      ? countdown > 0
-        ? `Resend OTP (${countdown}s)`
-        : "Resend OTP"
-      : "Request OTP"}
-</button>
+            {/* ACTION BUTTON */}
+            <button
+              onClick={
+                forgotMode
+                  ? handleForgotPassword
+                  : handleLogin
+              }
+              disabled={loading}
+              className="
+                w-full
+                h-14
+                rounded-2xl
+                bg-white
+                text-black
+                font-medium
+                hover:opacity-90
+                transition
+                disabled:opacity-50
+              "
+            >
+              {loading
+                ? "Please wait..."
+                : forgotMode
+                ? "Send Reset Link"
+                : "Login"}
+            </button>
 
-    {/* OTP */}
-   {showOtp && (
-  <div className="space-y-4">
-    <input
-      type="tel"
-      value={otp}
-      maxLength={6}
-      inputMode="numeric"
-      placeholder="Enter 6 digit OTP"
-      onChange={(e) =>
-        setOtp(
-          e.target.value
-            .replace(/\D/g, "")
-            .slice(0, 6)
-        )
-      }
-      className="
-        w-full
-        h-14
-        rounded-2xl
-        border
-        border-white/10
-        bg-white/5
-        px-4
-        outline-none
-        text-sm
-        placeholder:text-white/25
-        focus:border-brand
-      "
-    />
+            {/* TOGGLE */}
+            <button
+              onClick={() =>
+                setForgotMode(
+                  !forgotMode
+                )
+              }
+              className="w-full text-sm text-brand hover:underline"
+            >
+              {forgotMode
+                ? "Back to Login"
+                : "Forgot Password?"}
+            </button>
+          </div>
 
-    <button
-      onClick={handleVerifyOtp}
-      disabled={loading}
-      className="
-        w-full
-        h-14
-        rounded-2xl
-        bg-white
-        text-black
-        font-medium
-        hover:opacity-90
-        transition
-        disabled:opacity-50
-      "
-    >
-      {loading
-        ? "Verifying..."
-        : "Verify & Login"}
-    </button>
-  </div>
-)}
-  </div>
-</div>
-
-          {/*  footer */}
-          <div
-            className="
-              mt-8
-              pt-6
-              border-t
-              border-white/10
-              flex
-              items-center
-              justify-between
-              text-xs
-              text-white/35
-            "
-          >
-            <span>Protected Admin Access</span>
-
+          {/* footer */}
+          <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-white/35">
+            <span>
+              Protected Admin Access
+            </span>
             <span>v1.0</span>
           </div>
         </div>
