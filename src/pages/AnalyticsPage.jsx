@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   getDashboardAnalytics,
 } from "@/services/analyticsService";
@@ -171,40 +170,7 @@ if (loading) {
     <div className="space-y-6 p-6">
 
         <div>
-                <Link
-                  to="/admin/dashboard"
-                  className="
-                    group
-                    inline-flex
-                    items-center
-                    gap-2
-
-                    rounded-2xl
-
-                    border
-                    border-border
-
-                    bg-surface
-
-                    px-4
-                    py-2.5
-
-                    text-sm
-                    font-medium
-
-                    text-text-secondary
-
-                    shadow-sm
-
-                    transition-all
-
-                    hover:border-[#6B1A2A]/20
-                    hover:text-brand
-                  "
-                >
-                  <ArrowLeft size={16} />
-                  Back
-                </Link>
+                 
 
                 <h1
                   className="

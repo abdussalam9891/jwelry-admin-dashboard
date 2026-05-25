@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import useLogout
 from "../hooks/useLogout";
+import { useState } from "react";
 
 import {
   useAuth,
@@ -19,53 +20,88 @@ import {
   ShoppingCart,
   Users,
   X,
+
 } from "lucide-react";
 
 
-
 const navSections = [
-  {
-    title: "Overview",
-
-    links: [
-      {
-        label: "Dashboard",
-        path: "/admin",
-        icon: LayoutDashboard,
-      },
-    ],
-  },
+ {
+  title: "Overview",
+  links: [
+    {
+      label: "Dashboard",
+      path: "/admin",
+      icon: LayoutDashboard,
+      children: [
+        {
+          label: "Overview",
+          path: "/admin",
+          exact: true,
+        },
+        {
+          label: "Analytics",
+          path: "/admin/analytics",
+        },
+      ],
+    },
+  ],
+},
 
   {
     title: "Commerce",
-
     links: [
       {
         label: "Products",
         path: "/admin/products",
         icon: Package,
+        children: [
+          {
+            label: "All Products",
+            path: "/admin/products",
+             exact: true,
+          },
+          {
+            label: "Add Product",
+            path: "/admin/products/new",
+
+          },
+        ],
       },
 
       {
         label: "Orders",
         path: "/admin/orders",
         icon: ShoppingCart,
-
+        children: [
+          {
+            label: "All Orders",
+            path: "/admin/orders",
+             exact: true,
+          },
+        ],
       },
     ],
   },
 
   {
     title: "Customers",
-
     links: [
       {
         label: "Customers",
         path: "/admin/customers",
         icon: Users,
+        children: [
+          {
+            label: "All Customers",
+            path: "/admin/customers",
+             exact: true,
+          },
+        ],
       },
     ],
   },
+
+
 ];
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
@@ -76,6 +112,20 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
 const { user } =
   useAuth();
+
+  const [openMenus, setOpenMenus] = useState({
+  Dashboard: true,
+  Products: false,
+  Orders: false,
+  Customers: false,
+});
+
+const toggleMenu = (label) => {
+  setOpenMenus((prev) => ({
+    ...prev,
+    [label]: !prev[label],
+  }));
+};
 
 
 
@@ -113,7 +163,7 @@ const { user } =
     z-50
 
     h-screen
-    w-[280px]
+    w-[260px]
 
     bg-surface
 
@@ -143,7 +193,7 @@ const { user } =
             flex
             items-center
             justify-between
-            mb-10
+            mb-7
           "
         >
           {/* brand */}
@@ -214,160 +264,124 @@ const { user } =
         </div>
 
         {/* navigation */}
+ <div
+  className="
+    flex-1
+    overflow-y-auto
+    pr-1
+    scrollbar-hide
+  "
+>
+  {navSections.map((section) => (
+    <div key={section.title} className="mb-5">
+      {/* section title */}
+      <p
+        className="
+          px-4
+          mb-2
+          text-[11px]
+          font-semibold
+          uppercase
+          tracking-[0.12em]
+          text-text-secondary
+        "
+      >
+        {section.title}
+      </p>
 
-        <div
-          className="
-            flex-1
-            overflow-y-auto
-            pr-1
-          "
-        >
-          {navSections.map((section) => (
-            <div key={section.title} className="mb-7">
-              {/* section title */}
+      {/* links */}
+      <div className="flex flex-col gap-1">
+        {section.links.map((link) => {
+          const Icon = link.icon;
+          const isOpen = openMenus[link.label];
 
-              <p
+          return (
+            <div key={link.path} className="space-y-1">
+              {/* PARENT */}
+              <button
+                onClick={() =>
+                  link.children
+                    ? toggleMenu(link.label)
+                    : setSidebarOpen(false)
+                }
                 className="
-                  px-4
-                  mb-3
-
-                  text-[11px]
-                  font-semibold
-                  uppercase
-                  tracking-[0.12em]
-
-                 text-text-secondary
-                "
-              >
-                {section.title}
-              </p>
-
-              {/* links */}
-
-              <div
-                className="
+                  w-full
+                  group
                   flex
-                  flex-col
-                  gap-1.5
+                  items-center
+                  gap-3
+                  px-4
+                  py-2.5
+                  rounded-xl
+                  text-sm
+                  font-medium
+                  text-text-secondary
+                  hover:bg-surface-secondary
+                  hover:text-text-primary
+                  transition-all
                 "
               >
-                {section.links.map((link) => {
-                  const Icon = link.icon;
+                <Icon size={18} className="shrink-0" />
 
-                  return (
-                    <NavLink
-                      key={link.path}
-                      to={link.path}
-                      end={link.path === "/admin"}
-                      onClick={() => setSidebarOpen(false)}
-                      className={({ isActive }) => `
-                        relative
-                        overflow-hidden
+                <span className="flex-1 text-left">
+                  {link.label}
+                </span>
 
-                        flex
-                        items-center
-                        gap-3
+                {link.children && (
+                  <ChevronRight
+                    size={15}
+                    className={`
+                      transition-transform
+                      duration-200
+                      ${isOpen ? "rotate-90" : ""}
+                    `}
+                  />
+                )}
+              </button>
 
-                        px-4
-                        py-2
+              {/* CHILDREN */}
+              {link.children && isOpen && (
+                <div className="relative ml-7 pl-5">
+                  {/* vertical line */}
+                  <div className="absolute left-2 top-0 bottom-0 w-px bg-border" />
 
-                        rounded-xl
-
-                        text-sm
-                        font-medium
-
-                        transition-all
-                        duration-200
-
-                        ${
-                          isActive
-                            ? `
-                              bg-brand/10
-                              text-brand
-
-                              border
-                              border-[#6B1A2A]/10
-
-                              shadow-sm
-                            `
-                            : `
-                              text-text-secondary
-
-                            hover:bg-surface-secondary
-                              hover:text-black
-                            `
-                        }
-                      `}
-                    >
-                      {({ isActive }) => (
-                        <>
-                          {/* active indicator */}
-
-                          {isActive && (
-                            <div
-                              className="
-                                absolute
-                                left-0
-                                top-2
-                                bottom-2
-
-                                w-1
-
-                                rounded-r-full
-
-                                bg-brand
-                              "
-                            />
-                          )}
-
-                          {/* icon */}
-
-                          <Icon size={18} className="shrink-0" />
-
-                          {/* label */}
-
-                          <span className="flex-1">{link.label}</span>
-
-                          {/* badge */}
-
-                          {link.badge && (
-                            <span
-                              className="
-                                text-[11px]
-                                font-semibold
-
-                                bg-brand
-                                text-white
-
-                                px-2
-                                py-0.5
-
-                                rounded-full
-                              "
-                            >
-                              {link.badge}
-                            </span>
-                          )}
-
-                          {/* arrow */}
-
-                          {!link.badge && (
-                            <ChevronRight
-                              size={15}
-                              className="
-                                opacity-40
-                              "
-                            />
-                          )}
-                        </>
-                      )}
-                    </NavLink>
-                  );
-                })}
-              </div>
+                  <div className="space-y-1 py-1">
+                    {link.children.map((child) => (
+                      <NavLink
+                        key={child.path}
+                        to={child.path}
+                        end={!!child.exact}
+                        onClick={() => setSidebarOpen(false)}
+                        className={({ isActive }) => `
+                          flex
+                          items-center
+                          gap-3
+                          px-3
+                          py-2
+                          rounded-lg
+                          text-[13px]
+                          transition-all
+                          ${
+                            isActive
+                              ? "text-brand bg-brand/10 font-medium"
+                              : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
+                          }
+                        `}
+                      >
+                        <span className="h-1.5 w-1.5 rounded-full bg-current opacity-60" />
+                        {child.label}
+                      </NavLink>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          ))}
-        </div>
+          );
+        })}
+      </div>
+    </div>
+  ))}
+</div>
 
         {/* footer */}
 
@@ -444,7 +458,7 @@ const { user } =
 <Link
   to="/admin/profile"
   className="
-    mt-5
+    mt-3
     block
 
     rounded-2xl
@@ -454,7 +468,7 @@ const { user } =
 
     bg-surface-secondary
 
-    p-4
+    p-3
 
     shadow-sm
 
@@ -479,8 +493,8 @@ const { user } =
    <div
   className="
     flex
-    h-10
-    w-10
+    h-9
+    w-9
     shrink-0
     items-center
     justify-center
