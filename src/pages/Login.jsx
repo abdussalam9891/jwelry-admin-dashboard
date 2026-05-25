@@ -2,8 +2,12 @@ import logo from "../assets/icon/logo.png";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import { useAuth } from "../context/AuthContext";
+import {
+  adminLogin,
+  forgotPassword,
+} from "../services/authService";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -35,17 +39,11 @@ const handleLogin = async () => {
 
     setLoading(true);
 
-    const { data } =
-      await axios.post(
-        "http://localhost:5000/api/v1/auth/login",
-        {
-          email,
-          password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+
+    const data = await adminLogin({
+  email,
+  password,
+});
 
     if (
       data?.user?.role !== "admin"
@@ -88,10 +86,7 @@ const handleLogin = async () => {
 
         setLoading(true);
 
-        await axios.post(
-          "http://localhost:5000/api/v1/auth/forgot-password",
-          { email }
-        );
+       await forgotPassword(email);
 
         toast.success(
           "Reset link sent to email"
@@ -178,7 +173,7 @@ const handleLogin = async () => {
                 <button
                   onClick={() => {
                     window.location.href =
-                      "http://localhost:5000/api/v1/auth/google/admin";
+  `${import.meta.env.VITE_API_URL}/auth/google/admin`;
                   }}
                   className="
                     w-full

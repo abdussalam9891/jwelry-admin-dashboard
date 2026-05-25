@@ -2,7 +2,7 @@ import logo from "../assets/icon/logo.png";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { resetPassword } from "../services/authService";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -52,13 +52,10 @@ export default function ResetPassword() {
 
         setLoading(true);
 
-        await axios.post(
-          "http://localhost:5000/api/v1/auth/reset-password",
-          {
-            token,
-            password,
-          }
-        );
+       await resetPassword({
+  token,
+  password,
+});
 
         toast.success(
           "Password reset successful"

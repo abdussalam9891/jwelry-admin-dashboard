@@ -1,5 +1,27 @@
 import api from "../api/client";
 
+
+
+
+
+
+export async function adminLogin(payload) {
+  const res = await api.post(
+    "/api/v1/auth/login",
+    payload
+  );
+  return res.data;
+}
+
+export async function forgotPassword(email) {
+  const res = await api.post(
+    "/api/v1/auth/forgot-password",
+    { email }
+  );
+  return res.data;
+}
+
+
 export async function getCurrentUser() {
 
   const res =
@@ -101,6 +123,19 @@ export async function verifyAdminOtp(
 ) {
   const res = await api.post(
     "/auth/verify-otp-admin",
+    payload
+  );
+
+  return res.data;
+}
+
+
+
+export async function resetPassword(
+  payload
+) {
+  const res = await api.post(
+    "/auth/reset-password",
     payload
   );
 
