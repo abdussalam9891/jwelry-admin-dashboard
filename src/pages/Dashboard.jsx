@@ -94,7 +94,7 @@ export default function Dashboard() {
         }
 
         const data = await getDashboardData(params);
-
+        console.log(data);
         setDashboardData(data);
       } catch (error) {
         console.error(error);

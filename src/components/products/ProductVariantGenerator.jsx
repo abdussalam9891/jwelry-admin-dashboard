@@ -18,6 +18,18 @@ export default function ProductVariants({ formData, setFormData }) {
 
   const [selectedSizes, setSelectedSizes] = useState([]);
 
+
+  const existingMaterials =
+  new Set(
+    formData.variants.map(
+      (variant) => variant.material
+    )
+  );
+
+
+
+
+
   const toggleSelection = (value, selected, setter) => {
     if (selected.includes(value)) {
       setter(selected.filter((item) => item !== value));
@@ -217,40 +229,49 @@ export default function ProductVariants({ formData, setFormData }) {
           </p>
 
           <div className="flex flex-wrap gap-3">
-            {materialOptions.map((material) => (
-              <button
-                key={material}
-                type="button"
-                onClick={() =>
-                  toggleSelection(
-                    material,
-                    selectedMaterials,
-                    setSelectedMaterials,
-                  )
-                }
-                className={`
-                  rounded-2xl
+         {materialOptions.map((material) => {
+  const isExisting =
+    formData.variants.some(
+      (variant) =>
+        variant.material === material
+    );
 
-                  border
+  return (
+    <button
+      key={material}
+      type="button"
+      disabled={isExisting}
+      onClick={() => {
+        if (isExisting) return;
 
-                  px-4
-                  py-2
+        toggleSelection(
+          material,
+          selectedMaterials,
+          setSelectedMaterials
+        );
+      }}
+      className={`
+        rounded-2xl
+        border
+        px-4
+        py-2
+        text-sm
+        font-medium
+        transition
 
-                  text-sm
-                  font-medium
-
-                  transition
-
-                  ${
-                    selectedMaterials.includes(material)
-                      ? "border-brand bg-brand text-white"
-                      : "border-border bg-surface text-text-primary"
-                  }
-                `}
-              >
-                {material}
-              </button>
-            ))}
+        ${
+          isExisting
+            ? "border-border bg-gray-200 text-gray-400 cursor-not-allowed opacity-60"
+            : selectedMaterials.includes(material)
+            ? "border-brand bg-brand text-white"
+            : "border-border bg-surface text-text-primary"
+        }
+      `}
+    >
+      {material}
+    </button>
+  );
+})}
           </div>
         </div>
 

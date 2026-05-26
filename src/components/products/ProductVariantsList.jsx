@@ -73,7 +73,7 @@ export default function ProductVariantsList({
               </h3>
             </div>
 
-            {formData.variants.length > 1 && (
+            {formData.variants.length > 0 && (
               <button
                 type="button"
                 onClick={() => removeVariant(index)}
@@ -247,7 +247,7 @@ opacity-80
 
                     text-sm
 
-                    
+
                   "
               />
             </div>
