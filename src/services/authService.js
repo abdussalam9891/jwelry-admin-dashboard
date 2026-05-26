@@ -39,7 +39,7 @@ export async function updateProfile(
 ) {
 
   const res =
-    await api.put(
+    await api.patch(
       "/auth/profile",
       payload
     );
@@ -61,7 +61,7 @@ updateAvatar(file) {
   );
 
   const res =
-    await api.put(
+    await api.patch(
 
       "/auth/profile/avatar",
 
@@ -92,7 +92,7 @@ updateNotificationPreferences(
 ) {
 
   const res =
-    await api.put(
+    await api.patch(
 
       "/auth/preferences",
 
