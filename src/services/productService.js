@@ -74,7 +74,7 @@ export const updateProduct =
   ) => {
 
     const res =
-      await api.put(
+      await api.patch(
 
         `/admin/products/${id}`,
 
