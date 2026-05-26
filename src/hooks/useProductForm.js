@@ -638,7 +638,7 @@ const [formData, setFormData] =
 
         if (mode === "edit") {
 
-          await api.put(
+          await api.patch(
 
             `/admin/products/${initialData._id}`,
 
