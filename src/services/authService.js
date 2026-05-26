@@ -7,7 +7,7 @@ import api from "../api/client";
 
 export async function adminLogin(payload) {
   const res = await api.post(
-    "/api/v1/auth/login",
+    "/auth/login",
     payload
   );
   return res.data;
@@ -15,7 +15,7 @@ export async function adminLogin(payload) {
 
 export async function forgotPassword(email) {
   const res = await api.post(
-    "/api/v1/auth/forgot-password",
+    "/auth/forgot-password",
     { email }
   );
   return res.data;
