@@ -21,6 +21,9 @@ import CustomerDetailsPage from "../pages/CustomerDetails";
 import AdminProfilePage from "../pages/AdminProfile";
 import SettingsPage from "../pages/Settings";
 import AnalyticsPage from "../pages/AnalyticsPage";
+import CouponsPage from "../pages/Coupons";
+import CreateCouponPage from "../pages/CreateCouponPage";
+import EditCouponPage from "../pages/EditCouponPage";
 
 export default function AppRoutes() {
   return (
@@ -113,6 +116,21 @@ export default function AppRoutes() {
             <OrderDetailsPage />
           }
         />
+
+        <Route
+  path="/admin/coupons"
+  element={<CouponsPage />}
+/>
+
+<Route
+  path="/admin/coupons/new"
+  element={<CreateCouponPage />}
+/>
+
+<Route
+  path="/admin/coupons/:id/edit"
+  element={<EditCouponPage />}
+/>
 
         {/* Customers */}
         <Route

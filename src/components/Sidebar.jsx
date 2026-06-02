@@ -20,7 +20,7 @@ import {
   ShoppingCart,
   Users,
   X,
-
+  Ticket,
 } from "lucide-react";
 
 
@@ -80,6 +80,22 @@ const navSections = [
           },
         ],
       },
+      {
+  label: "Coupons",
+  path: "/admin/coupons",
+  icon: Ticket,
+  children: [
+    {
+      label: "All Coupons",
+      path: "/admin/coupons",
+      exact: true,
+    },
+    {
+      label: "Create Coupon",
+      path: "/admin/coupons/new",
+    },
+  ],
+},
     ],
   },
 
@@ -118,6 +134,7 @@ const { user } =
   Products: false,
   Orders: false,
   Customers: false,
+  Coupons: false,
 });
 
 const toggleMenu = (label) => {

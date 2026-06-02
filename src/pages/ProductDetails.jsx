@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-
 import { useParams } from "react-router-dom";
-
 import ConfirmModal from "../components/ConfirmModal";
 import {
   archiveProduct,
   deleteProduct,
   getProductDetails,
 } from "../services/productService";
+import { deleteReviewAdmin, moderateReview } from "@/services/reviewService";
+
 
 import toast from "react-hot-toast";
 
@@ -34,44 +34,113 @@ const ProductDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  const [deleteLoading, setDeleteLoading] = useState(false);
+   const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [productData, setProductData] = useState(null);
 
+  const [
+  showDeleteReviewModal,
+  setShowDeleteReviewModal
+] = useState(false);
+
+const [
+  reviewToDelete,
+  setReviewToDelete
+] = useState(null);
+const [
+  deleteReviewLoading,
+  setDeleteReviewLoading
+] = useState(false);
+
+
+
+  const [sortBy, setSortBy] =
+  useState("latest");
+
+
+
+
+
+
+
+
+
   useEffect(() => {
-    const fetchProduct = async () => {
+
+  const fetchProduct =
+    async () => {
+
       try {
+
         setLoading(true);
 
-        const data = await getProductDetails(id);
+        const data =
+          await getProductDetails(
+            id
+          );
 
-        setProductData(data);
+        setProductData(
+          data
+        );
+
       } catch (error) {
-        console.error(error);
+
+        console.error(
+          error
+        );
+
       } finally {
+
         setLoading(false);
+
       }
+
     };
 
-    fetchProduct();
-  }, [id]);
+  fetchProduct();
+
+}, [id]);
 
   if (loading) {
     return <div className="p-10">Loading...</div>;
   }
 
-  const {
-    product,
+const {
+  product,
+  analytics,
+  variants,
+  recentOrders,
+  revenueChart,
+  reviews = [],
+  reviewStats = [],
+} = productData;
 
-    analytics,
 
-    variants,
 
-    recentOrders,
+const ratingBreakdown = {
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 0,
+};
 
-    revenueChart,
-  } = productData;
+reviewStats.forEach(
+  (item) => {
+
+    ratingBreakdown[
+      item._id
+    ] = item.count;
+
+  }
+);
+
+
+const imageReviews =
+  reviews.filter(
+    (review) =>
+      review.images?.length
+  ).length;
 
   const stats = [
     {
@@ -159,6 +228,202 @@ const ProductDetailsPage = () => {
       setShowDeleteModal(false);
     }
   };
+
+
+
+  const sortedReviews =
+  [...reviews].sort(
+    (a, b) => {
+
+      if (
+        sortBy ===
+        "highest"
+      ) {
+        return (
+          b.rating -
+          a.rating
+        );
+      }
+
+      if (
+        sortBy ===
+        "lowest"
+      ) {
+        return (
+          a.rating -
+          b.rating
+        );
+      }
+
+      return (
+        new Date(
+          b.createdAt
+        ) -
+        new Date(
+          a.createdAt
+        )
+      );
+
+    }
+  );
+
+
+
+  const handleRejectReview =
+  async (reviewId) => {
+
+    try {
+
+      await moderateReview(
+        reviewId,
+        {
+          moderationStatus:
+            "REJECTED",
+        }
+      );
+
+      setProductData(
+        (prev) => ({
+          ...prev,
+
+          reviews:
+            prev.reviews.map(
+              (review) =>
+                review._id ===
+                reviewId
+                  ? {
+                      ...review,
+                      moderationStatus:
+                        "REJECTED",
+                    }
+                  : review
+            ),
+        })
+      );
+
+      toast.success(
+        "Review rejected"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      toast.error(
+        "Failed to reject review"
+      );
+
+    }
+
+  };
+
+
+
+  const handleRestoreReview =
+  async (reviewId) => {
+
+    try {
+
+      await moderateReview(
+        reviewId,
+        {
+          moderationStatus:
+            "APPROVED",
+        }
+      );
+
+      setProductData(
+        (prev) => ({
+          ...prev,
+
+          reviews:
+            prev.reviews.map(
+              (review) =>
+                review._id ===
+                reviewId
+                  ? {
+                      ...review,
+                      moderationStatus:
+                        "APPROVED",
+                    }
+                  : review
+            ),
+        })
+      );
+
+      toast.success(
+        "Review restored"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      toast.error(
+        "Failed to restore review"
+      );
+
+    }
+
+  };
+
+
+  const handleDeleteReview =
+  async (reviewId) => {
+
+    try {
+
+      setDeleteReviewLoading(
+        true
+      );
+
+      await deleteReviewAdmin(
+        reviewId,
+        "Deleted by admin"
+      );
+
+      setProductData(
+        (prev) => ({
+          ...prev,
+          reviews:
+            prev.reviews.filter(
+              (review) =>
+                review._id !== reviewId
+            ),
+        })
+      );
+
+      toast.success(
+        "Review deleted"
+      );
+
+      setShowDeleteReviewModal(
+        false
+      );
+
+      setReviewToDelete(
+        null
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      toast.error(
+        "Failed to delete review"
+      );
+
+    } finally {
+
+      setDeleteReviewLoading(
+        false
+      );
+
+    }
+
+  };
+
+
 
   return (
     <div className="min-h-screen bg-bg p-6">
@@ -739,17 +1004,358 @@ const ProductDetailsPage = () => {
                         {variant.sold}
                       </td>
 
-                      <td className="px-6 py-5">
-                        <div className="inline-flex rounded-full bg-[#ECFDF3] px-3 py-1 text-xs font-semibold text-[#027A48]">
-                          IN STOCK
-                        </div>
-                      </td>
+                     <td className="px-6 py-5">
+  <div
+    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+      variant.stock === 0
+        ? "bg-[#FEF3F2] text-[#B42318]"
+        : variant.stock <= product.lowStockThreshold
+          ? "bg-[#FFF7ED] text-[#C2410C]"
+          : "bg-[#ECFDF3] text-[#027A48]"
+    }`}
+  >
+    {variant.stock === 0
+      ? "OUT OF STOCK"
+      : variant.stock <= product.lowStockThreshold
+        ? "LOW STOCK"
+        : "IN STOCK"}
+  </div>
+</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
+
+
+
+
+          {/* REVIEWS */}
+
+<div className="rounded-[28px] border border-border bg-surface shadow-sm">
+  {/* HEADER */}
+
+  <div className="border-b border-border p-6">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div>
+        <h2 className="text-xl font-semibold text-text-primary">
+          Customer Reviews
+        </h2>
+
+        <p className="mt-1 text-sm text-text-secondary">
+          Monitor customer sentiment, ratings and moderation activity.
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+       <select
+  value={sortBy}
+  onChange={(e) =>
+    setSortBy(
+      e.target.value
+    )
+  }
+  className="
+    rounded-xl
+    border
+    border-border
+    bg-surface
+    px-3
+    py-2
+    text-sm
+  "
+>
+  <option value="latest">
+    Latest
+  </option>
+
+  <option value="highest">
+    Highest Rated
+  </option>
+
+  <option value="lowest">
+    Lowest Rated
+  </option>
+</select>
+
+
+      </div>
+    </div>
+  </div>
+
+  <div className="p-6">
+    {/* KPI CARDS */}
+
+    <div className="grid gap-4 md:grid-cols-4">
+      <div className="rounded-2xl bg-surface-secondary p-5">
+        <p className="text-sm text-text-secondary">
+          Average Rating
+        </p>
+
+        <h3 className="mt-2 text-3xl font-bold text-text-primary">
+          {product.averageRating}
+        </h3>
+      </div>
+
+      <div className="rounded-2xl bg-surface-secondary p-5">
+        <p className="text-sm text-text-secondary">
+          Reviews
+        </p>
+
+        <h3 className="mt-2 text-3xl font-bold text-text-primary">
+          {product.numReviews}
+        </h3>
+      </div>
+
+
+
+      <div className="rounded-2xl bg-surface-secondary p-5">
+        <p className="text-sm text-text-secondary">
+          With Images
+        </p>
+
+        <h3 className="mt-2 text-3xl font-bold text-text-primary">
+          {imageReviews}
+        </h3>
+      </div>
+    </div>
+
+    {/* RATING BREAKDOWN */}
+
+    <div className="mt-8 rounded-3xl border border-border p-6">
+      <h3 className="font-semibold text-text-primary">
+        Rating Distribution
+      </h3>
+
+      <div className="mt-5 space-y-4">
+        {[5, 4, 3, 2, 1].map((star) => (
+          <div
+            key={star}
+            className="flex items-center gap-3"
+          >
+            <span className="w-10 text-sm font-medium">
+              {star}★
+            </span>
+
+            <div className="h-3 flex-1 rounded-full bg-surface-secondary">
+              <div
+               className="h-3 rounded-full bg-brand"
+  style={{
+    width: `${
+      product.numReviews
+        ? (
+            ratingBreakdown[star] /
+            product.numReviews
+          ) * 100
+        : 0
+    }%`,
+  }}
+              />
+            </div>
+
+            <span className="w-10 text-right text-sm text-text-secondary">
+            {ratingBreakdown[star]}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* REVIEW LIST */}
+
+    <div className="mt-8 space-y-4">
+      {sortedReviews.map((review) => (
+        <div
+          key={review._id}
+          className=" rounded-3xl
+            border
+             border-border
+            p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <div className="flex items-center gap-3">
+                <h4 className="font-semibold text-text-primary">
+                  {review.userName}
+                </h4>
+
+                {review.verifiedPurchase && (
+                  <span className="rounded-full bg-[#ECFDF3] px-2 py-1 text-xs font-semibold text-[#027A48]">
+                    Verified Purchase
+                  </span>
+                )}
+
+
+              </div>
+
+              <p className="mt-2 text-sm text-text-secondary">
+                {"★".repeat(review.rating)}
+              </p>
+
+              <p className="mt-3 text-text-secondary">
+                {review.comment}
+              </p>
+
+              {review.images?.length > 0 && (
+                <div className="mt-4 flex gap-2">
+                  {review.images.map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={img.url}
+                      alt=""
+                      className="
+                        h-16
+                        w-16
+                        rounded-xl
+                        object-cover
+                        border
+                      "
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col items-end gap-3">
+
+  {/* STATUS BADGE */}
+
+ <span
+  className={`
+    inline-flex
+    items-center
+    gap-1.5
+
+    rounded-full
+
+    border
+
+    px-3
+    py-1.5
+
+    text-xs
+    font-semibold
+
+    transition-all
+
+    ${
+      review.moderationStatus ===
+      "APPROVED"
+        ? `
+          border-green-200
+          bg-green-50
+          text-green-700
+        `
+        : review.moderationStatus ===
+            "REJECTED"
+          ? `
+            border-red-200
+            bg-red-50
+            text-red-700
+          `
+          : `
+            border-yellow-200
+            bg-yellow-50
+            text-yellow-700
+          `
+    }
+  `}
+>
+  <span
+    className="
+      h-2
+      w-2
+      rounded-full
+      bg-current
+    "
+  />
+
+  {review.moderationStatus}
+</span>
+
+  {/* ACTIONS */}
+
+  <div className="flex gap-2">
+
+    {review.moderationStatus ===
+      "APPROVED" && (
+      <button
+        onClick={() =>
+          handleRejectReview(
+            review._id
+          )
+        }
+        className="
+          rounded-xl
+          bg-yellow-50
+          px-3
+          py-2
+          text-sm
+          font-medium
+          text-yellow-700
+        "
+      >
+        Reject
+      </button>
+    )}
+
+    {review.moderationStatus ===
+      "REJECTED" && (
+      <button
+        onClick={() =>
+          handleRestoreReview(
+            review._id
+          )
+        }
+        className="
+          rounded-xl
+          bg-green-50
+          px-3
+          py-2
+          text-sm
+          font-medium
+          text-green-700
+        "
+      >
+        Restore
+      </button>
+    )}
+
+    <button
+     onClick={() => {
+  setReviewToDelete(
+    review._id
+  );
+
+  setShowDeleteReviewModal(
+    true
+  );
+}}
+      className="
+        rounded-xl
+        bg-red-50
+        px-3
+        py-2
+        text-sm
+        font-medium
+        text-red-600
+      "
+    >
+      Delete
+    </button>
+
+  </div>
+
+</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+
+
 
           {/* RECENT ORDERS */}
 
@@ -1267,6 +1873,40 @@ const ProductDetailsPage = () => {
   `}
         confirmText="Delete Product"
       />
+
+
+      <ConfirmModal
+  open={showDeleteReviewModal}
+  onClose={() => {
+    setShowDeleteReviewModal(
+      false
+    );
+
+    setReviewToDelete(
+      null
+    );
+  }}
+  onConfirm={() =>
+    handleDeleteReview(
+      reviewToDelete
+    )
+  }
+
+  loading={
+    deleteReviewLoading
+  }
+
+
+  title="Delete Review"
+  description={`
+    This action cannot be undone.
+
+    The review, rating and
+    associated images will be
+    permanently deleted.
+  `}
+  confirmText="Delete Review"
+/>
     </div>
   );
 };
