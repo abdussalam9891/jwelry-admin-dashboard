@@ -49,12 +49,12 @@ export const updateCoupon =
     return data;
   };
 
-export const deleteCoupon =
+export const toggleCouponStatus =
   async (id) => {
 
     const { data } =
-      await api.delete(
-        `/admin/coupons/${id}`
+      await api.patch(
+        `/admin/coupons/${id}/toggle-status`
       );
 
     return data;

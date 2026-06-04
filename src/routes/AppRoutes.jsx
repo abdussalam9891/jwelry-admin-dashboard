@@ -24,6 +24,7 @@ import AnalyticsPage from "../pages/AnalyticsPage";
 import CouponsPage from "../pages/Coupons";
 import CreateCouponPage from "../pages/CreateCouponPage";
 import EditCouponPage from "../pages/EditCouponPage";
+import CouponAnalyticsPage from "@/pages/CouponAnalyticsPage";
 
 export default function AppRoutes() {
   return (
@@ -130,6 +131,13 @@ export default function AppRoutes() {
 <Route
   path="/admin/coupons/:id/edit"
   element={<EditCouponPage />}
+/>
+
+<Route
+  path="/admin/coupons/:id/analytics"
+  element={
+    <CouponAnalyticsPage />
+  }
 />
 
         {/* Customers */}

@@ -5,6 +5,20 @@ import {
   getCustomers,
 } from "../services/customerService";
 
+
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import {
+  Search,
+} from "lucide-react";
+
 export default function CustomersPage() {
   const navigate = useNavigate();
 
@@ -102,6 +116,16 @@ export default function CustomersPage() {
     }
   };
 
+
+
+  if (loading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      Loading customers...
+    </div>
+  );
+}
+
   return (
     <div className="min-h-screen  p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -167,108 +191,154 @@ export default function CustomersPage() {
         </div>
 
         {/* SEARCH + FILTERS */}
-        <div className="bg-surface border border-border rounded-3xl p-4 md:p-5 shadow-sm">
-          <div className="flex flex-col xl:flex-row gap-4">
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
+       <div className="bg-surface border border-border rounded-3xl p-4 md:p-5 shadow-sm">
+  <div className="flex flex-col xl:flex-row gap-4">
 
-                  setPage(1);
-                }}
-                placeholder="Search customers by name, email or phone..."
-                className="
-    w-full
-    h-14
+    {/* SEARCH */}
 
-    rounded-2xl
+    <div className="flex-1 relative">
 
-    border
-    border-border
+      <Search
+        size={18}
+        className="
+          absolute
+          left-4
+          top-1/2
+          -translate-y-1/2
+          text-text-secondary
+        "
+      />
 
-    bg-surface-secondary
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => {
+          setSearch(
+            e.target.value
+          );
 
-    px-5
+          setPage(1);
+        }}
+        placeholder="Search customers by name, email or phone..."
+        className="
+          h-14
+          w-full
 
-    outline-none
+          rounded-2xl
 
-    focus:ring-2
-    focus:ring-[#7b1e2b]/20
-  "
-              />
-            </div>
+          border
+          border-border
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <select
-                value={tier}
-                onChange={(e) => {
-                  setTier(e.target.value);
+          bg-surface-secondary
 
-                  setPage(1);
-                }}
-                className="
-    h-14
+          pl-12
+          pr-4
 
-    rounded-2xl
+          text-sm
 
-    border
-    border-border
+          outline-none
 
-    bg-surface
+          transition
 
-    px-4
+          focus:ring-2
+          focus:ring-[#7b1e2b]/20
+          focus:border-brand
+        "
+      />
+    </div>
 
-    outline-none
+    {/* FILTERS */}
 
-    min-w-[170px]
-  "
-              >
-                <option value="All">All Tiers</option>
+    <div className="flex flex-col sm:flex-row gap-3">
 
-                <option value="Platinum">Platinum</option>
+      <Select
+        value={tier}
+        onValueChange={(value) => {
+          setTier(value);
 
-                <option value="Gold">Gold</option>
+          setPage(1);
+        }}
+      >
+        <SelectTrigger
+          className="
+            h-14
+            min-w-[170px]
 
-                <option value="Silver">Silver</option>
+            rounded-2xl
 
-                <option value="Bronze">Bronze</option>
-              </select>
+            border-border
 
-              <select
-                value={sort}
-                onChange={(e) => {
-                  setSort(e.target.value);
+            bg-surface
+          "
+        >
+          <SelectValue />
+        </SelectTrigger>
 
-                  setPage(1);
-                }}
-                className="
-    h-14
+        <SelectContent>
+          <SelectItem value="All">
+            All Tiers
+          </SelectItem>
 
-    rounded-2xl
+          <SelectItem value="Platinum">
+            Platinum
+          </SelectItem>
 
-    border
-    border-border
+          <SelectItem value="Gold">
+            Gold
+          </SelectItem>
 
-    bg-surface
+          <SelectItem value="Silver">
+            Silver
+          </SelectItem>
 
-    px-4
+          <SelectItem value="Bronze">
+            Bronze
+          </SelectItem>
+        </SelectContent>
+      </Select>
 
-    outline-none
+      <Select
+        value={sort}
+        onValueChange={(value) => {
+          setSort(value);
 
-    min-w-[170px]
-  "
-              >
-                <option value="Newest">Newest First</option>
+          setPage(1);
+        }}
+      >
+        <SelectTrigger
+          className="
+            h-14
+            min-w-[190px]
 
-                <option value="Highest Spend">Highest Spend</option>
+            rounded-2xl
 
-                <option value="Most Orders">Most Orders</option>
-              </select>
-            </div>
-          </div>
-        </div>
+            border-border
+
+            bg-surface
+          "
+        >
+          <SelectValue />
+        </SelectTrigger>
+
+        <SelectContent>
+          <SelectItem value="Newest">
+            Newest First
+          </SelectItem>
+
+          <SelectItem value="Highest Spend">
+            Highest Spend
+          </SelectItem>
+
+          <SelectItem value="Most Orders">
+            Most Orders
+          </SelectItem>
+        </SelectContent>
+      </Select>
+
+    </div>
+
+  </div>
+</div>
 
         {/* DESKTOP TABLE */}
 

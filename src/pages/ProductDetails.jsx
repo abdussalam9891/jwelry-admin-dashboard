@@ -9,6 +9,19 @@ import {
 import { deleteReviewAdmin, moderateReview } from "@/services/reviewService";
 
 
+
+
+
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+
 import toast from "react-hot-toast";
 
 import { useNavigate } from "react-router-dom";
@@ -110,7 +123,7 @@ const {
   analytics,
   variants,
   recentOrders,
-  revenueChart,
+
   reviews = [],
   reviewStats = [],
 } = productData;
@@ -1049,35 +1062,43 @@ const imageReviews =
       </div>
 
       <div className="flex flex-wrap gap-2">
-       <select
+  <Select
   value={sortBy}
-  onChange={(e) =>
-    setSortBy(
-      e.target.value
-    )
+  onValueChange={
+    setSortBy
   }
-  className="
-    rounded-xl
-    border
-    border-border
-    bg-surface
-    px-3
-    py-2
-    text-sm
-  "
 >
-  <option value="latest">
-    Latest
-  </option>
+  <SelectTrigger
+    className="
+      h-10
+      w-[180px]
 
-  <option value="highest">
-    Highest Rated
-  </option>
+      rounded-xl
 
-  <option value="lowest">
-    Lowest Rated
-  </option>
-</select>
+      border-border
+
+      bg-surface
+
+      text-sm
+    "
+  >
+    <SelectValue />
+  </SelectTrigger>
+
+  <SelectContent>
+    <SelectItem value="latest">
+      Latest
+    </SelectItem>
+
+    <SelectItem value="highest">
+      Highest Rated
+    </SelectItem>
+
+    <SelectItem value="lowest">
+      Lowest Rated
+    </SelectItem>
+  </SelectContent>
+</Select>
 
 
       </div>
