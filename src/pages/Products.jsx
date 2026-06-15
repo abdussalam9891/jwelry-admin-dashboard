@@ -24,12 +24,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import StatCard from "@/components/products/StatCard";
 
+import { CATEGORIES, PRODUCT_TYPES } from "@/constants/productMeta";
+
 import {
-  AlertTriangle,
-  LayoutGrid,
   Package,
+  AlertTriangle,
   PackageX,
-  Search,
+  LayoutGrid,
+  Layers,
+  PackageCheck,
+
+  Search
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import api from "../api/client";
@@ -45,9 +50,11 @@ export default function Products() {
 
   const [category, setCategory] = useState("");
 
-  const [sort, setSort] = useState("-createdAt");
+  const [sort, setSort] = useState("newest");
 
-  const [material, setMaterial] = useState("");
+  const [productType, setProductType] = useState("");
+
+  const [status, setStatus] = useState("");
 
   const [loading, setLoading] = useState(false);
 
@@ -55,38 +62,40 @@ export default function Products() {
 
   const [pagination, setPagination] = useState(null);
 
-  const [stats, setStats] = useState({
-    totalProducts: 0,
+ const [stats, setStats] = useState({
+  totalProducts: 0,
 
-    lowStockProducts: 0,
+  totalCategories: 0,
 
-    outOfStockProducts: 0,
+  totalProductTypes: 0,
 
-    totalCategories: 0,
-  });
+  inStockProducts: 0,
+
+  lowStockProducts: 0,
+
+  outOfStockProducts: 0,
+
+  bestSellerProducts: 0,
+
+  averageStoreRating: 0,
+});
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        /* PARALLEL REQUESTS */
-
         const [productsRes, statsRes] = await Promise.all([
           api.get(
-            `/admin/products?page=${page}&limit=10&search=${search}&category=${category}&material=${material}&sort=${sort}`,
+            `/admin/products?page=${page}&limit=10&search=${search}&category=${category}&productType=${productType}&status=${status}&sort=${sort}`,
           ),
 
           api.get("/admin/products/stats"),
         ]);
 
-        /* PRODUCTS */
-
         setProducts(productsRes.data.products);
 
         setPagination(productsRes.data.pagination);
-
-        /* STATS */
 
         setStats(statsRes.data);
       } catch (error) {
@@ -97,7 +106,7 @@ export default function Products() {
     };
 
     fetchData();
-  }, [page, search, category, sort, material]);
+  }, [page, search, category, productType, status, sort]);
 
   const handleExport = async () => {
     try {
@@ -121,6 +130,10 @@ export default function Products() {
     }
   };
 
+  const availableTypes = category
+    ? PRODUCT_TYPES[category] || []
+    : Object.values(PRODUCT_TYPES).flat();
+
   return (
     <div className="min-h-screen p-6">
       {/* HEADER */}
@@ -139,29 +152,7 @@ export default function Products() {
       >
         {/* LEFT */}
         <div>
-          <div
-            className="
-        inline-flex
-        items-center
 
-        rounded-full
-
-        border
-        border-border
-
-        bg-[#F8EEF1]
-
-        px-4
-        py-2
-
-        text-xs
-        font-medium
-
-        text-brand
-      "
-          >
-            Inventory Management
-          </div>
 
           <h1
             className="
@@ -203,6 +194,7 @@ export default function Products() {
     "
         >
           {/* secondary */}
+
           <button
             onClick={handleExport}
             className="
@@ -231,6 +223,7 @@ export default function Products() {
           </button>
 
           {/* primary */}
+
           <button
             onClick={() => navigate("/admin/products/new")}
             className="
@@ -257,55 +250,73 @@ export default function Products() {
         </div>
       </div>
 
-      {/* STATS */}
-      <div
-        className="
+{/* STATS */}
+<div
+  className="
     mb-8
-
     grid
     grid-cols-1
     gap-5
-
     md:grid-cols-2
     xl:grid-cols-4
   "
-      >
-        <StatCard
-          title="Total Products"
-          value={stats.totalProducts}
-          icon={Package}
-          glowColor="#F8EEF1"
-          iconBg="#F8EEF1"
-          iconColor="#6B1A2A"
-        />
+>
+  <StatCard
+    title="Total Products"
+    value={stats.totalProducts}
+    icon={Package}
+    glowColor="#F8EEF1"
+    iconBg="#F8EEF1"
+    iconColor="#6B1A2A"
+  />
 
-        <StatCard
-          title="Low Stock"
-          value={stats.lowStockProducts}
-          icon={AlertTriangle}
-          glowColor="#FFF5E8"
-          iconBg="#FFF5E8"
-          iconColor="#D97706"
-        />
+  <StatCard
+    title="Categories"
+    value={stats.totalCategories}
+    icon={Layers}
+    glowColor="#F3F4F6"
+    iconBg="#F3F4F6"
+    iconColor="#4B5563"
+  />
 
-        <StatCard
-          title="Out of Stock"
-          value={stats.outOfStockProducts}
-          icon={PackageX}
-          glowColor="#FFF1F2"
-          iconBg="#FFF1F2"
-          iconColor="#E11D48"
-        />
+  <StatCard
+    title="Product Types"
+    value={stats.totalProductTypes}
+    icon={LayoutGrid}
+    glowColor="#EEF6FF"
+    iconBg="#EEF6FF"
+    iconColor="#2563EB"
+  />
 
-        <StatCard
-          title="Categories"
-          value={stats.totalCategories}
-          icon={LayoutGrid}
-          glowColor="#EEF6FF"
-          iconBg="#EEF6FF"
-          iconColor="#2563EB"
-        />
-      </div>
+  <StatCard
+    title="In Stock"
+    value={stats.inStockProducts}
+    icon={PackageCheck}
+    glowColor="#ECFDF5"
+    iconBg="#ECFDF5"
+    iconColor="#059669"
+  />
+
+  <StatCard
+    title="Low Stock"
+    value={stats.lowStockProducts}
+    icon={AlertTriangle}
+    glowColor="#FFF5E8"
+    iconBg="#FFF5E8"
+    iconColor="#D97706"
+  />
+
+  <StatCard
+    title="Out of Stock"
+    value={stats.outOfStockProducts}
+    icon={PackageX}
+    glowColor="#FFF1F2"
+    iconBg="#FFF1F2"
+    iconColor="#E11D48"
+  />
+
+
+</div>
 
       {/*FILTER BAR*/}
 
@@ -372,7 +383,7 @@ export default function Products() {
                 }}
                 type="text"
                 placeholder="
-    Search products, materials or collections...
+    Search by name, SKU, type...
   "
                 className="
     h-12
@@ -401,31 +412,27 @@ export default function Products() {
             {/* CATEGORY */}
 
             <Select
-              value={category}
+              value={category || "all"}
               onValueChange={(value) => {
                 setPage(1);
 
                 setCategory(value === "all" ? "" : value);
+
+                setProductType("");
               }}
             >
               <SelectTrigger
                 className="
       h-12
-
       rounded-2xl
-
       border-border
-
       bg-surface-secondary
-
       px-4
-
       text-sm
       font-medium
       text-text-primary
-
       focus:ring-2
-    focus:ring-[#7b1e2b]/20
+      focus:ring-[#7b1e2b]/20
     "
               >
                 <SelectValue placeholder="All Categories" />
@@ -434,69 +441,98 @@ export default function Products() {
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
 
-                <SelectItem value="rings">Rings</SelectItem>
-
-                <SelectItem value="bracelets">Bracelets</SelectItem>
-
-                <SelectItem value="earrings">Earrings</SelectItem>
-
-                <SelectItem value="necklaces">Necklaces</SelectItem>
+                {CATEGORIES.map((category) => (
+                  <SelectItem key={category.value} value={category.value}>
+                    {category.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
-            {/* MATERIAL */}
+            {/* PRODUCT TYPE */}
+
+          <Select
+  value={productType || "all"}
+  disabled={!category}
+  onValueChange={(value) => {
+    setPage(1);
+    setProductType(
+      value === "all" ? "" : value
+    );
+  }}
+>
+  <SelectTrigger
+    className="
+      h-12
+      rounded-2xl
+      border-border
+      bg-surface-secondary
+      px-4
+      text-sm
+      font-medium
+      text-text-primary
+      disabled:cursor-not-allowed
+      disabled:opacity-60
+    "
+  >
+    <SelectValue
+      placeholder={
+        category
+          ? "All Types"
+          : "Select Category First"
+      }
+    />
+  </SelectTrigger>
+
+  <SelectContent>
+    <SelectItem value="all">
+      All Types
+    </SelectItem>
+
+    {availableTypes.map((type) => (
+      <SelectItem
+        key={type.value}
+        value={type.value}
+      >
+        {type.label}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
+
+            {/* STATUS */}
 
             <Select
-              value={material || "all"}
+              value={status || "all"}
               onValueChange={(value) => {
                 setPage(1);
 
-                setMaterial(value === "all" ? "" : value);
+                setStatus(value === "all" ? "" : value);
               }}
             >
               <SelectTrigger
                 className="
       h-12
-
       rounded-2xl
-
       border-border
-
       bg-surface-secondary
-
       px-4
-
       text-sm
       font-medium
-
       text-text-primary
-
-      focus:ring-0
-      focus:border-border-[#D8C7CD]
-      focus:bg-surface
     "
               >
-                <SelectValue placeholder="All Materials" />
+                <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem value="all">All Materials</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
 
-                <SelectItem value="18K Gold">18K Gold</SelectItem>
+                <SelectItem value="ACTIVE">Active</SelectItem>
 
-                <SelectItem value="22K Gold">22K Gold</SelectItem>
+                <SelectItem value="DRAFT">Draft</SelectItem>
 
-                <SelectItem value="Silver">Silver</SelectItem>
-
-                <SelectItem value="Diamond">Diamond</SelectItem>
-
-                <SelectItem value="Rose Gold">Rose Gold</SelectItem>
-
-                <SelectItem value="White Gold">White Gold</SelectItem>
-
-                <SelectItem value="Platinum">Platinum</SelectItem>
-
-                <SelectItem value="Gemstone">Gemstone</SelectItem>
+                <SelectItem value="ARCHIVED">Archived</SelectItem>
               </SelectContent>
             </Select>
 
@@ -505,26 +541,20 @@ export default function Products() {
             <Select
               value={sort}
               onValueChange={(value) => {
+                setPage(1);
                 setSort(value);
               }}
             >
               <SelectTrigger
                 className="
       h-12
-
       rounded-2xl
-
       border-border
-
       bg-surface-secondary
-
       px-4
-
       text-sm
       font-medium
-
       text-text-primary
-
       focus:ring-0
       focus:border-border-[#D8C7CD]
       focus:bg-surface
@@ -534,11 +564,15 @@ export default function Products() {
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem value="-createdAt">Newest First</SelectItem>
+                <SelectItem value="newest">Newest First</SelectItem>
 
-                <SelectItem value="price">Price Low to High</SelectItem>
+                <SelectItem value="price_asc">Price Low to High</SelectItem>
 
-                <SelectItem value="-price">Price High to Low</SelectItem>
+                <SelectItem value="price_desc">Price High to Low</SelectItem>
+
+                <SelectItem value="highest_rated">Highest Rated</SelectItem>
+
+                <SelectItem value="best_selling">Best Selling</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -583,7 +617,7 @@ export default function Products() {
                   {[
                     "Product",
                     "Category",
-                    "SKU",
+                    "Product Type",
                     "Price",
                     "Stock",
                     "Status",
@@ -700,32 +734,35 @@ export default function Products() {
                       </TableCell>
 
                       {/* CATEGORY */}
+
                       <TableCell
                         className="
-                    px-6
-                    py-5
+    px-6
+    py-5
 
-                    text-sm
-                    capitalize
+    text-sm
 
-                    text-[#4B5563]
-                  "
+    text-[#4B5563]
+  "
                       >
-                        {product.category}
+                        <span className="capitalize">{product.category}</span>
                       </TableCell>
 
-                      {/* SKU */}
+                      {/* PRODUCT TYPE */}
+
                       <TableCell
                         className="
-                    px-6
-                    py-5
+    px-6
+    py-5
 
-                    text-sm
+    text-sm
 
-                    text-[#4B5563]
-                  "
+    text-[#4B5563]
+  "
                       >
-                        {product.sku || `SKU-${product._id.slice(-6)}`}
+                        <span className="capitalize">
+                          {product.productType?.replaceAll("-", " ")}
+                        </span>
                       </TableCell>
 
                       {/* PRICE */}
@@ -744,17 +781,18 @@ export default function Products() {
                       </TableCell>
 
                       {/* STOCK */}
+
                       <TableCell
                         className="
-                    px-6
-                    py-5
+    px-6
+    py-5
 
-                    text-sm
+    text-sm
 
-                    text-[#4B5563]
-                  "
+    text-[#4B5563]
+  "
                       >
-                        {product.totalStock}
+                        {product.stock}
                       </TableCell>
 
                       {/* STATUS */}

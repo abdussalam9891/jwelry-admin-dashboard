@@ -6,7 +6,6 @@ import ProductDescription from "../components/products/ProductDescription";
 
 import ProductImages from "../components/products/ProductImages";
 
-import ProductPricing from "../components/products/ProductPricing";
 
 import ProductOrganization from "../components/products/ProductOrganization";
 
@@ -194,41 +193,44 @@ export default function ProductForm({ initialData = null, mode = "create" }) {
       {/* FORM */}
 
       <form
-        onSubmit={handleSubmit}
-        className="
-          grid
-          grid-cols-1
-          items-start
-          gap-6
+  onSubmit={handleSubmit}
+  className="
+    max-w-7xl
+    mx-auto
 
-          xl:grid-cols-3
-        "
-      >
+    space-y-6
+  "
+>
         {/* LEFT */}
 
-        <div
-          className="
-            xl:col-span-2
 
-            space-y-6
-          "
-        >
           <ProductBasicInfo formData={formData} handleChange={handleChange} />
 
-          <ProductDescription
-            formData={formData}
-            handleChange={handleChange}
-            setFormData={setFormData}
-          />
 
-          <ProductImages
+
+
+
+
+
+           <ProductOrganization
+  formData={formData}
+  handleChange={handleChange}
+  setFormData={setFormData}
+/>
+
+
+  <ProductImages
             formData={formData}
             handleImageUpload={handleImageUpload}
             removeImage={removeImage}
             moveImage={moveImage}
           />
 
-          <ProductPricing formData={formData} handleChange={handleChange} />
+  <ProductDescription
+            formData={formData}
+            handleChange={handleChange}
+            setFormData={setFormData}
+          />
 
           <ProductVariants formData={formData} setFormData={setFormData} />
 
@@ -237,55 +239,52 @@ export default function ProductForm({ initialData = null, mode = "create" }) {
             removeVariant={removeVariant}
             handleVariantChange={handleVariantChange}
           />
-        </div>
 
-        {/* RIGHT */}
 
-        <div
-          className="
-            sticky
-            top-28
 
-            h-fit
 
-            space-y-6
-          "
-        >
-          <ProductOrganization
-            formData={formData}
-            handleChange={handleChange}
-          />
 
           {/* SUBMIT */}
+<div
+  className="
+    sticky
+    bottom-0
+    z-20
 
-          <button
-            type="submit"
-            className="
-              w-full
+    flex
+    justify-end
 
-              rounded-2xl
+    border-t
+    border-border
 
-              bg-brand
+    bg-bg/95
+    backdrop-blur
 
-              px-5
-              py-4
+    py-4
+  "
+>
+  <button
+    type="submit"
+    className="
+      min-w-[220px]
 
-              text-sm
-              font-semibold
+      rounded-2xl
 
-              text-white
+      bg-brand
 
-              shadow-lg
-              shadow-[#6B1A2A]/15
+      px-8
+      py-4
 
-              transition
+      text-sm
+      font-semibold
 
-              hover:opacity-90
-            "
-          >
-            {mode === "edit" ? "Save Changes" : "Create Product"}
-          </button>
-        </div>
+      text-white
+    "
+  >
+    Save Changes
+  </button>
+</div>
+
       </form>
     </div>
   );

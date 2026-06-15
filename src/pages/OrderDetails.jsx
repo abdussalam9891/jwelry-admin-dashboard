@@ -4,7 +4,9 @@ import { Link, useParams } from "react-router-dom";
 
 import { ArrowLeft, CreditCard, Package, Truck, User } from "lucide-react";
 
-import { getOrderDetails, updateOrderStatus } from "../services/orderService";
+import { getOrderDetails, updateOrderStatus, updatePaymentStatus } from "../services/orderService";
+
+import ConfirmModal from "@/components/ConfirmModal";
 
 export default function OrderDetailsPage() {
   const { id } = useParams();
@@ -12,6 +14,14 @@ export default function OrderDetailsPage() {
   const [loading, setLoading] = useState(true);
 
   const [order, setOrder] = useState(null);
+
+
+  const [confirmation, setConfirmation] = useState({
+  open: false,
+  title: "",
+  description: "",
+  onConfirm: null,
+});
 
   console.log(order);
 
@@ -30,6 +40,15 @@ export default function OrderDetailsPage() {
 
     fetchOrder();
   }, [id]);
+
+
+
+
+ 
+
+
+
+
 
   if (loading) {
     return (
@@ -187,16 +206,26 @@ export default function OrderDetailsPage() {
           >
             <select
               value={order.orderStatus}
-              onChange={async (e) => {
-                const newStatus = e.target.value;
+            onChange={(e) => {
+  const newStatus = e.target.value;
 
-                await updateOrderStatus(order._id, newStatus);
+  setConfirmation({
+    open: true,
+    title: "Update Order Status",
+    description: `Change order status from ${order.orderStatus} to ${newStatus}?`,
+    onConfirm: async () => {
+      await updateOrderStatus(
+        order._id,
+        newStatus
+      );
 
-                setOrder((prev) => ({
-                  ...prev,
-                  orderStatus: newStatus,
-                }));
-              }}
+      setOrder((prev) => ({
+        ...prev,
+        orderStatus: newStatus,
+      }));
+    },
+  });
+}}
               className={`
         appearance-none
 
@@ -1471,7 +1500,43 @@ export default function OrderDetailsPage() {
           }
         `}
                 >
-                  {order.paymentStatus}
+                  <select
+  value={order.paymentStatus}
+ onChange={(e) => {
+  const newStatus = e.target.value;
+
+  setConfirmation({
+    open: true,
+    title: "Update Payment Status",
+    description: `Change payment status from ${order.paymentStatus} to ${newStatus}?`,
+    onConfirm: async () => {
+      await updatePaymentStatus(
+        order._id,
+        newStatus
+      );
+
+      setOrder((prev) => ({
+        ...prev,
+        paymentStatus: newStatus,
+      }));
+    },
+  });
+}}
+  className="
+    rounded-xl
+    border
+    border-border
+    bg-white
+    px-3
+    py-2
+    text-sm
+  "
+>
+  <option value="PENDING">Pending</option>
+  <option value="PAID">Paid</option>
+  <option value="FAILED">Failed</option>
+  <option value="REFUNDED">Refunded</option>
+</select>
                 </span>
               </div>
 
@@ -1880,6 +1945,37 @@ export default function OrderDetailsPage() {
           </div>
         </div>
       </div>
+
+
+      <ConfirmModal
+  open={confirmation.open}
+  title={confirmation.title}
+  description={confirmation.description}
+  confirmText="Confirm"
+  cancelText="Cancel"
+  onClose={() =>
+    setConfirmation({
+      open: false,
+      title: "",
+      description: "",
+      onConfirm: null,
+    })
+  }
+  onConfirm={async () => {
+    try {
+      await confirmation.onConfirm?.();
+    } finally {
+      setConfirmation({
+        open: false,
+        title: "",
+        description: "",
+        onConfirm: null,
+      });
+    }
+  }}
+/>
+
+
     </div>
   );
 }

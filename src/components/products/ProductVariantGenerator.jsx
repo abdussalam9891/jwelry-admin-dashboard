@@ -1,17 +1,20 @@
 import { useState } from "react";
+import {
+  MATERIALS,
+  SIZE_BASED_PRODUCT_TYPES,
+} from "@/constants/productMeta";
 
-const materialOptions = [
-  "18K Gold",
-  "22K Gold",
-  "Silver",
-  "Diamond",
-  "Rose Gold",
-  "White Gold",
-  "Platinum",
-  "Gemstone",
+
+
+const sizeOptions = [
+
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+
 ];
-
-const sizeOptions = ["6", "7", "8"];
 
 export default function ProductVariants({ formData, setFormData }) {
   const [selectedMaterials, setSelectedMaterials] = useState([]);
@@ -19,12 +22,40 @@ export default function ProductVariants({ formData, setFormData }) {
   const [selectedSizes, setSelectedSizes] = useState([]);
 
 
-  const existingMaterials =
-  new Set(
-    formData.variants.map(
-      (variant) => variant.material
-    )
+
+  const requiresSize =
+  SIZE_BASED_PRODUCT_TYPES.includes(
+    formData.productType
   );
+
+
+
+  const variantExists = (
+  material,
+  size = ""
+) => {
+  return formData.variants.some(
+    (variant) =>
+      variant.material === material &&
+      (variant.size || "") === size
+  );
+};
+
+const materialFullyGenerated = (
+  material
+) => {
+  if (!requiresSize) {
+    return formData.variants.some(
+      (variant) =>
+        variant.material === material
+    );
+  }
+
+  return sizeOptions.every((size) =>
+    variantExists(material, size)
+  );
+};
+
 
 
 
@@ -38,71 +69,104 @@ export default function ProductVariants({ formData, setFormData }) {
     }
   };
 
-  const generateVariants = () => {
-    const generatedVariants = [];
+ const generateVariants = () => {
 
-    selectedMaterials.forEach((material) => {
-      // PRODUCTS WITHOUT SIZE
+  if (
+  selectedMaterials.length === 0 ||
+  (requiresSize &&
+    selectedSizes.length === 0)
+) {
+  return;
+}
 
-      if (!["rings", "bracelets"].includes(formData.category)) {
-        const sku = `${formData.category}-${material}`
 
-          .toUpperCase()
+  if (!formData.productType) {
+  return;
+}
 
-          .replace(/\s+/g, "-");
 
-        generatedVariants.push({
-          material,
+  const generatedVariants = [];
 
-          size: "",
 
-          sku,
 
-          price: "",
+  selectedMaterials.forEach((material) => {
+    // PRODUCTS WITHOUT SIZE
 
-          stock: "",
-        });
-
-        return;
-      }
-
-      // PRODUCTS WITH SIZE
-
-      selectedSizes.forEach((size) => {
-        const sku = `${formData.category}-${material}-${size}`
+    if (!requiresSize) {
+      const sku =
+        `${formData.productType}-${material}`
 
           .toUpperCase()
 
           .replace(/\s+/g, "-");
 
-        generatedVariants.push({
-          material,
+      generatedVariants.push({
+        material,
 
-          size,
+        size: "",
 
-          sku,
+        sku,
 
-          price: "",
+        price: "",
 
-          stock: "",
-        });
+        stock: "",
+      });
+
+      return;
+    }
+
+    // PRODUCTS WITH SIZE
+
+    selectedSizes.forEach((size) => {
+      const sku =
+        `${formData.productType}-${material}-${size}`
+
+          .toUpperCase()
+
+          .replace(/\s+/g, "-");
+
+      generatedVariants.push({
+        material,
+
+        size,
+
+        sku,
+
+        price: "",
+
+        stock: "",
       });
     });
+  });
 
-    // REMOVE DUPLICATES
+  // REMOVE DUPLICATES
 
-    const existingSkus = formData.variants.map((variant) => variant.sku);
+  const existingSkus = formData.variants.map(
+    (variant) => variant.sku
+  );
 
-    const uniqueGeneratedVariants = generatedVariants.filter(
-      (variant) => !existingSkus.includes(variant.sku),
+  const uniqueGeneratedVariants =
+    generatedVariants.filter(
+      (variant) =>
+        !existingSkus.includes(
+          variant.sku
+        )
     );
 
-    setFormData((prev) => ({
-      ...prev,
+  setFormData((prev) => ({
+    ...prev,
 
-      variants: [...prev.variants, ...uniqueGeneratedVariants],
-    }));
-  };
+    variants: [
+      ...prev.variants,
+      ...uniqueGeneratedVariants,
+    ],
+  }));
+
+  // RESET GENERATOR
+
+  setSelectedMaterials([]);
+  setSelectedSizes([]);
+};
 
   return (
     <div
@@ -228,56 +292,63 @@ export default function ProductVariants({ formData, setFormData }) {
             Select Materials
           </p>
 
-          <div className="flex flex-wrap gap-3">
-         {materialOptions.map((material) => {
-  const isExisting =
-    formData.variants.some(
-      (variant) =>
-        variant.material === material
-    );
-
-  return (
-    <button
-      key={material}
-      type="button"
-      disabled={isExisting}
-      onClick={() => {
-        if (isExisting) return;
-
-        toggleSelection(
-          material,
-          selectedMaterials,
-          setSelectedMaterials
-        );
-      }}
-      className={`
-        rounded-2xl
-        border
-        px-4
-        py-2
-        text-sm
-        font-medium
-        transition
-
-        ${
-          isExisting
-            ? "border-border bg-gray-200 text-gray-400 cursor-not-allowed opacity-60"
-            : selectedMaterials.includes(material)
-            ? "border-brand bg-brand text-white"
-            : "border-border bg-surface text-text-primary"
-        }
-      `}
-    >
-      {material}
-    </button>
+        <div className="flex flex-wrap gap-3">
+  {MATERIALS.map((material) => {
+    const isExisting =
+  materialFullyGenerated(
+    material
   );
-})}
-          </div>
+
+    return (
+      <button
+        key={material}
+        type="button"
+        disabled={isExisting}
+       onClick={() => {
+  if (isExisting) return;
+
+  if (requiresSize) {
+    setSelectedMaterials([material]);
+
+    setSelectedSizes([]);
+  } else {
+    toggleSelection(
+      material,
+      selectedMaterials,
+      setSelectedMaterials
+    );
+  }
+}}
+        className={`
+          rounded-2xl
+          border
+          px-4
+          py-2
+          text-sm
+          font-medium
+          transition
+
+          ${
+            isExisting
+              ? "border-border bg-gray-200 text-gray-400 cursor-not-allowed opacity-60"
+              : selectedMaterials.includes(
+                  material
+                )
+              ? "border-brand bg-brand text-white"
+              : "border-border bg-surface text-text-primary hover:border-brand/40"
+          }
+        `}
+      >
+        {material}
+      </button>
+    );
+  })}
+</div>
         </div>
 
         {/* SIZES */}
 
-        {["rings", "bracelets"].includes(formData.category) && (
+        {requiresSize && (
           <div className="mt-6">
             <p
               className="
@@ -293,36 +364,53 @@ export default function ProductVariants({ formData, setFormData }) {
             </p>
 
             <div className="flex flex-wrap gap-3">
-              {sizeOptions.map((size) => (
-                <button
-                  key={size}
-                  type="button"
-                  onClick={() =>
-                    toggleSelection(size, selectedSizes, setSelectedSizes)
-                  }
-                  className={`
-                    rounded-2xl
+            {sizeOptions.map((size) => {
+  const selectedMaterial =
+    selectedMaterials[0];
 
-                    border
+  const isExisting =
+    selectedMaterial &&
+    variantExists(
+      selectedMaterial,
+      size
+    );
 
-                    px-4
-                    py-2
+  return (
+    <button
+      key={size}
+      type="button"
+      disabled={isExisting}
+      onClick={() => {
+        if (isExisting) return;
 
-                    text-sm
-                    font-medium
+        toggleSelection(
+          size,
+          selectedSizes,
+          setSelectedSizes
+        );
+      }}
+      className={`
+        rounded-2xl
+        border
+        px-4
+        py-2
+        text-sm
+        font-medium
+        transition
 
-                    transition
-
-                    ${
-                      selectedSizes.includes(size)
-                        ? "border-brand bg-brand text-white"
-                        : "border-border bg-surface text-text-primary"
-                    }
-                  `}
-                >
-                  {size}
-                </button>
-              ))}
+        ${
+          isExisting
+            ? "border-border bg-gray-200 text-gray-400 cursor-not-allowed opacity-60"
+            : selectedSizes.includes(size)
+            ? "border-brand bg-brand text-white"
+            : "border-border bg-surface text-text-primary"
+        }
+      `}
+    >
+      {size}
+    </button>
+  );
+})}
             </div>
           </div>
         )}

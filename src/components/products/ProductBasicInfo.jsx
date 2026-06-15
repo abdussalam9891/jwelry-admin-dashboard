@@ -97,35 +97,36 @@ export default function ProductBasicInfo({ formData, handleChange }) {
             Slug
           </label>
 
-          <input
-            type="text"
-            name="slug"
-            value={formData.slug}
-            onChange={handleChange}
-            placeholder="diamond-ring"
-            className="
-              h-12
-              w-full
+         <input
+  type="text"
+  name="slug"
+  value={formData.slug}
+  readOnly
+  placeholder="diamond-ring"
+  className="
+    h-12
+    w-full
 
-              rounded-2xl
+    rounded-2xl
 
-              border
-              border-border
+    border
+    border-border
 
-              bg-surface-secondary
+    bg-surface-secondary
 
-              px-4
+    px-4
 
-              text-sm
+    text-sm
 
-              outline-none
+    text-text-secondary
 
-              transition
+    opacity-80
 
-              focus:border-border-[#D8C7CD]
-              focus:bg-surface
-            "
-          />
+    outline-none
+
+    cursor-not-allowed
+  "
+/>
         </div>
       </div>
     </div>

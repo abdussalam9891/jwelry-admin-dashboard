@@ -6,7 +6,8 @@ export default function StatCard({
   icon: Icon,
   iconBg,
   iconColor,
-   
+  
+
 }) {
   return (
     <Card

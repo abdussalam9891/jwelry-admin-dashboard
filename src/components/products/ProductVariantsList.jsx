@@ -1,19 +1,40 @@
-const materialOptions = [
-  "18K Gold",
-  "22K Gold",
-  "Silver",
-  "Diamond",
-  "Rose Gold",
-  "White Gold",
-  "Platinum",
-  "Gemstone",
-];
+import {
+  MATERIALS,
+  SIZE_BASED_PRODUCT_TYPES,
+} from "@/constants/productMeta";
+import VariantTable from "./VariantTable";
 
 export default function ProductVariantsList({
   formData,
   removeVariant,
   handleVariantChange,
 }) {
+
+
+  const requiresSize =
+  SIZE_BASED_PRODUCT_TYPES.includes(
+    formData.productType
+  );
+
+  const useTableView =
+  formData.variants.length > 6;
+
+  if (useTableView) {
+  return (
+    <VariantTable
+      variants={formData.variants}
+      removeVariant={removeVariant}
+      handleVariantChange={
+        handleVariantChange
+      }
+      requiresSize={
+        requiresSize
+      }
+    />
+  );
+}
+
+
   return (
     <div className="mt-8 space-y-6">
       {formData.variants.map((variant, index) => (
@@ -155,7 +176,7 @@ export default function ProductVariantsList({
                     outline-none
                   "
               >
-                {materialOptions.map((material) => (
+                {MATERIALS.map((material) => (
                   <option key={material} value={material}>
                     {material}
                   </option>
@@ -165,7 +186,7 @@ export default function ProductVariantsList({
 
             {/* SIZE */}
 
-            {["rings", "bracelets"].includes(formData.category) && (
+            {requiresSize  && (
               <div>
                 <label
                   className="

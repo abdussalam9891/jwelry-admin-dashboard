@@ -76,3 +76,19 @@ export const exportOrdersReport =
     return res.data;
 
   };
+
+
+
+  export const updatePaymentStatus = async (
+  id,
+  paymentStatus
+) => {
+  const res = await api.patch(
+    `/admin/orders/${id}/payment-status`,
+    {
+      paymentStatus,
+    }
+  );
+
+  return res.data;
+};

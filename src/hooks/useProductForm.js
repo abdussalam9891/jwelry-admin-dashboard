@@ -22,30 +22,21 @@ const createEmptyVariant = () => ({
 });
 
 
-
 const generateSku = (
-  category,
+  productType,
   material,
   size
 ) => {
-
   return [
-
-    category,
+    productType,
     material,
     size,
   ]
-
     .filter(Boolean)
-
     .join("-")
-
     .toUpperCase()
-
     .replace(/\s+/g, "-")
-
     .replace(/[^A-Z0-9-]/g, "");
-
 };
 
 
@@ -62,20 +53,43 @@ export default function useProductForm({
 const [formData, setFormData] =
   useState(() => ({
 
+    // BASIC INFO
+
     name:
       initialData?.name || "",
 
     slug:
       initialData?.slug || "",
 
+    status:
+      initialData?.status || "ACTIVE",
+
+
+
+    // ORGANIZATION
+
     category:
       initialData?.category || "rings",
 
-    subcategory:
-      initialData?.subcategory || ["casual"],
+    productType:
+      initialData?.productType ||
+      "engagement-ring",
+
+    styles:
+      initialData?.styles || [],
+
+    collection:
+      initialData?.collection || "",
+
+    searchTags:
+      initialData?.searchTags || [],
 
     targetAudience:
       initialData?.targetAudience || "women",
+
+
+
+    // PRICING
 
     price:
       initialData?.price || "",
@@ -85,9 +99,6 @@ const [formData, setFormData] =
 
     stock:
       initialData?.stock || "",
-
-    status:
-      initialData?.status || "ACTIVE",
 
     lowStockThreshold:
       initialData?.lowStockThreshold || 5,
@@ -117,16 +128,30 @@ const [formData, setFormData] =
 
 
 
-    // VARIANTS
+    // INVENTORY
 
     variants:
-
       initialData?.variants?.length > 0
-
         ? initialData.variants
-
         : [createEmptyVariant()],
 
+
+
+    // MARKETING
+
+    isBestSeller:
+      initialData?.isBestSeller || false,
+
+    isNewProduct:
+      initialData?.isNewProduct || false,
+
+
+
+    // ANALYTICS
+
+    soldCount:
+      initialData?.soldCount || 0,
+
   }));
 
 
@@ -134,78 +159,32 @@ const [formData, setFormData] =
 
 
 
- const handleChange = (e) => {
+const handleChange = (e) => {
+  let { name, value } = e.target;
 
-  let { name, value } =
-    e.target;
+ const numericFields = [
+  "originalPrice",
+  "lowStockThreshold",
+];
 
-
-
-  const numericFields = [
-
-    "price",
-
-    "originalPrice",
-
-    "stock",
-
-    "lowStockThreshold",
-
-  ];
-
-
-
-  // NUMERIC SANITIZATION
-
-  if (
-    numericFields.includes(name)
-  ) {
-
-    // ALLOW ONLY DIGITS
-
-    value = value.replace(
-      /[^0-9]/g,
-      ""
-    );
-
+  if (numericFields.includes(name)) {
+    value = value.replace(/[^0-9]/g, "");
   }
 
-
-
   setFormData((prev) => ({
-
     ...prev,
 
-    [name]:
-
-      name === "subcategory"
-
-        ? [value]
-
-        : value,
-
-
-
-    // AUTO SLUG
+    [name]: value,
 
     ...(name === "name" && {
-
       slug: value
-
         .toLowerCase()
-
         .trim()
-
         .replace(/\s+/g, "-")
-
         .replace(/[^\w-]+/g, ""),
-
     }),
-
   }));
-
 };
-
 
 
 
@@ -221,7 +200,7 @@ const [formData, setFormData] =
     [
       "price",
       "stock",
-      "originalPrice",
+
     ].includes(field)
   ) {
 
@@ -259,13 +238,12 @@ const [formData, setFormData] =
 
 
 
-  updatedVariants[index].sku =
-
-    generateSku(
-      formData.category,
-      material,
-      size
-    );
+ updatedVariants[index].sku =
+  generateSku(
+    formData.productType,
+    material,
+    size
+  );
 
 
 
@@ -464,230 +442,364 @@ const [formData, setFormData] =
 
 
 
+//old one
 
-  const handleSubmit =
-    async (e) => {
+//   const handleSubmit =
+//     async (e) => {
 
-      e.preventDefault();
+//       e.preventDefault();
 
 
 
-      const price =
-        Number(formData.price);
+//       const price =
+//         Number(formData.price);
 
-      const originalPrice =
-        Number(formData.originalPrice);
+//       const originalPrice =
+//         Number(formData.originalPrice);
 
-      const stock =
-        Number(formData.stock);
+//       const stock =
+//         Number(formData.stock);
 
-      const lowStockThreshold =
-        Number(
-          formData.lowStockThreshold
-        );
+//       const lowStockThreshold =
+//         Number(
+//           formData.lowStockThreshold
+//         );
 
 
 
-      if (price < 0) {
+//       if (price < 0) {
 
-        return toast.error(
-          "Price cannot be negative"
-        );
+//         return toast.error(
+//           "Price cannot be negative"
+//         );
 
-      }
+//       }
 
 
 
-      if (originalPrice < 0) {
+//       if (originalPrice < 0) {
 
-        return toast.error(
-          "Original price cannot be negative"
-        );
+//         return toast.error(
+//           "Original price cannot be negative"
+//         );
 
-      }
+//       }
 
 
 
-      if (stock < 0) {
+//       if (stock < 0) {
 
-        return toast.error(
-          "Stock cannot be negative"
-        );
+//         return toast.error(
+//           "Stock cannot be negative"
+//         );
 
-      }
+//       }
 
 
 
-      if (
-        lowStockThreshold < 0
-      ) {
+//       if (
+//         lowStockThreshold < 0
+//       ) {
 
-        return toast.error(
-          "Low stock threshold cannot be negative"
-        );
+//         return toast.error(
+//           "Low stock threshold cannot be negative"
+//         );
 
-      }
+//       }
 
 
 
-      if (
-        originalPrice > 0 &&
-        originalPrice < price
-      ) {
+//       if (
+//         originalPrice > 0 &&
+//         originalPrice < price
+//       ) {
 
-        return toast.error(
-          "Original price should be greater than price"
-        );
+//         return toast.error(
+//           "Original price should be greater than price"
+//         );
 
-      }
+//       }
 
 
 
-      const invalidVariant =
+//       const invalidVariant =
 
-        formData.variants.some(
-          (variant) => {
+//         formData.variants.some(
+//           (variant) => {
 
-            return (
+//             return (
 
-              !variant.material ||
+//               !variant.material ||
 
-              Number(
-                variant.price
-              ) < 0 ||
+//               Number(
+//                 variant.price
+//               ) < 0 ||
 
-              Number(
-                variant.stock
-              ) < 0 ||
+//               Number(
+//                 variant.stock
+//               ) < 0 ||
 
-              !variant.sku
-            );
+//               !variant.sku
+//             );
 
-          }
-        );
+//           }
+//         );
 
 
 
-      if (invalidVariant) {
+//       if (invalidVariant) {
 
-        return toast.error(
-          "Please complete all variant fields"
-        );
+//         return toast.error(
+//           "Please complete all variant fields"
+//         );
 
-      }
+//       }
 
 
 
-      try {
+//       try {
 
-        const payload = {
+//       const payload = {
+//   name: formData.name,
+//   slug: formData.slug,
 
-          name:
-            formData.name,
+//   originalPrice: Number(
+//     formData.originalPrice || 0
+//   ),
 
-          slug:
-            formData.slug,
+//   lowStockThreshold: Number(
+//     formData.lowStockThreshold
+//   ),
 
-          price,
+//   category: formData.category,
+//   productType: formData.productType,
 
-          originalPrice,
+//   styles: formData.styles,
 
-          stock,
+//   searchTags: formData.searchTags,
 
-          lowStockThreshold,
+//   isBestSeller: formData.isBestSeller,
 
-          category:
-            formData.category,
+//   isNewProduct: formData.isNewProduct,
 
-          subcategory:
-            formData.subcategory,
+//   targetAudience: formData.targetAudience,
 
-          targetAudience:
-            formData.targetAudience,
+//   status: formData.status,
 
-          status:
-            formData.status,
+//   images: formData.images,
 
-          images:
-            formData.images,
+//   variants: formData.variants,
 
-          variants:
-            formData.variants,
+//   description: {
+//     short: formData.shortDescription,
+//     design: formData.designDescription,
+//     details: formData.details.filter(
+//       (detail) => detail.trim() !== ""
+//     ),
+//     styling: formData.stylingDescription,
+//   },
+// };
 
-          description: {
 
-  short:
-    formData.shortDescription,
 
-  design:
-    formData.designDescription,
+//         if (mode === "edit") {
 
-  details:
+//           await api.patch(
 
-    formData.details.filter(
-      (detail) =>
-        detail.trim() !== ""
-    ),
+//             `/admin/products/${initialData._id}`,
 
-  styling:
-    formData.stylingDescription,
-},
-        };
+//             payload
+//           );
 
 
 
-        if (mode === "edit") {
+//           toast.success(
+//             "Product updated successfully"
+//           );
 
-          await api.patch(
+//         } else {
 
-            `/admin/products/${initialData._id}`,
+//           await api.post(
 
-            payload
-          );
+//             "/admin/products",
 
+//             payload
+//           );
 
 
-          toast.success(
-            "Product updated successfully"
-          );
 
-        } else {
+//           toast.success(
+//             "Product created successfully"
+//           );
 
-          await api.post(
+//         }
 
-            "/admin/products",
 
-            payload
-          );
 
+//         navigate(
+//           "/admin/products"
+//         );
 
+//       } catch (error) {
 
-          toast.success(
-            "Product created successfully"
-          );
+//         console.error(error);
 
-        }
+//         toast.error(
 
+//           error.response?.data?.message ||
 
+//           "Failed to save product"
+//         );
 
-        navigate(
-          "/admin/products"
-        );
+//       }
 
-      } catch (error) {
+//     };
 
-        console.error(error);
 
-        toast.error(
 
-          error.response?.data?.message ||
+    const handleSubmit = async (e) => {
+  e.preventDefault();
 
-          "Failed to save product"
-        );
+  const originalPrice = Number(
+    formData.originalPrice || 0
+  );
 
-      }
+  const lowStockThreshold = Number(
+    formData.lowStockThreshold
+  );
 
+  // BASIC VALIDATION
+
+  if (!formData.name.trim()) {
+    return toast.error(
+      "Product name is required"
+    );
+  }
+
+  if (!formData.productType) {
+    return toast.error(
+      "Select a product type"
+    );
+  }
+
+  if (formData.images.length === 0) {
+    return toast.error(
+      "At least one image is required"
+    );
+  }
+
+  if (originalPrice < 0) {
+    return toast.error(
+      "Original price cannot be negative"
+    );
+  }
+
+  if (lowStockThreshold < 0) {
+    return toast.error(
+      "Low stock threshold cannot be negative"
+    );
+  }
+
+  // VARIANT VALIDATION
+
+  const invalidVariant =
+    formData.variants.some(
+      (variant) =>
+        !variant.material ||
+        !variant.sku ||
+        Number(variant.price) <= 0 ||
+        Number(variant.stock) < 0
+    );
+
+  if (invalidVariant) {
+    return toast.error(
+      "Please complete all variant fields"
+    );
+  }
+
+  try {
+    const payload = {
+      name: formData.name,
+
+      slug: formData.slug,
+
+      category: formData.category,
+
+      productType:
+        formData.productType,
+
+      styles: formData.styles,
+
+      searchTags:
+        formData.searchTags,
+
+      targetAudience:
+        formData.targetAudience,
+
+      status: formData.status,
+
+      originalPrice,
+
+      lowStockThreshold,
+
+      isBestSeller:
+        formData.isBestSeller,
+
+      isNewProduct:
+        formData.isNewProduct,
+
+      images: formData.images,
+
+      variants: formData.variants,
+
+      description: {
+        short:
+          formData.shortDescription,
+
+        design:
+          formData.designDescription,
+
+        details:
+          formData.details.filter(
+            (detail) =>
+              detail.trim() !== ""
+          ),
+
+        styling:
+          formData.stylingDescription,
+      },
     };
+
+    if (mode === "edit") {
+      await api.patch(
+        `/admin/products/${initialData._id}`,
+        payload
+      );
+
+      toast.success(
+        "Product updated successfully"
+      );
+    } else {
+      await api.post(
+        "/admin/products",
+        payload
+      );
+
+      toast.success(
+        "Product created successfully"
+      );
+    }
+
+    navigate("/admin/products");
+  } catch (error) {
+    console.error(error);
+
+    toast.error(
+      error.response?.data?.message ||
+        "Failed to save product"
+    );
+  }
+};
 
 
 
