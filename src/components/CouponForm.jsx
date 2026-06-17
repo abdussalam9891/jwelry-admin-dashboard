@@ -497,31 +497,7 @@ const handleChange = (e) => {
             </Link>
           </div>
 
-          <div
-            className="
-              inline-flex
-              items-center
-
-              rounded-full
-
-              border
-              border-border
-
-              bg-[#F8EEF1]
-
-              px-4
-              py-2
-
-              text-xs
-              font-medium
-
-              text-brand
-            "
-          >
-            {isEditMode
-              ? "Coupon Editing"
-              : "Coupon Creation"}
-          </div>
+           
 
           <h1
             className="

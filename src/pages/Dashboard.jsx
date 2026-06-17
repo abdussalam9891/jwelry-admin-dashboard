@@ -190,32 +190,7 @@ export default function Dashboard() {
         >
           {/* LEFT */}
           <div>
-            <div
-              className="
-          inline-flex
-          items-center
-          gap-2
 
-          rounded-full
-
-          border
-          border-[#E7D7DC]
-
-          bg-surface/80
-
-          px-4
-          py-2
-
-          text-xs
-          font-medium
-
-          text-brand
-
-          backdrop-blur-xl
-        "
-            >
-              Gemora Admin Suite
-            </div>
 
             <h1
               className="

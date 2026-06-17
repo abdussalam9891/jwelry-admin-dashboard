@@ -170,7 +170,7 @@ if (loading) {
     <div className="space-y-6 p-6">
 
         <div>
-                 
+
 
                 <h1
                   className="
@@ -233,26 +233,7 @@ if (loading) {
   <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
     {/* LEFT */}
     <div>
-      <div
-        className="
-          inline-flex
-          items-center
-          gap-2
-          rounded-full
-          border
-          border-[#E7D7DC]
-          bg-surface-secondary
-          px-4
-          py-2
-          text-xs
-          font-medium
-          tracking-wide
-          text-brand
-        "
-      >
-
-        Live Analytics
-      </div>
+     
 
       <h1
         className="

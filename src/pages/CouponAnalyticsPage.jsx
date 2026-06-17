@@ -117,26 +117,7 @@ export default function CouponAnalyticsPage() {
 
         <div className="mt-6">
 
-          <div
-            className="
-              inline-flex
-              items-center
-
-              rounded-full
-
-              bg-[#F8EEF1]
-
-              px-4
-              py-2
-
-              text-xs
-              font-medium
-
-              text-brand
-            "
-          >
-            Coupon Analytics
-          </div>
+          
 
           <h1
             className="

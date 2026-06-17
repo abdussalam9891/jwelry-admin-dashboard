@@ -132,12 +132,10 @@ export default function CustomersPage() {
         {/* TOP HEADER */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <p className="text-sm text-[#7b1e2b] font-medium mb-2">
-              Customer Management
-            </p>
+            
 
             <h1 className="text-4xl font-bold tracking-tight text-text-primary">
-              Customers
+              Customer Management
             </h1>
 
             <p className="text-text-secondary mt-2 max-w-2xl leading-7">

@@ -117,29 +117,7 @@ export default function Orders() {
       >
         {/* LEFT */}
         <div>
-          <div
-            className="
-        inline-flex
-        items-center
-
-        rounded-full
-
-        border
-        border-border
-
-        bg-[#F8EEF1]
-
-        px-4
-        py-2
-
-        text-xs
-        font-medium
-
-        text-brand
-      "
-          >
-            Order Management
-          </div>
+          
 
           <h1
             className="
@@ -152,7 +130,7 @@ export default function Orders() {
         text-text-primary
       "
           >
-            Orders
+            Order Management
           </h1>
 
           <p
