@@ -86,12 +86,12 @@ export default function CustomersPage() {
     },
 
     {
-      title: "Revenue Generated",
+  title: "Revenue Generated",
 
-      value: `₹${customers
-        .reduce((acc, customer) => acc + customer.totalSpent, 0)
-        .toLocaleString()}`,
-    },
+  value: `₹${Math.round(
+    customers.reduce((acc, customer) => acc + customer.totalSpent, 0)
+  ).toLocaleString()}`,
+}
   ];
 
   const handleExport = async () => {
@@ -132,7 +132,7 @@ export default function CustomersPage() {
         {/* TOP HEADER */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            
+
 
             <h1 className="text-4xl font-bold tracking-tight text-text-primary">
               Customer Management

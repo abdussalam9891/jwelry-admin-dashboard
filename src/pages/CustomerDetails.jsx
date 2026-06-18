@@ -607,7 +607,7 @@ const mostPurchasedMaterial =
             >
               ₹
               {
-                customer.totalSpent
+                Math.round(customer.totalSpent)
                   ?.toLocaleString()
               }
             </h2>

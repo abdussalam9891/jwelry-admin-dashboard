@@ -108,3 +108,32 @@ export const getGeoAnalytics =
 
     return res.data;
   };
+
+
+
+
+  export const getMaterialAnalytics =
+  async (params) => {
+    const res =
+      await api.get(
+        "/admin/analytics/materials",
+        {
+          params,
+        }
+      );
+
+    return res.data;
+  };
+
+export const getCategoryAnalytics =
+  async (params) => {
+    const res =
+      await api.get(
+        "/admin/analytics/categories",
+        {
+          params,
+        }
+      );
+
+    return res.data;
+  };
