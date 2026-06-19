@@ -37,8 +37,8 @@ import {
   Search
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import api from "../api/client";
-import { exportProductsReport } from "../services/productService";
+
+import { exportProductsReport, getProducts, getProductStats } from "../services/productService";
 
 import { useNavigate } from "react-router-dom";
 
@@ -47,6 +47,7 @@ export default function Products() {
   const [products, setProducts] = useState([]);
 
   const [search, setSearch] = useState("");
+   const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const [category, setCategory] = useState("");
 
@@ -80,24 +81,43 @@ export default function Products() {
   averageStoreRating: 0,
 });
 
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(search);
+  }, 400);
+
+  return () => clearTimeout(timer);
+}, [search]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        const [productsRes, statsRes] = await Promise.all([
-          api.get(
-            `/admin/products?page=${page}&limit=10&search=${search}&category=${category}&productType=${productType}&status=${status}&sort=${sort}`,
-          ),
+          const [productsData, statsData] = await Promise.all([
+  getProducts({
+    page,
+    limit: 10,
+    search: debouncedSearch,
+    category,
+    productType,
+    status,
+    sort,
+  }),
 
-          api.get("/admin/products/stats"),
-        ]);
+  getProductStats(),
+]);
 
-        setProducts(productsRes.data.products);
+setProducts(productsData.products);
 
-        setPagination(productsRes.data.pagination);
+setPagination(productsData.pagination);
 
-        setStats(statsRes.data);
+setStats(statsData);
+
+
+
+
       } catch (error) {
         console.error(error);
       } finally {
@@ -106,7 +126,10 @@ export default function Products() {
     };
 
     fetchData();
-  }, [page, search, category, productType, status, sort]);
+  }, [page, debouncedSearch, category, productType, status, sort]);
+
+
+
 
   const handleExport = async () => {
     try {

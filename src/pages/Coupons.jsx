@@ -33,104 +33,82 @@ export default function Coupons() {
     setLoading,
   ] = useState(true);
 
-  const [search, setSearch] =
-  useState("");
+ const [search, setSearch] = useState("");
 
-const [status, setStatus] =
+const [status, setStatus] = useState("ALL");
+
+const [discountType, setDiscountType] =
   useState("ALL");
 
-const [
-  discountType,
-  setDiscountType,
-] = useState("ALL");
+const [sort, setSort] =
+  useState("Newest");
+
+const [page, setPage] =
+  useState(1);
+
+const [pagination, setPagination] =
+  useState({
+    total: 0,
+    page: 1,
+    pages: 1,
+  });
+
+  const [debouncedSearch, setDebouncedSearch] =
+  useState("");
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(search);
+  }, 400);
+
+  return () => clearTimeout(timer);
+}, [search]);
 
 
 
 
-const fetchCoupons =
-      async () => {
 
-        try {
 
-          const data =
-            await getCoupons();
+const fetchCoupons = async () => {
+  try {
+    setLoading(true);
 
-          setCoupons(data);
+    const data = await getCoupons({
+      search:   debouncedSearch,
 
-        } catch (error) {
+      status,
+      discountType,
+      sort,
+      page,
+      limit: 12,
+    });
 
-          console.error(error);
+    setCoupons(data.coupons);
 
-        } finally {
-
-          setLoading(false);
-
-        }
-
-      };
+    setPagination(data.pagination);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
 
 
 
 
   useEffect(() => {
+  fetchCoupons();
+}, [
+    debouncedSearch,
+  status,
+  discountType,
+  sort,
+  page,
+]);
 
 
 
-    fetchCoupons();
-
-  }, []);
-
-
-
-  const filteredCoupons =
-  coupons.filter(
-    (coupon) => {
-
-      const matchesSearch =
-        coupon.code
-          .toLowerCase()
-          .includes(
-            search.toLowerCase()
-          ) ||
-        coupon.name
-          .toLowerCase()
-          .includes(
-            search.toLowerCase()
-          );
-
-      const isExpired =
-        coupon.expiresAt &&
-        new Date(
-          coupon.expiresAt
-        ) < new Date();
-
-      const matchesStatus =
-        status === "ALL"
-          ? true
-          : status ===
-            "ACTIVE"
-          ? coupon.isActive &&
-            !isExpired
-          : status ===
-            "INACTIVE"
-          ? !coupon.isActive
-          : isExpired;
-
-      const matchesType =
-        discountType ===
-        "ALL"
-          ? true
-          : coupon.discountType ===
-            discountType;
-
-      return (
-        matchesSearch &&
-        matchesStatus &&
-        matchesType
-      );
-    }
-  );
 
   return (
     <div
@@ -196,15 +174,18 @@ const fetchCoupons =
         coupons={coupons}
       />
 
-      <CouponFilters
+     <CouponFilters
   search={search}
   setSearch={setSearch}
+  sort={sort}
+  setPage={setPage}
+  setSort={setSort}
   status={status}
   setStatus={setStatus}
   discountType={discountType}
   setDiscountType={setDiscountType}
-  totalResults={
-    filteredCoupons.length
+ totalResults={
+    pagination?.total || 0
   }
 />
 
@@ -214,7 +195,7 @@ const fetchCoupons =
     Loading...
   </div>
 
-) : filteredCoupons.length === 0 ? (
+) : coupons.length === 0 ? (
 
   <div
     className="
@@ -263,7 +244,7 @@ const fetchCoupons =
       xl:grid-cols-2
     "
   >
-    {filteredCoupons.map(
+    {coupons.map(
       (coupon) => (
         <CouponCard
       key={coupon._id}
@@ -277,6 +258,167 @@ const fetchCoupons =
   </div>
 
 )}
+
+
+
+{pagination?.pages > 1 && (
+  <div
+    className="
+      flex
+      flex-col
+      gap-4
+
+      rounded-3xl
+      border
+      border-border
+
+      bg-surface
+
+      p-5
+
+      sm:flex-row
+      sm:items-center
+      sm:justify-between
+    "
+  >
+    <div
+      className="
+        text-sm
+        text-text-secondary
+      "
+    >
+      Showing page{" "}
+      <span className="font-medium text-text-primary">
+        {pagination.page}
+      </span>{" "}
+      of{" "}
+      <span className="font-medium text-text-primary">
+        {pagination.pages}
+      </span>
+      {" • "}
+      {pagination.total} total coupons
+    </div>
+
+    <div
+      className="
+        flex
+        items-center
+        gap-2
+      "
+    >
+      <button
+        onClick={() =>
+          setPage((prev) =>
+            Math.max(prev - 1, 1)
+          )
+        }
+        disabled={page === 1}
+        className="
+          rounded-2xl
+
+          border
+          border-border
+
+          px-4
+          py-2
+
+          text-sm
+          font-medium
+
+          transition
+
+          hover:bg-surface-secondary
+
+          disabled:cursor-not-allowed
+          disabled:opacity-50
+        "
+      >
+        Previous
+      </button>
+
+      {Array.from(
+        {
+          length: pagination.pages,
+        },
+        (_, index) => index + 1
+      )
+        .slice(
+          Math.max(page - 3, 0),
+          Math.min(
+            page + 2,
+            pagination.pages
+          )
+        )
+        .map((pageNumber) => (
+          <button
+            key={pageNumber}
+            onClick={() =>
+              setPage(pageNumber)
+            }
+            className={`
+              h-10
+              w-10
+
+              rounded-xl
+
+              text-sm
+              font-medium
+
+              transition
+
+              ${
+                pageNumber === page
+                  ? "bg-brand text-white"
+                  : "border border-border hover:bg-surface-secondary"
+              }
+            `}
+          >
+            {pageNumber}
+          </button>
+        ))}
+
+      <button
+        onClick={() =>
+          setPage((prev) =>
+            Math.min(
+              prev + 1,
+              pagination.pages
+            )
+          )
+        }
+        disabled={
+          page === pagination.pages
+        }
+        className="
+          rounded-2xl
+
+          border
+          border-border
+
+          px-4
+          py-2
+
+          text-sm
+          font-medium
+
+          transition
+
+          hover:bg-surface-secondary
+
+          disabled:cursor-not-allowed
+          disabled:opacity-50
+        "
+      >
+        Next
+      </button>
+    </div>
+  </div>
+)}
+
+
+
+
+
     </div>
   );
 }

@@ -53,24 +53,7 @@ const ConfirmModal = ({
           shadow-2xl
         "
       >
-        {/* CLOSE */}
 
-        <button
-          onClick={onClose}
-          className="
-            absolute
-            right-5
-            top-5
-
-            text-text-secondary
-
-            transition
-
-            hover:text-text-primary
-          "
-        >
-          <X size={20} />
-        </button>
 
         {/* TITLE */}
 
@@ -115,25 +98,26 @@ const ConfirmModal = ({
           <button
             onClick={onClose}
             className="
-              rounded-2xl
+  rounded-2xl
 
-              border
-              border-black/10
+  border
+  border-border
 
-              bg-surface
+  bg-surface
 
-              px-5
-              py-3
+  px-5
+  py-3
 
-              text-sm
-              font-semibold
+  text-sm
+  font-semibold
 
-              text-text-primary
+  text-text-primary
 
-              transition
+  transition-colors
 
-              hover:bg-[#FAFAFA]
-            "
+  hover:border-brand/20
+  hover:bg-surface-secondary
+"
           >
             {cancelText}
           </button>

@@ -1,15 +1,29 @@
 import api from "../api/client";
 
-export const getCoupons =
-  async () => {
+export const getCoupons = async ({
+  search,
+  status,
+  discountType,
+  sort,
+  page,
+  limit,
+}) => {
+  const { data } = await api.get(
+    "/admin/coupons",
+    {
+      params: {
+        search,
+        status,
+        discountType,
+        sort,
+        page,
+        limit,
+      },
+    }
+  );
 
-    const { data } =
-      await api.get(
-        "/admin/coupons"
-      );
-
-    return data;
-  };
+  return data;
+};
 
 export const getCoupon =
   async (id) => {
@@ -44,6 +58,17 @@ export const updateCoupon =
       await api.patch(
         `/admin/coupons/${id}`,
         couponData
+      );
+
+    return data;
+  };
+
+ export const duplicateCoupon =
+  async (id) => {
+
+    const { data } =
+      await api.get(
+        `/admin/coupons/${id}/duplicate`
       );
 
     return data;

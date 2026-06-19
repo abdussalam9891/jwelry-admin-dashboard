@@ -11,8 +11,14 @@ import {
 } from "react-router-dom";
 import {
   toggleCouponStatus,
+  duplicateCoupon,
 } from "../../services/couponService";
+
 import ConfirmModal from "../../components/ConfirmModal";
+import {
+  useNavigate,
+} from "react-router-dom";
+
 
 export default function CouponCard({
    coupon,
@@ -34,6 +40,9 @@ const [
   disabling,
   setDisabling,
 ] = useState(false);
+
+const navigate =
+  useNavigate();
 
   const statusClass =
     isExpired
@@ -81,6 +90,35 @@ const handleToggleStatus =
   };
 
 
+
+
+const handleDuplicate =
+  async () => {
+
+    try {
+
+      const data =
+        await duplicateCoupon(
+          coupon._id
+        );
+
+      navigate(
+        "/admin/coupons/new",
+        {
+          state: {
+            duplicatedCoupon:
+              data,
+          },
+        }
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  };
 
 
 
@@ -324,35 +362,52 @@ const handleToggleStatus =
           gap-2
         "
       >
-        <Link
-          to={`/admin/coupons/${coupon._id}/edit`}
-          className="
-            inline-flex
-            items-center
-            gap-2
-
-            rounded-2xl
-
-            border
-            border-border
-
-            bg-surface-secondary
-
-            px-4
-            py-2.5
-
-            text-sm
-            font-medium
-
-            transition
-
-            hover:bg-surface
-          "
-        >
-          <Pencil size={16} />
-
-          Edit
-        </Link>
+       {!isExpired ? (
+  <Link
+    to={`/admin/coupons/${coupon._id}/edit`}
+    className="
+      inline-flex
+      items-center
+      gap-2
+      rounded-2xl
+      border
+      border-border
+      bg-surface-secondary
+      px-4
+      py-2.5
+      text-sm
+      font-medium
+      transition
+      hover:bg-surface
+    "
+  >
+    <Pencil size={16} />
+    Edit
+  </Link>
+) : (
+  <button
+    onClick={() =>
+      handleDuplicate()
+    }
+    className="
+      inline-flex
+      items-center
+      gap-2
+      rounded-2xl
+      border
+      border-blue-200
+      bg-blue-50
+      px-4
+      py-2.5
+      text-sm
+      font-medium
+      text-blue-600
+      hover:bg-blue-100
+    "
+  >
+    Create Similar
+  </button>
+)}
 
      <Link
   to={`/admin/coupons/${coupon._id}/analytics`}
@@ -382,54 +437,55 @@ const handleToggleStatus =
   Analytics
 </Link>
 
-        <button
-  type="button"
-  onClick={() =>
-    setShowDisableModal(
-      true
-    )
-  }
-  className={`
-    inline-flex
-    items-center
-    gap-2
 
-    rounded-2xl
 
-    px-4
-    py-2.5
 
-    text-sm
-    font-medium
-
-    transition
-
-    ${
-      coupon.isActive
-        ? `
-          border
-          border-red-200
-          bg-red-50
-          text-red-600
-          hover:bg-red-100
-        `
-        : `
-          border
-          border-green-200
-          bg-green-50
-          text-green-600
-          hover:bg-green-100
-        `
+{!isExpired && (
+  <button
+    onClick={() =>
+      setShowDisableModal(true)
     }
-  `}
->
-  <Ban size={16} />
+    className={`
+      inline-flex
+      items-center
+      gap-2
 
-  {coupon.isActive
-    ? "Disable"
-    : "Enable"}
-</button>
+      rounded-2xl
 
+      px-4
+      py-2.5
+
+      text-sm
+      font-medium
+
+      transition
+
+      ${
+        coupon.isActive
+          ? `
+            border
+            border-red-200
+            bg-red-50
+            text-red-600
+            hover:bg-red-100
+          `
+          : `
+            border
+            border-green-200
+            bg-green-50
+            text-green-600
+            hover:bg-green-100
+          `
+      }
+    `}
+  >
+    <Ban size={16} />
+
+    {coupon.isActive
+      ? "Disable"
+      : "Enable"}
+  </button>
+)}
       </div>
 
 

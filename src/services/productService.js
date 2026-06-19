@@ -1,5 +1,20 @@
 import api from "../api/client";
 
+
+
+
+
+
+export const getProducts = async (params) => {
+  const res = await api.get("/admin/products", {
+    params 
+  });
+
+  return res.data;
+};
+
+
+
 /* PRODUCT STATS */
 
 export const getProductStats =

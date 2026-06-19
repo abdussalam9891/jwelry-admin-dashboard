@@ -22,8 +22,6 @@ import {
 export default function CustomersPage() {
   const navigate = useNavigate();
 
-  const [search, setSearch] = useState("");
-
   const [tier, setTier] = useState("All");
 
   const [sort, setSort] = useState("Newest");
@@ -36,13 +34,24 @@ export default function CustomersPage() {
 
   const [loading, setLoading] = useState(true);
 
+  const [search, setSearch] = useState("");
+const [debouncedSearch, setDebouncedSearch] = useState("");
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(search);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [search]);
+
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
         setLoading(true);
 
         const data = await getCustomers({
-          search,
+          search: debouncedSearch,
 
           tier,
 
@@ -64,7 +73,7 @@ export default function CustomersPage() {
     };
 
     fetchCustomers();
-  }, [search, tier, sort, page]);
+  }, [debouncedSearch, tier, sort, page]);
 
   const stats = [
     {
@@ -721,6 +730,157 @@ export default function CustomersPage() {
             })}
           </div>
         </div>
+
+
+        {/* MOBILE CARDS */}
+
+<div className="space-y-4 lg:hidden">
+  {customers?.length === 0 && (
+    <div className="rounded-3xl border border-border bg-surface p-10 text-center">
+      <p className="text-lg font-semibold text-text-primary">
+        No customers found
+      </p>
+
+      <p className="mt-2 text-sm text-text-secondary">
+        Try adjusting filters or search query
+      </p>
+    </div>
+  )}
+
+  {customers?.map((customer) => {
+    const daysAgo = Math.floor(
+      (new Date() - new Date(customer.lastOrderDate)) /
+        (1000 * 60 * 60 * 24),
+    );
+
+    return (
+      <div
+        key={customer._id}
+        onClick={() => navigate(`/admin/customers/${customer._id}`)}
+        className="
+          cursor-pointer
+          rounded-3xl
+          border
+          border-border
+          bg-surface
+          p-5
+          transition-all
+          hover:border-brand/20
+          hover:shadow-md
+        "
+      >
+        <div className="flex items-start gap-4">
+          <div
+            className="
+              flex
+              h-12
+              w-12
+              shrink-0
+              items-center
+              justify-center
+              rounded-2xl
+              bg-brand/10
+              font-semibold
+              text-brand
+            "
+          >
+            {customer.customerName?.charAt(0)}
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <h3 className="truncate font-semibold text-text-primary">
+              {customer.customerName}
+            </h3>
+
+            <p className="truncate text-sm text-text-secondary">
+              {customer.customerEmail}
+            </p>
+          </div>
+
+          <span
+            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+              customer.customerTier === "Platinum"
+                ? "bg-[#EEF2FF] text-indigo-500 border border-[#C7D2FE]"
+                : customer.customerTier === "Gold"
+                ? "bg-[#FFF7E8] text-[#B7791F] border border-[#FDE3B0]"
+                : customer.customerTier === "Silver"
+                ? "bg-[#F3F4F6] text-[#4B5563] border border-[#E5E7EB]"
+                : "bg-[#FFF4E8] text-[#C77700] border border-[#FFE1B4]"
+            }`}
+          >
+            {customer.customerTier}
+          </span>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-wide text-text-secondary">
+              Orders
+            </p>
+
+            <p className="mt-1 font-semibold text-text-primary">
+              {customer.totalOrders}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs uppercase tracking-wide text-text-secondary">
+              Revenue
+            </p>
+
+            <p className="mt-1 font-semibold text-text-primary">
+              ₹{customer.totalSpent?.toLocaleString()}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs uppercase tracking-wide text-text-secondary">
+              Joined
+            </p>
+
+            <p className="mt-1 text-sm font-medium text-text-primary">
+              {new Date(customer.joinedAt).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs uppercase tracking-wide text-text-secondary">
+              Last Purchase
+            </p>
+
+            <p className="mt-1 text-sm font-medium text-text-primary">
+              {daysAgo}d ago
+            </p>
+          </div>
+        </div>
+
+        <button
+          className="
+            mt-5
+            w-full
+            rounded-2xl
+            border
+            border-border
+            bg-surface-secondary
+            py-3
+            text-sm
+            font-medium
+            text-text-primary
+            transition-all
+            hover:border-brand/20
+            hover:bg-brand/5
+          "
+        >
+          View Profile
+        </button>
+      </div>
+    );
+  })}
+</div>
 
         {/* PAGINATION */}
 

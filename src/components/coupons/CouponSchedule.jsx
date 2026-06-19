@@ -76,6 +76,7 @@ export default function CouponSchedule({
             showTimeSelect
             dateFormat="dd MMM yyyy h:mm aa"
             placeholderText="Select start date"
+            minDate={new Date()}
             className={`
               w-full
               rounded-2xl
@@ -155,13 +156,11 @@ export default function CouponSchedule({
             showTimeSelect
             dateFormat="dd MMM yyyy h:mm aa"
             placeholderText="Select expiry date"
-            minDate={
-              formData.startsAt
-                ? new Date(
-                    formData.startsAt
-                  )
-                : undefined
-            }
+           minDate={
+    formData.startsAt
+      ? new Date(formData.startsAt)
+      : new Date()
+  }
             className={`
               w-full
               rounded-2xl

@@ -1,11 +1,13 @@
 import {
-  useState,
-} from "react";
-
-import {
   useNavigate,
   Link,
+  useLocation,
 } from "react-router-dom";
+
+import {
+  useState,
+  useEffect,
+} from "react";
 
 import {
   ArrowLeft,
@@ -37,6 +39,11 @@ export default function CouponForm({
   const isEditMode =
     mode === "edit";
 
+
+
+
+const location =
+  useLocation();
   const [loading, setLoading] =
     useState(false);
     const [errors, setErrors] =
@@ -93,6 +100,31 @@ export default function CouponForm({
         initialData?.expiresAt
           ?.slice(0, 16) || "",
     });
+
+
+
+    useEffect(() => {
+
+  if (
+    location.state
+      ?.duplicatedCoupon
+  ) {
+
+    setFormData(
+      (prev) => ({
+        ...prev,
+
+        ...location.state
+          .duplicatedCoupon,
+      })
+    );
+
+  }
+
+}, [location.state]);
+
+
+
 
   const numericFields = [
   "discountValue",
@@ -497,7 +529,7 @@ const handleChange = (e) => {
             </Link>
           </div>
 
-           
+
 
           <h1
             className="

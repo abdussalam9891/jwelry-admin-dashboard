@@ -1,6 +1,6 @@
 import {
   Search,
-   
+
 } from "lucide-react";
 import {
   Select,
@@ -13,11 +13,14 @@ import {
 export default function CouponFilters({
   search,
   setSearch,
+  sort,
+  setSort,
   status,
   setStatus,
   discountType,
   setDiscountType,
   totalResults,
+  setPage,
 }) {
   return (
     <div
@@ -63,11 +66,12 @@ export default function CouponFilters({
           <input
             type="text"
             value={search}
-            onChange={(e) =>
+            onChange={(e) => {
               setSearch(
                 e.target.value
-              )
-            }
+              );
+              setPage(1);
+            }}
             placeholder="Search coupon code or name..."
             className="
   h-12
@@ -112,9 +116,10 @@ export default function CouponFilters({
 
   <Select
     value={status}
-    onValueChange={
-      setStatus
-    }
+    onValueChange={(value) => {
+  setStatus(value);
+  setPage(1);
+}}
   >
     <SelectTrigger
       className="
@@ -154,9 +159,10 @@ export default function CouponFilters({
 
   <Select
     value={discountType}
-    onValueChange={
-      setDiscountType
-    }
+    onValueChange={(value) => {
+  setDiscountType(value);
+  setPage(1);
+}}
   >
     <SelectTrigger
       className="
@@ -191,6 +197,51 @@ export default function CouponFilters({
       </SelectItem>
     </SelectContent>
   </Select>
+
+
+
+  <Select
+  value={sort}
+ onValueChange={(value) => {
+  setSort(value);
+  setPage(1);
+}}
+>
+  <SelectTrigger
+    className="
+      h-12
+      w-[180px]
+
+      rounded-2xl
+
+      border-border
+
+      bg-surface-secondary
+    "
+  >
+    <SelectValue />
+  </SelectTrigger>
+
+  <SelectContent>
+    <SelectItem value="Newest">
+      Newest First
+    </SelectItem>
+
+    <SelectItem value="Oldest">
+      Oldest First
+    </SelectItem>
+
+    <SelectItem value="Highest Discount">
+      Highest Discount
+    </SelectItem>
+
+    <SelectItem value="Most Used">
+      Most Used
+    </SelectItem>
+  </SelectContent>
+</Select>
+
+
 </div>
 
       </div>
