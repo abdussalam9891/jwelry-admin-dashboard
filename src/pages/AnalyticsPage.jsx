@@ -12,8 +12,7 @@ from "@/components/analytics/CategoryAnalyticsCard";
 import TopProductsCard
 from "@/components/analytics/TopProductsCard";
 
-import MaterialPerformanceCard
-from "@/components/analytics/MaterialPerformanceCard";
+
 
 import CustomerAnalyticsCard from "@/components/analytics/CustomerAnalyticsCard";
 import PaymentAnalyticsCard from "@/components/analytics/PaymentAnalyticsCard";
@@ -79,7 +78,7 @@ export default function AnalyticsPage() {
 
         {
           title: "Customers",
-          value: dashboard.customerAnalytics?.newCustomers || 0,
+          value: dashboard.customerAnalytics?.recentCustomers.length || 0,
           growth: null,
           icon: Users,
           iconBg: "#ECFDF5",
@@ -108,66 +107,9 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-6 p-6">
       <div>
-        <h1
-          className="
-                    mt-5
 
-                    text-4xl
-                    font-bold
 
-                    tracking-tight
-
-                    text-text-primary
-                  "
-        >
-          Analytics
-        </h1>
-      </div>
-      {/* HERO */}
-      <div
-        className="
-    relative
-    overflow-hidden
-    rounded-[32px]
-    border
-    border-border
-    bg-surface
-    px-8
-    py-10
-    shadow-[0_10px_40px_rgba(0,0,0,0.04)]
-  "
-      >
-        {/* glow */}
-        <div
-          className="
-      absolute
-      -right-24
-      -top-24
-      h-72
-      w-72
-      rounded-full
-      bg-brand/10
-      blur-3xl
-    "
-        />
-
-        <div
-          className="
-      absolute
-      -left-16
-      bottom-0
-      h-44
-      w-44
-      rounded-full
-      bg-brand/5
-      blur-3xl
-    "
-        />
-
-        <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          {/* LEFT */}
-          <div>
-            <h1
+          <h1
               className="
           mt-5
           text-4xl
@@ -193,73 +135,9 @@ export default function AnalyticsPage() {
               Unified operational visibility across revenue, customer growth,
               order flow, inventory health, and payment performance.
             </p>
-          </div>
-
-          {/* RIGHT */}
-          <div
-            className="
-        grid
-        grid-cols-2
-        gap-4
-        sm:grid-cols-3
-      "
-          >
-            <div
-              className="
-          rounded-2xl
-          border
-          border-border
-          bg-surface-secondary
-          px-5
-          py-4
-        "
-            >
-              <p className="text-[11px] uppercase tracking-wide text-text-secondary">
-                Status
-              </p>
-              <p className="mt-2 text-sm font-semibold text-text-primary">
-                Live Sync
-              </p>
-            </div>
-
-            <div
-              className="
-          rounded-2xl
-          border
-          border-border
-          bg-surface-secondary
-          px-5
-          py-4
-        "
-            >
-              <p className="text-[11px] uppercase tracking-wide text-text-secondary">
-                Scope
-              </p>
-              <p className="mt-2 text-sm font-semibold text-text-primary">
-                Full Store
-              </p>
-            </div>
-
-            <div
-              className="
-          rounded-2xl
-          border
-          border-border
-          bg-surface-secondary
-          px-5
-          py-4
-        "
-            >
-              <p className="text-[11px] uppercase tracking-wide text-text-secondary">
-                Updated
-              </p>
-              <p className="mt-2 text-sm font-semibold text-text-primary">
-                Real-time
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
+
+
 
       {/* BUSINESS HEALTH */}
 
@@ -387,11 +265,7 @@ export default function AnalyticsPage() {
   dashboard={dashboard}
 />
 
-<MaterialPerformanceCard
-  materialAnalytics={
-    dashboard?.materialAnalytics || []
-  }
-/>
+ 
 
    <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
   <CustomerAnalyticsCard dashboard={dashboard} />

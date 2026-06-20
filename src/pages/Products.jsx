@@ -933,9 +933,9 @@ setStats(statsData);
             </Table>
           )}
         </div>
-      </div>
 
-      {/* PAGINATION */}
+
+            {/* PAGINATION */}
       {pagination && (
         <div
           className="
@@ -1073,6 +1073,9 @@ setStats(statsData);
           </div>
         </div>
       )}
+      </div>
+
+
     </div>
   );
 }

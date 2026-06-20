@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { PackageSearch } from "lucide-react";
+
 import DateRangeFilter from "@/components/DateRangeFilter";
 
 import { getProductsAnalytics } from "@/services/analyticsService";
@@ -115,7 +117,7 @@ export default function TopProductsCard({
             <tr>
               {[
                 "Product",
-                "SKU",
+
                 "Revenue",
                 "Units Sold",
                 "Stock",
@@ -142,7 +144,46 @@ export default function TopProductsCard({
           </thead>
 
           <tbody>
-            {topProducts?.map(
+  {topProducts?.length === 0 ? (
+    <tr>
+      <td
+        colSpan={5}
+        className="
+          px-6
+          py-16
+          text-center
+        "
+      >
+        <div className="flex flex-col items-center py-16">
+  <div
+    className="
+      mb-4
+      flex
+      h-14
+      w-14
+      items-center
+      justify-center
+      rounded-full
+      bg-surface-secondary
+    "
+  >
+    <PackageSearch
+      size={28}
+      className="text-text-secondary"
+    />
+  </div>
+
+  <h3 className="text-lg font-semibold text-text-primary">
+    No product data
+  </h3>
+
+  <p className="mt-2 text-sm text-text-secondary">
+    No sales were recorded during the selected period.
+  </p>
+</div>
+      </td>
+    </tr>
+  ) : (topProducts?.map(
               (product) => (
                 <tr
                   key={
@@ -167,17 +208,7 @@ export default function TopProductsCard({
                     }
                   </td>
 
-                  <td
-                    className="
-                      px-6
-                      py-5
-                      text-text-secondary
-                    "
-                  >
-                    {
-                      product.sku
-                    }
-                  </td>
+                  
 
                   <td
                     className="
@@ -218,7 +249,7 @@ export default function TopProductsCard({
                   </td>
                 </tr>
               )
-            )}
+            ))}
           </tbody>
         </table>
       </div>

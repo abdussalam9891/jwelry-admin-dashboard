@@ -6,8 +6,10 @@ import { useAuth } from "../context/AuthContext";
 import { useEffect, useRef, useState } from "react";
 import useLogout from "../hooks/useLogout";
 
-import { getNotifications } from "@/services/notificationService";
+import useNotifications
+from "@/hooks/useNotifications";
 import { globalSearch } from "@/services/searchService";
+import NotificationDropdown from "@/components/notifications/NotificationDropdown";
 
 export default function Topbar({ setSidebarOpen }) {
   const [isDark, setIsDark] = useState(
@@ -38,13 +40,17 @@ export default function Topbar({ setSidebarOpen }) {
 
   const [activeIndex, setActiveIndex] = useState(-1);
 
-  const [notifications, setNotifications] = useState([]);
-
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  const [notificationOpen, setNotificationOpen] = useState(false);
 
 
+  const {
+  notifications,
+  unreadCount,
+  notificationOpen,
+  setNotificationOpen,
+  handleNotificationClick,
+  handleMarkAllRead,
+  handleClearAll,
+} = useNotifications(navigate);
 
   const searchRef = useRef(null);
 
@@ -60,23 +66,7 @@ export default function Topbar({ setSidebarOpen }) {
     localStorage.setItem("theme", dark ? "dark" : "light");
   };
 
-
-
-  useEffect(() => {
-    async function loadNotifications() {
-      try {
-        const data = await getNotifications();
-
-        setNotifications(data.notifications);
-
-        setUnreadCount(data.unreadCount);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    loadNotifications();
-  }, []);
+  
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -86,17 +76,9 @@ export default function Topbar({ setSidebarOpen }) {
         setProfileOpen(false);
       }
 
-
-      if (
-  searchRef.current &&
-  !searchRef.current.contains(
-    event.target
-  )
-) {
-  setSearchOpen(false);
-}
-
-
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setSearchOpen(false);
+      }
 
       /* NOTIFICATIONS */
 
@@ -115,102 +97,66 @@ export default function Topbar({ setSidebarOpen }) {
     };
   }, []);
 
-
-
   const flatResults = [
-  ...searchResults.products.map(
-    (item) => ({
+    ...searchResults.products.map((item) => ({
       ...item,
       type: "product",
-    })
-  ),
+    })),
 
-  ...searchResults.orders.map(
-    (item) => ({
+    ...searchResults.orders.map((item) => ({
       ...item,
       type: "order",
-    })
-  ),
+    })),
 
-  ...searchResults.customers.map(
-    (item) => ({
+    ...searchResults.customers.map((item) => ({
       ...item,
       type: "customer",
-    })
-  ),
-];
+    })),
+  ];
 
+  useEffect(() => {
+    if (!search.trim()) {
+      setSearchResults({
+        products: [],
+        orders: [],
+        customers: [],
+      });
 
-useEffect(() => {
-  if (!search.trim()) {
-    setSearchResults({
-      products: [],
-      orders: [],
-      customers: [],
-    });
-
-    setSearchOpen(false);
-    setActiveIndex(-1);
-    return;
-  }
-
-  const timer =
-    setTimeout(
-      async () => {
-        try {
-          setSearchLoading(true);
-
-          const data =
-            await globalSearch(
-              search
-            );
-
-          setSearchResults(
-            data
-          );
-
-          setSearchOpen(true);
-        } catch (err) {
-          console.error(err);
-        } finally {
-          setSearchLoading(false);
-        }
-      },
-      300
-    );
-
-  return () =>
-    clearTimeout(timer);
-}, [search]);
-
-
-const handleSearchSelect =
-  (item) => {
-    if (
-      item.type ===
-      "product"
-    ) {
-      navigate(
-        `/admin/products/${item._id}`
-      );
+      setSearchOpen(false);
+      setActiveIndex(-1);
+      return;
     }
 
-    if (
-      item.type ===
-      "order"
-    ) {
-      navigate(
-        `/admin/orders/${item._id}`
-      );
+    const timer = setTimeout(async () => {
+      try {
+        setSearchLoading(true);
+
+        const data = await globalSearch(search);
+
+        setSearchResults(data);
+
+        setSearchOpen(true);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const handleSearchSelect = (item) => {
+    if (item.type === "product") {
+      navigate(`/admin/products/${item._id}`);
     }
 
-    if (
-      item.type ===
-      "customer"
-    ) {
-      navigate(
-        `/admin/customers/${item._id}`
-      );
+    if (item.type === "order") {
+      navigate(`/admin/orders/${item._id}`);
+    }
+
+    if (item.type === "customer") {
+      navigate(`/admin/customers/${item._id}`);
     }
 
     setSearch("");
@@ -218,60 +164,36 @@ const handleSearchSelect =
     setActiveIndex(-1);
   };
 
-
-
-
-  const handleSearchKeyDown =
-  (e) => {
+  const handleSearchKeyDown = (e) => {
     if (!searchOpen) return;
 
-    if (
-      e.key ===
-      "ArrowDown"
-    ) {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
 
-      setActiveIndex(
-        (prev) =>
-          prev <
-          flatResults.length - 1
-            ? prev + 1
-            : 0
-      );
+      setActiveIndex((prev) => (prev < flatResults.length - 1 ? prev + 1 : 0));
     }
 
-    if (
-      e.key ===
-      "ArrowUp"
-    ) {
+    if (e.key === "ArrowUp") {
       e.preventDefault();
 
-      setActiveIndex(
-        (prev) =>
-          prev > 0
-            ? prev - 1
-            : flatResults.length -
-              1
-      );
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : flatResults.length - 1));
     }
 
-    if (
-      e.key === "Enter" &&
-      activeIndex >= 0
-    ) {
-      handleSearchSelect(
-        flatResults[
-          activeIndex
-        ]
-      );
+    if (e.key === "Enter" && activeIndex >= 0) {
+      handleSearchSelect(flatResults[activeIndex]);
     }
 
-    if (
-      e.key === "Escape"
-    ) {
+    if (e.key === "Escape") {
       setSearchOpen(false);
     }
   };
+
+
+
+
+
+
+
 
   return (
     <header
@@ -335,10 +257,10 @@ const handleSearchSelect =
       </div>
 
       {/* CENTER SEARCH */}
-     {/* CENTER SEARCH */}
-<div
-  ref={searchRef}
-  className="
+
+      <div
+        ref={searchRef}
+        className="
     hidden
     lg:flex
     items-center
@@ -347,46 +269,36 @@ const handleSearchSelect =
     mx-8
     relative
   "
->
-  <div
-    className="
+      >
+        <div
+          className="
       relative
       w-full
     "
-  >
-    <Search
-      size={18}
-      className="
+        >
+          <Search
+            size={18}
+            className="
         absolute
         left-4
         top-1/2
         -translate-y-1/2
         text-text-secondary
       "
-    />
+          />
 
-    <input
-      type="text"
-      value={search}
-      onChange={(e) =>
-        setSearch(
-          e.target.value
-        )
-      }
-      onFocus={() => {
-        if (
-          search.trim()
-        ) {
-          setSearchOpen(
-            true
-          );
-        }
-      }}
-      onKeyDown={
-        handleSearchKeyDown
-      }
-      placeholder="Search products, orders, customers..."
-      className="
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onFocus={() => {
+              if (search.trim()) {
+                setSearchOpen(true);
+              }
+            }}
+            onKeyDown={handleSearchKeyDown}
+            placeholder="Search products, orders, customers..."
+            className="
         w-full
         h-11
         rounded-xl
@@ -400,12 +312,12 @@ const handleSearchSelect =
         focus:bg-surface
         transition
       "
-    />
+          />
 
-    {/* DROPDOWN */}
-    {searchOpen && (
-      <div
-        className="
+          {/* DROPDOWN */}
+          {searchOpen && (
+            <div
+              className="
           absolute
           top-[calc(100%+12px)]
           left-0
@@ -418,46 +330,43 @@ const handleSearchSelect =
           bg-surface
           shadow-2xl
         "
-      >
-        {/* LOADING */}
-        {searchLoading ? (
-          <div
-            className="
+            >
+              {/* LOADING */}
+              {searchLoading ? (
+                <div
+                  className="
               p-6
               text-center
               text-sm
               text-text-secondary
             "
-          >
-            Searching...
-          </div>
-        ) : flatResults.length ===
-          0 ? (
-          /* EMPTY */
-          <div
-            className="
+                >
+                  Searching...
+                </div>
+              ) : flatResults.length === 0 ? (
+                /* EMPTY */
+                <div
+                  className="
               p-6
               text-center
               text-sm
               text-text-secondary
             "
-          >
-            No results found
-          </div>
-        ) : (
-          <div
-            className="
+                >
+                  No results found
+                </div>
+              ) : (
+                <div
+                  className="
               max-h-[430px]
               overflow-y-auto
             "
-          >
-            {/* PRODUCTS */}
-            {searchResults
-              .products
-              .length > 0 && (
-              <div>
-                <p
-                  className="
+                >
+                  {/* PRODUCTS */}
+                  {searchResults.products.length > 0 && (
+                    <div>
+                      <p
+                        className="
                     px-5
                     py-3
                     text-xs
@@ -465,28 +374,20 @@ const handleSearchSelect =
                     uppercase
                     text-text-secondary
                   "
-                >
-                  Products
-                </p>
+                      >
+                        Products
+                      </p>
 
-                {searchResults.products.map(
-                  (
-                    product,
-                    idx
-                  ) => (
-                    <button
-                      key={
-                        product._id
-                      }
-                      onClick={() =>
-                        handleSearchSelect(
-                          {
-                            ...product,
-                            type: "product",
+                      {searchResults.products.map((product, idx) => (
+                        <button
+                          key={product._id}
+                          onClick={() =>
+                            handleSearchSelect({
+                              ...product,
+                              type: "product",
+                            })
                           }
-                        )
-                      }
-                      className={`
+                          className={`
                         flex
                         w-full
                         items-center
@@ -496,24 +397,13 @@ const handleSearchSelect =
                         text-left
                         transition
                         hover:bg-surface-secondary
-                        ${
-                          activeIndex ===
-                          idx
-                            ? "bg-surface-secondary"
-                            : ""
-                        }
+                        ${activeIndex === idx ? "bg-surface-secondary" : ""}
                       `}
-                    >
-                      <img
-                        src={
-                          product
-                            .images?.[0]
-                            ?.url
-                        }
-                        alt={
-                          product.name
-                        }
-                        className="
+                        >
+                          <img
+                            src={product.images?.[0]?.url}
+                            alt={product.name}
+                            className="
                           h-12
                           w-12
                           rounded-2xl
@@ -521,45 +411,38 @@ const handleSearchSelect =
                           border
                           border-border
                         "
-                      />
+                          />
 
-                      <div>
-                        <p
-                          className="
+                          <div>
+                            <p
+                              className="
                             text-sm
                             font-medium
                             text-text-primary
                           "
-                        >
-                          {
-                            product.name
-                          }
-                        </p>
+                            >
+                              {product.name}
+                            </p>
 
-                        <p
-                          className="
+                            <p
+                              className="
                             text-xs
                             text-text-secondary
                           "
-                        >
-                          {
-                            product.category
-                          }
-                        </p>
-                      </div>
-                    </button>
-                  )
-                )}
-              </div>
-            )}
+                            >
+                              {product.category}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-            {/* ORDERS */}
-            {searchResults
-              .orders
-              .length > 0 && (
-              <div>
-                <p
-                  className="
+                  {/* ORDERS */}
+                  {searchResults.orders.length > 0 && (
+                    <div>
+                      <p
+                        className="
                     px-5
                     py-3
                     text-xs
@@ -567,35 +450,24 @@ const handleSearchSelect =
                     uppercase
                     text-text-secondary
                   "
-                >
-                  Orders
-                </p>
+                      >
+                        Orders
+                      </p>
 
-                {searchResults.orders.map(
-                  (
-                    order,
-                    idx
-                  ) => {
-                    const absoluteIndex =
-                      searchResults
-                        .products
-                        .length +
-                      idx;
+                      {searchResults.orders.map((order, idx) => {
+                        const absoluteIndex =
+                          searchResults.products.length + idx;
 
-                    return (
-                      <button
-                        key={
-                          order._id
-                        }
-                        onClick={() =>
-                          handleSearchSelect(
-                            {
-                              ...order,
-                              type: "order",
+                        return (
+                          <button
+                            key={order._id}
+                            onClick={() =>
+                              handleSearchSelect({
+                                ...order,
+                                type: "order",
+                              })
                             }
-                          )
-                        }
-                        className={`
+                            className={`
                           w-full
                           px-5
                           py-3
@@ -603,49 +475,41 @@ const handleSearchSelect =
                           transition
                           hover:bg-surface-secondary
                           ${
-                            activeIndex ===
-                            absoluteIndex
+                            activeIndex === absoluteIndex
                               ? "bg-surface-secondary"
                               : ""
                           }
                         `}
-                      >
-                        <p
-                          className="
+                          >
+                            <p
+                              className="
                             text-sm
                             font-medium
                             text-text-primary
                           "
-                        >
-                          {
-                            order.orderNumber
-                          }
-                        </p>
+                            >
+                              {order.orderNumber}
+                            </p>
 
-                        <p
-                          className="
+                            <p
+                              className="
                             text-xs
                             text-text-secondary
                           "
-                        >
-                          {
-                            order.customerName
-                          }
-                        </p>
-                      </button>
-                    );
-                  }
-                )}
-              </div>
-            )}
+                            >
+                              {order.customerName}
+                            </p>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
 
-            {/* CUSTOMERS */}
-            {searchResults
-              .customers
-              .length > 0 && (
-              <div>
-                <p
-                  className="
+                  {/* CUSTOMERS */}
+                  {searchResults.customers.length > 0 && (
+                    <div>
+                      <p
+                        className="
                     px-5
                     py-3
                     text-xs
@@ -653,39 +517,26 @@ const handleSearchSelect =
                     uppercase
                     text-text-secondary
                   "
-                >
-                  Customers
-                </p>
+                      >
+                        Customers
+                      </p>
 
-                {searchResults.customers.map(
-                  (
-                    customer,
-                    idx
-                  ) => {
-                    const absoluteIndex =
-                      searchResults
-                        .products
-                        .length +
-                      searchResults
-                        .orders
-                        .length +
-                      idx;
+                      {searchResults.customers.map((customer, idx) => {
+                        const absoluteIndex =
+                          searchResults.products.length +
+                          searchResults.orders.length +
+                          idx;
 
-                    return (
-                      <button
-                        key={
-                          customer._id
-                        }
-                        onClick={() =>
-                          handleSearchSelect(
-                            {
-                              ...customer,
-                              type:
-                                "customer",
+                        return (
+                          <button
+                            key={customer._id}
+                            onClick={() =>
+                              handleSearchSelect({
+                                ...customer,
+                                type: "customer",
+                              })
                             }
-                          )
-                        }
-                        className={`
+                            className={`
                           flex
                           w-full
                           items-center
@@ -696,15 +547,14 @@ const handleSearchSelect =
                           transition
                           hover:bg-surface-secondary
                           ${
-                            activeIndex ===
-                            absoluteIndex
+                            activeIndex === absoluteIndex
                               ? "bg-surface-secondary"
                               : ""
                           }
                         `}
-                      >
-                        <div
-                          className="
+                          >
+                            <div
+                              className="
                             flex
                             h-10
                             w-10
@@ -713,76 +563,62 @@ const handleSearchSelect =
                             rounded-full
                             bg-brand/10
                           "
-                        >
-                          {customer
-                            ?.avatar ? (
-                            <img
-                              src={
-                                customer.avatar
-                              }
-                              alt={
-                                customer.name
-                              }
-                              className="
+                            >
+                              {customer?.avatar ? (
+                                <img
+                                  src={customer.avatar}
+                                  alt={customer.name}
+                                  className="
                                 h-full
                                 w-full
                                 rounded-full
                                 object-cover
                               "
-                            />
-                          ) : (
-                            <span
-                              className="
+                                />
+                              ) : (
+                                <span
+                                  className="
                                 text-sm
                                 font-semibold
                                 text-brand
                               "
-                            >
-                              {customer.name
-                                ?.charAt(
-                                  0
-                                )
-                                ?.toUpperCase()}
-                            </span>
-                          )}
-                        </div>
+                                >
+                                  {customer.name?.charAt(0)?.toUpperCase()}
+                                </span>
+                              )}
+                            </div>
 
-                        <div>
-                          <p
-                            className="
+                            <div>
+                              <p
+                                className="
                               text-sm
                               font-medium
                               text-text-primary
                             "
-                          >
-                            {
-                              customer.name
-                            }
-                          </p>
+                              >
+                                {customer.name}
+                              </p>
 
-                          <p
-                            className="
+                              <p
+                                className="
                               text-xs
                               text-text-secondary
                             "
-                          >
-                            {
-                              customer.email
-                            }
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  }
-                )}
-              </div>
-            )}
-          </div>
-        )}
+                              >
+                                {customer.email}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
-    )}
-  </div>
-</div>
 
       {/* RIGHT */}
       <div
@@ -820,232 +656,22 @@ const handleSearchSelect =
           {isDark ? <Sun size={18} /> : <Moon size={18} />}
         </button>
 
-        {/* notification */}
-        <div ref={notificationRef} className="relative">
-          {/* trigger */}
 
-          <button
-            onClick={() => setNotificationOpen((prev) => !prev)}
-            className="
-      relative
+<NotificationDropdown
+  notificationRef={notificationRef}
+  notificationOpen={notificationOpen}
+  setNotificationOpen={setNotificationOpen}
+  notifications={notifications}
+  unreadCount={unreadCount}
+  onNotificationClick={
+    handleNotificationClick
+  }
+  onMarkAllRead={
+    handleMarkAllRead
+  }
+  onClearAll={handleClearAll}
+/>
 
-      flex
-      h-11
-      w-11
-      items-center
-      justify-center
-
-      rounded-2xl
-
-      border
-      border-border
-
-      bg-surface
-
-      transition-all
-
-      hover:bg-surface-secondary
-    "
-          >
-            <Bell
-              size={18}
-              className="
-        text-text-primary
-      "
-            />
-
-            {unreadCount > 0 && (
-              <span
-                className="
-          absolute
-          right-2
-          top-2
-
-          flex
-          h-2.5
-          w-2.5
-
-          rounded-full
-
-          bg-red-500
-        "
-              />
-            )}
-          </button>
-
-          {/* dropdown */}
-
-          {notificationOpen && (
-            <div
-              className="
-        absolute
-        right-0
-        top-[calc(100%+12px)]
-
-        z-50
-
-        w-[360px]
-
-        overflow-hidden
-
-        rounded-3xl
-
-        border
-        border-border
-
-        bg-surface
-
-        shadow-2xl
-      "
-            >
-              {/* header */}
-
-              <div
-                className="
-          flex
-          items-center
-          justify-between
-
-          border-b
-          border-border
-
-          px-5
-          py-4
-        "
-              >
-                <div>
-                  <h3
-                    className="
-              text-sm
-              font-semibold
-              text-text-primary
-            "
-                  >
-                    Notifications
-                  </h3>
-
-                  <p
-                    className="
-              mt-1
-              text-xs
-              text-text-secondary
-            "
-                  >
-                    Recent store activity
-                  </p>
-                </div>
-
-                {unreadCount > 0 && (
-                  <div
-                    className="
-              rounded-full
-
-              bg-brand/10
-
-              px-2.5
-              py-1
-
-              text-[10px]
-              font-semibold
-
-              text-brand
-            "
-                  >
-                    {unreadCount} New
-                  </div>
-                )}
-              </div>
-
-              {/* list */}
-
-              <div
-                className="
-          max-h-[420px]
-          overflow-y-auto
-        "
-              >
-                {notifications.length === 0 ? (
-                  <div
-                    className="
-              p-10
-
-              text-center
-
-              text-sm
-              text-text-secondary
-            "
-                  >
-                    No notifications yet.
-                  </div>
-                ) : (
-                  notifications.map((item) => (
-                    <button
-                      key={item._id}
-                      className="
-                  flex
-                  w-full
-                  items-start
-                  gap-4
-
-                  border-b
-                  border-border
-
-                  px-5
-                  py-4
-
-                  text-left
-
-                  transition-all
-
-                  hover:bg-surface-secondary
-                "
-                    >
-                      {/* dot */}
-
-                      <div
-                        className={`
-                    mt-1.5
-
-                    h-2.5
-                    w-2.5
-
-                    rounded-full
-
-                    ${item.read ? "bg-border" : "bg-brand"}
-                  `}
-                      />
-
-                      {/* content */}
-
-                      <div className="flex-1">
-                        <p
-                          className="
-                      text-sm
-                      font-medium
-                      text-text-primary
-                    "
-                        >
-                          {item.title}
-                        </p>
-
-                        <p
-                          className="
-                      mt-1
-                      text-xs
-                      leading-6
-                      text-text-secondary
-                    "
-                        >
-                          {item.message}
-                        </p>
-                      </div>
-                    </button>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-        </div>
 
         {/* profile dropdown */}
 
@@ -1305,3 +931,15 @@ const handleSearchSelect =
     </header>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,27 +1,13 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+ import DateRangeFilter from "@/components/DateRangeFilter";
+import { getRevenueAnalytics } from "@/services/analyticsService";
 
-import { format } from "date-fns";
 
-import { CalendarIcon } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-
-import { Calendar } from "@/components/ui/calendar";
 
 import MetricCard from "@/components/dashboard/MetricCard";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
-import { AlertTriangle, IndianRupee, ShoppingCart, Users } from "lucide-react";
+
+import { AlertTriangle, IndianRupee, ShoppingCart, Users, TrendingUp } from "lucide-react";
+
 
 import { Link } from "react-router-dom";
 
@@ -50,7 +36,7 @@ export default function Dashboard() {
 
       pendingOrders: 0,
 
-      totalCustomers: 0,
+
 
       totalProducts: 0,
 
@@ -63,54 +49,65 @@ export default function Dashboard() {
 
     lowStockProducts: [],
   });
-  const [customMode, setCustomMode] = useState(false);
 
-  const [fromDate, setFromDate] = useState(null);
 
-  const [toDate, setToDate] = useState(null);
+  const [revenueChart, setRevenueChart] = useState(
+  dashboardData?.revenueChart || []
+);
+const [revenueRange, setRevenueRange] =
+  useState({
+    from: "",
+    to: "",
+  });
 
-  const [range, setRange] = useState("12m");
 
   const [loading, setLoading] = useState(false);
   const { metrics } = dashboardData;
 
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        setLoading(true);
+useEffect(() => {
+  const fetchDashboard = async () => {
+    try {
+      setLoading(true);
 
-        let params = {};
+      const data =
+        await getDashboardData();
 
-        if (customMode && fromDate && toDate) {
-          params = {
-            from: fromDate.toISOString(),
+      setDashboardData(data);
 
-            to: toDate.toISOString(),
-          };
-        } else {
-          params = {
-            range,
-          };
-        }
-
-        const data = await getDashboardData(params);
-        console.log(data);
-        setDashboardData(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboard();
-  }, [range, customMode, fromDate, toDate]);
-
-  const handlePresetChange = (value) => {
-    setCustomMode(false);
-
-    setRange(value);
+      setRevenueChart(
+        data.revenueChart || []
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  fetchDashboard();
+}, []);
+
+
+
+const handleApply = async () => {
+  const data = await getRevenueAnalytics({
+    startDate: revenueRange.from,
+    endDate: revenueRange.to,
+  });
+
+  setRevenueChart(data.revenueChart || []);
+};
+
+const handleReset = () => {
+  setRevenueRange({
+    from: "",
+    to: "",
+  });
+
+  setRevenueChart(
+    dashboardData?.revenueChart || []
+  );
+};
 
   const handleExport = async () => {
     try {
@@ -321,7 +318,7 @@ export default function Dashboard() {
         <MetricCard
           to="/admin/customers"
           title="Customers"
-          value={metrics.totalCustomers}
+          value={dashboardData.recentCustomers.length}
           icon={Users}
           description="Manage customer accounts"
           actionText="View customers"
@@ -350,14 +347,14 @@ export default function Dashboard() {
     grid-cols-1
     gap-6
 
-    xl:grid-cols-3
+
   "
       >
         {/* REVENUE CHART */}
 
         <div
           className="
-    xl:col-span-2
+   
 
     rounded-[2rem]
     border
@@ -386,7 +383,7 @@ export default function Dashboard() {
             {/* LEFT */}
 
             <div>
-              
+
 
               <h2
                 className="
@@ -414,353 +411,169 @@ export default function Dashboard() {
               </p>
             </div>
 
-            {/* RIGHT CONTROLS */}
-
-            <div
-              className="
-        flex
-        flex-wrap
-        items-center
-        gap-3
-      "
-            >
-              {/* RANGE */}
-
-              <Select
-                value={range}
-                onValueChange={(value) => handlePresetChange(value)}
-              >
-                <SelectTrigger
-                  className="
-      h-11
-      w-[180px]
-
-      rounded-xl
-
-      border-black/10
-
-      bg-surface-secondary
-
-      text-sm
-      font-medium
-
-      shadow-none
-
-      focus:ring-4
-      focus:ring-[#6B1A2A]/10
-      focus:border-border-[#6B1A2A]/30
-    "
-                >
-                  <SelectValue placeholder="Select Range" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectItem value="7d">Last 7 Days</SelectItem>
-
-                  <SelectItem value="15d">Last 15 Days</SelectItem>
-
-                  <SelectItem value="1m">Last 1 Month</SelectItem>
-
-                  <SelectItem value="3m">Last 3 Months</SelectItem>
-
-                  <SelectItem value="6m">Last 6 Months</SelectItem>
-
-                  <SelectItem value="12m">Last 12 Months</SelectItem>
-                </SelectContent>
-              </Select>
-
-              {/* FROM */}
-
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="
-        h-11
-        w-[160px]
-
-        justify-start
-        rounded-xl
-
-        border-black/10
-
-        bg-surface
-
-        px-4
-
-        text-left
-        text-sm
-        font-medium
-
-        shadow-sm
-      "
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-
-                    {fromDate ? format(fromDate, "dd MMM yyyy") : "From Date"}
-                  </Button>
-                </PopoverTrigger>
-
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={fromDate}
-                    onSelect={(date) => {
-                      setCustomMode(true);
-
-                      setFromDate(date);
-                    }}
-                    disabled={(date) => date > new Date()}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-
-              {/* TO */}
-
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    disabled={!fromDate}
-                    className="
-        h-11
-        w-[160px]
-
-        justify-start
-        rounded-xl
-
-        border-black/10
-
-        bg-surface
-
-        px-4
-
-        text-left
-        text-sm
-        font-medium
-
-        shadow-sm
-      "
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-
-                    {toDate ? format(toDate, "dd MMM yyyy") : "To Date"}
-                  </Button>
-                </PopoverTrigger>
-
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={toDate}
-                    onSelect={(date) => {
-                      if (fromDate && date < fromDate) {
-                        return;
-                      }
-
-                      setCustomMode(true);
-
-                      setToDate(date);
-                    }}
-                    disabled={(date) =>
-                      date > new Date() || (fromDate && date < fromDate)
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
+         <DateRangeFilter
+  range={revenueRange}
+  setRange={setRevenueRange}
+  onApply={handleApply}
+  onReset={handleReset}
+/>
           </div>
 
           {/* CHART */}
 
-          <div className="mt-10 h-[340px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={dashboardData.revenueChart || []}
-                margin={{
-                  top: 10,
-                  right: 10,
-                  left: -20,
-                  bottom: 0,
-                }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#F1ECEE"
-                />
+       <div className="mt-10 h-[340px]">
+  {revenueChart?.length === 0 ? (
+    <div className="flex h-full flex-col items-center justify-center text-center">
+      <div
+        className="
+          mb-4
+          flex
+          h-14
+          w-14
+          items-center
+          justify-center
+          rounded-full
+          bg-surface-secondary
+        "
+      >
+        <TrendingUp
+          size={28}
+          className="text-text-secondary"
+        />
+      </div>
 
-                <XAxis
-                  dataKey="label"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{
-                    fill: "#6D7175",
-                    fontSize: 12,
-                  }}
-                />
+      <h3 className="text-lg font-semibold text-text-primary">
+        No revenue data found
+      </h3>
 
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{
-                    fill: "#6D7175",
-                    fontSize: 12,
-                  }}
-                  tickFormatter={(value) => {
-                    if (value >= 1000000) {
-                      return `₹${(value / 1000000).toFixed(1)}M`;
-                    }
+      <p className="mt-2 max-w-sm text-sm text-text-secondary">
+        No revenue was generated during the selected date range.
+      </p>
+    </div>
+  ) : (
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+    >
+      <BarChart
+        data={revenueChart}
+        margin={{
+          top: 10,
+          right: 10,
+          left: -20,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid
+          strokeDasharray="3 3"
+          vertical={false}
+          stroke="#F1ECEE"
+        />
 
-                    if (value >= 1000) {
-                      return `₹${(value / 1000).toFixed(0)}k`;
-                    }
+        <XAxis
+          dataKey="label"
+          axisLine={false}
+          tickLine={false}
+          tick={{
+            fill: "#6D7175",
+            fontSize: 12,
+          }}
+        />
 
-                    return `₹${value}`;
-                  }}
-                />
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+          tick={{
+            fill: "#6D7175",
+            fontSize: 12,
+          }}
+          tickFormatter={(value) => {
+            if (value >= 1000000) {
+              return `₹${(
+                value / 1000000
+              ).toFixed(1)}M`;
+            }
 
-                <Tooltip
-                  cursor={{
-                    fill: "rgba(107,26,42,0.04)",
-                  }}
-                  contentStyle={{
-                    borderRadius: "20px",
+            if (value >= 1000) {
+              return `₹${(
+                value / 1000
+              ).toFixed(0)}k`;
+            }
 
-                    border: "1px solid #ECE7E9",
+            return `₹${value}`;
+          }}
+        />
 
-                    background: "#FFFFFF",
+        <Tooltip
+          cursor={{
+            fill:
+              "rgba(107,26,42,0.04)",
+          }}
+          content={({
+            active,
+            payload,
+          }) => {
+            if (
+              active &&
+              payload &&
+              payload.length
+            ) {
+              const item =
+                payload[0].payload;
 
-                    boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
-                  }}
-                  formatter={(value) => [
-                    `₹${value.toLocaleString()}`,
+              return (
+                <div
+                  className="
+                    rounded-xl
+                    border
+                    border-border
+                    bg-surface
+                    p-3
+                    shadow-lg
+                  "
+                >
+                  <p className="font-semibold text-text-primary">
+                    {item.label}
+                  </p>
 
-                    "Revenue",
-                  ]}
-                  labelFormatter={(label) => label}
-                />
+                  <div className="mt-2 space-y-1 text-sm">
+                    <p className="text-text-secondary">
+                      Revenue:{" "}
+                      <span className="font-medium text-text-primary">
+                        ₹
+                        {item.revenue?.toLocaleString(
+                          "en-IN"
+                        )}
+                      </span>
+                    </p>
 
-                <Bar
-                  dataKey="revenue"
-                  radius={[14, 14, 0, 0]}
-                  fill="#6B1A2A"
-                  maxBarSize={56}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+                    <p className="text-text-secondary">
+                      Orders:{" "}
+                      <span className="font-medium text-text-primary">
+                        {item.orders}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+
+            return null;
+          }}
+        />
+
+        <Bar
+          dataKey="revenue"
+          radius={[14, 14, 0, 0]}
+          fill="#6B1A2A"
+          maxBarSize={56}
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  )}
+</div>
         </div>
-        {/* QUICK INSIGHTS */}
-        <div
-          className="
-      rounded-3xl
-      border
-      border-border
 
-      bg-surface
-      p-6
-
-      shadow-sm
-    "
-        >
-          <h2
-            className="
-        text-lg
-        font-semibold
-        text-text-primary
-      "
-          >
-            Quick Insights
-          </h2>
-
-          <div className="mt-6 space-y-5">
-            {/* TOTAL PRODUCTS */}
-            <div
-              className="
-          rounded-2xl
-          bg-surface-secondary
-          p-4
-        "
-            >
-              <p
-                className="
-            text-sm
-            text-text-secondary
-          "
-              >
-                Total Products
-              </p>
-
-              <h3
-                className="
-            mt-2
-            text-xl
-            font-bold
-          "
-              >
-                {loading ? "..." : metrics.totalProducts}
-              </h3>
-            </div>
-
-            {/* PENDING ORDERS */}
-            <div
-              className="
-          rounded-2xl
-          bg-surface-secondary
-          p-4
-        "
-            >
-              <p
-                className="
-            text-sm
-            text-text-secondary
-          "
-              >
-                Pending Orders
-              </p>
-
-              <h3
-                className="
-            mt-2
-            text-xl
-            font-bold
-          "
-              >
-                {loading ? "..." : metrics.pendingOrders}
-              </h3>
-            </div>
-
-            {/* LOW STOCK */}
-            <div
-              className="
-          rounded-2xl
-          bg-surface-secondary
-          p-4
-        "
-            >
-              <p
-                className="
-            text-sm
-            text-text-secondary
-          "
-              >
-                Inventory Alerts
-              </p>
-
-              <h3
-                className="
-            mt-2
-            text-xl
-            font-bold
-          "
-              >
-                {loading ? "..." : metrics.lowStockProducts}
-              </h3>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* LOWER GRID */}

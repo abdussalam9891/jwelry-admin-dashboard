@@ -281,7 +281,7 @@ export default function ProductForm({ initialData = null, mode = "create" }) {
       text-white
     "
   >
-    Save Changes
+    {isEditMode ? "Save Changes" : "Create Product"}
   </button>
 </div>
 

@@ -15,6 +15,8 @@ import {
   YAxis,
 } from "recharts";
 
+import { TrendingUp } from "lucide-react";
+
 import DateRangeFilter from "@/components/DateRangeFilter";
 
 import { getRevenueAnalytics } from "@/services/analyticsService";
@@ -30,6 +32,8 @@ export default function RevenueAnalyticsCard({
   const [revenueData, setRevenueData] =
     useState(null);
 
+    const [isFiltered, setIsFiltered] = useState(false);
+
   const fetchRevenueAnalytics =
     async () => {
       try {
@@ -40,6 +44,7 @@ export default function RevenueAnalyticsCard({
           });
 
         setRevenueData(data);
+    setIsFiltered(true);
       } catch (error) {
         console.error(error);
       }
@@ -77,7 +82,13 @@ export default function RevenueAnalyticsCard({
     });
 
     setRevenueData(null);
+  setIsFiltered(false);
   };
+
+
+  const chartData = isFiltered
+  ? revenueData?.revenueChart || []
+  : dashboard?.revenueChart || [];
 
   return (
     <div className="grid grid-cols-1 gap-6">
@@ -140,19 +151,7 @@ export default function RevenueAnalyticsCard({
                   )}
               </p>
 
-              <span
-                className="
-                  rounded-full
-                  bg-[#EEF8F1]
-                  px-3
-                  py-1
-                  text-xs
-                  font-semibold
-                  text-[#0F9F61]
-                "
-              >
-                +18.4%
-              </span>
+
             </div>
           </div>
 
@@ -219,68 +218,120 @@ export default function RevenueAnalyticsCard({
           </div>
         </div>
 
-        <div className="h-[360px]">
-          <ResponsiveContainer
-            width="100%"
-            height="100%"
-          >
-            <AreaChart
-              data={
-                revenueData?.revenueChart ||
-                dashboard?.revenueChart ||
-                []
-              }
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="#F1ECEE"
-              />
+   <div className="h-[360px]">
+  {!chartData.length ? (
+    <div className="flex h-full flex-col items-center justify-center text-center">
+      <div
+        className="
+          mb-4
+          flex
+          h-14
+          w-14
+          items-center
+          justify-center
+          rounded-full
+          bg-surface-secondary
+        "
+      >
+        <TrendingUp
+          size={28}
+          className="text-text-secondary"
+        />
+      </div>
 
-              <XAxis
-                dataKey="label"
-                axisLine={false}
-                tickLine={false}
-              />
+      <h3 className="text-lg font-semibold text-text-primary">
+        No revenue data found
+      </h3>
 
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tickFormatter={(v) =>
-                  `₹${v / 1000}k`
-                }
-              />
+      <p className="mt-2 max-w-sm text-sm text-text-secondary">
+        No revenue was generated during the selected date range.
+      </p>
+    </div>
+  ) : (
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+    >
+      <AreaChart
+       data={chartData}
+      >
+        <CartesianGrid
+          strokeDasharray="3 3"
+          vertical={false}
+          stroke="#F1ECEE"
+        />
 
-              <Tooltip
-                contentStyle={{
-                  borderRadius:
-                    "16px",
-                  border:
-                    "1px solid #E5E7EB",
-                  background:
-                    "#fff",
-                }}
-                formatter={(
-                  value
-                ) => [
-                  `₹${value.toLocaleString(
-                    "en-IN"
-                  )}`,
-                  "Revenue",
-                ]}
-              />
+        <XAxis
+          dataKey="label"
+          axisLine={false}
+          tickLine={false}
+        />
 
-              <Area
-                type="monotone"
-                dataKey="revenue"
-                stroke="#6B1A2A"
-                fill="#F8EEF1"
-                fillOpacity={1}
-                strokeWidth={3}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+          tickFormatter={(v) =>
+            `₹${v / 1000}k`
+          }
+        />
+
+         
+
+        <Tooltip
+  content={({ active, payload }) => {
+    if (
+      active &&
+      payload &&
+      payload.length
+    ) {
+      const item =
+        payload[0].payload;
+
+      return (
+        <div
+          className="
+            rounded-xl
+            border
+            border-border
+            bg-surface
+            p-3
+            shadow-lg
+          "
+        >
+          <p className="font-semibold text-text-primary">
+            {item.label}
+          </p>
+
+          <p className="mt-2 text-sm text-text-secondary">
+            Revenue: ₹
+            {item.revenue?.toLocaleString(
+              "en-IN"
+            )}
+          </p>
+
+          <p className="text-sm text-text-secondary">
+            Orders: {item.orders}
+          </p>
         </div>
+      );
+    }
+
+    return null;
+  }}
+/>
+
+        <Area
+          type="monotone"
+          dataKey="revenue"
+          stroke="#6B1A2A"
+          fill="#F8EEF1"
+          fillOpacity={1}
+          strokeWidth={3}
+        />
+      </AreaChart>
+    </ResponsiveContainer>
+  )}
+</div>
       </div>
     </div>
   );

@@ -103,21 +103,60 @@ export default function DateRangeFilter({
         </PopoverContent>
       </Popover>
 
-      <Button
-        onClick={onApply}
-        disabled={
-          !range.from || !range.to
-        }
-      >
-        Apply
-      </Button>
+     <Button
+  onClick={onApply}
+  disabled={!range.from || !range.to}
+  className="
+    rounded-2xl
 
-      <Button
-        variant="outline"
-        onClick={onReset}
-      >
-        Reset
-      </Button>
+    bg-brand
+
+    px-5
+    py-3
+
+    text-sm
+    font-semibold
+    text-white
+
+    shadow-lg
+    shadow-[#6B1A2A]/20
+
+    transition
+
+    hover:opacity-90
+
+    disabled:pointer-events-none
+    disabled:opacity-50
+  "
+>
+  Apply
+</Button>
+
+     <Button
+  variant="outline"
+  onClick={onReset}
+  className="
+    rounded-2xl
+
+    border-border
+
+    bg-surface
+
+    px-5
+    py-3
+
+    text-sm
+    font-semibold
+
+    text-text-primary
+
+    transition
+
+    hover:bg-surface-secondary
+  "
+>
+  Reset
+</Button>
     </div>
   );
 }
