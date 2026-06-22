@@ -45,7 +45,7 @@ export default function CouponDiscountSettings({
           gap-5
 
           ${
-            formData.discountType === "FREE_SHIPPING"
+            formData.discountType === "PERCENTAGE"
               ? "md:grid-cols-1"
               : "md:grid-cols-2"
           }
@@ -121,18 +121,7 @@ export default function CouponDiscountSettings({
   </div>
 </SelectItem>
 
-<SelectItem value="FREE_SHIPPING">
-  <div
-    className="
-      flex
-      items-center
-      gap-2
-    "
-  >
-    <Truck size={14} />
-    Free Shipping
-  </div>
-</SelectItem>
+
 
     </SelectContent>
   </Select>
@@ -191,7 +180,7 @@ export default function CouponDiscountSettings({
 
         {/* HIDE FOR FREE SHIPPING */}
 
-        {formData.discountType !== "FREE_SHIPPING" && (
+        {formData.discountType  && (
           <>
             <div>
               <label className="block mb-2 text-sm font-medium">
