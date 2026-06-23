@@ -10,8 +10,8 @@ export const CATEGORIES = [
   },
 
   {
-    value: "neckwear",
-    label: "Neckwear",
+    value: "neckwears",
+    label: "Neckwears",
   },
 
   {
@@ -90,7 +90,7 @@ export const PRODUCT_TYPES = {
     },
   ],
 
-  neckwear: [
+  neckwears: [
     {
       value: "pendant",
       label: "Pendant",
