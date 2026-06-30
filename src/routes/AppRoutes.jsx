@@ -119,22 +119,22 @@ export default function AppRoutes() {
         />
 
         <Route
-  path="/admin/coupons"
+  path="coupons"
   element={<CouponsPage />}
 />
 
 <Route
-  path="/admin/coupons/new"
+  path="coupons/new"
   element={<CreateCouponPage />}
 />
 
 <Route
-  path="/admin/coupons/:id/edit"
+  path="coupons/:id/edit"
   element={<EditCouponPage />}
 />
 
 <Route
-  path="/admin/coupons/:id/analytics"
+  path="coupons/:id/analytics"
   element={
     <CouponAnalyticsPage />
   }

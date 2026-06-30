@@ -23,7 +23,7 @@ export default function OrderDetailsPage() {
   onConfirm: null,
 });
 
-  console.log(order);
+  
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -44,7 +44,7 @@ export default function OrderDetailsPage() {
 
 
 
- 
+
 
 
 
@@ -264,6 +264,7 @@ export default function OrderDetailsPage() {
         }
       `}
             >
+              <option value="PENDING">PENDING</option>
               <option value="PLACED">PLACED</option>
 
               <option value="CONFIRMED">CONFIRMED</option>

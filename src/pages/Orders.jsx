@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import StatCard from "@/components/StatCard";
+import ButtonLoader from "@/components/loaders/ButtonLoader";
+import StatsCardsSkeleton from "@/components/loaders/StatsCardsSkeleton";
+import DataTableSkeleton from "@/components/loaders/DataTableSkeleton";
 
 import {
   Select,
@@ -11,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { Clock3, PackageCheck, Search, Truck, XCircle } from "lucide-react";
+import { Clock3, PackageCheck, Search, Truck, XCircle, Loader2  } from "lucide-react";
 
 import {
   exportOrdersReport,
@@ -40,66 +45,76 @@ export default function Orders() {
   const [status, setStatus] = useState("");
 
   const [sort, setSort] = useState("-createdAt");
+  const [ordersLoading, setOrdersLoading] = useState(false);
+const [statsLoading, setStatsLoading] = useState(false);
+const [exportLoading, setExportLoading] = useState(false);
 
-  const [loading, setLoading] = useState(false);
+
+
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-
-        const [statsData, ordersData] = await Promise.all([
-          getOrderStats(),
-
-          getOrders({
-            page,
-            limit: 10,
-            search,
-            status,
-            sort,
-          }),
-        ]);
-
-        /* KPI STATS */
-
-        setStats(statsData);
-
-        /* ORDERS */
-
-        setOrders(ordersData.orders);
-
-        setPagination(ordersData.pagination);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [page, search, status, sort]);
-
-  const handleExport = async () => {
+  const fetchStats = async () => {
     try {
-      const data = await exportOrdersReport();
+      setStatsLoading(true);
 
-      const url = window.URL.createObjectURL(new Blob([data]));
-
-      const link = document.createElement("a");
-
-      link.href = url;
-
-      link.setAttribute("download", "orders-report.xlsx");
-
-      document.body.appendChild(link);
-
-      link.click();
-
-      link.remove();
-    } catch (error) {
-      console.error(error);
+      const data = await getOrderStats();
+      setStats(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setStatsLoading(false);
     }
   };
+
+  fetchStats();
+}, []);
+
+ useEffect(() => {
+  const fetchOrders = async () => {
+    try {
+      setOrdersLoading(true);
+
+      const data = await getOrders({
+        page,
+        limit: 10,
+        search,
+        status,
+        sort,
+      });
+
+      setOrders(data.orders);
+      setPagination(data.pagination);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  fetchOrders();
+}, [page, search, status, sort]);
+
+const handleExport = async () => {
+  try {
+    setExportLoading(true);
+
+    const data = await exportOrdersReport();
+
+    const url = window.URL.createObjectURL(new Blob([data]));
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.setAttribute("download", "orders-report.xlsx");
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setExportLoading(false);
+  }
+};
 
   return (
     <div className="space-y-6">
@@ -117,7 +132,7 @@ export default function Orders() {
       >
         {/* LEFT */}
         <div>
-          
+
 
           <h1
             className="
@@ -159,29 +174,43 @@ export default function Orders() {
     "
         >
           {/* primary */}
-          <button
-            onClick={handleExport}
-            className="
-        rounded-2xl
+<button
+  onClick={handleExport}
+  disabled={exportLoading}
+  className="
+    inline-flex
+    items-center
+    justify-center
 
-        bg-brand
+    rounded-2xl
 
-        px-5
-        py-3
+    bg-brand
 
-        text-sm
-        font-semibold
-        text-white
+    px-5
+    py-3
 
-        shadow-lg
-        shadow-[#6B1A2A]/15
+    text-sm
+    font-semibold
+    text-white
 
-        transition
-        hover:opacity-90
-      "
-          >
-            Export
-          </button>
+    shadow-lg
+    shadow-[#6B1A2A]/15
+
+    transition
+
+    hover:opacity-90
+
+    disabled:cursor-not-allowed
+    disabled:opacity-70
+  "
+>
+  <ButtonLoader
+    loading={exportLoading}
+    loadingText="Exporting..."
+  >
+    Export
+  </ButtonLoader>
+</button>
         </div>
       </div>
 
@@ -196,293 +225,47 @@ export default function Orders() {
     xl:grid-cols-4
   "
       >
-        {/* TOTAL ORDERS */}
-        <div
-          className="
-      rounded-3xl
 
-      border
-      border-border
 
-      bg-surface
 
-      p-6
+ {statsLoading ? (
+  <StatsCardsSkeleton />
+) : (
+  <>
+    <StatCard
+      title="Total Orders"
+      value={stats.totalOrders}
+      icon={PackageCheck}
+      iconBg="#F8EEF1"
+      iconColor="#6B1A2A"
+    />
 
-      shadow-sm
-    "
-        >
-          <div
-            className="
-        flex
-        items-start
-        justify-between
-      "
-          >
-            <div>
-              <p
-                className="
-            text-xs
-            font-medium
-            uppercase
-            tracking-wide
+    <StatCard
+      title="Processing"
+      value={stats.processingOrders}
+      icon={Clock3}
+      iconBg="#FFF5E8"
+      iconColor="#D97706"
+    />
 
-            text-[#6B7280]
-          "
-              >
-                Total Orders
-              </p>
+    <StatCard
+      title="Shipped"
+      value={stats.shippedOrders}
+      icon={Truck}
+      iconBg="#EEF6FF"
+      iconColor="#2563EB"
+    />
 
-              <h2
-                className="
-            mt-4
+    <StatCard
+      title="Cancelled"
+      value={stats.cancelledOrders}
+      icon={XCircle}
+      iconBg="#FFF1F2"
+      iconColor="#E11D48"
+    />
+  </>
+)}
 
-            text-3xl
-            font-bold
-            tracking-tight
-
-            text-text-primary
-          "
-              >
-                {stats.totalOrders}
-              </h2>
-            </div>
-
-            <div
-              className="
-          flex
-          h-12
-          w-12
-
-          items-center
-          justify-center
-
-          rounded-2xl
-
-          bg-[#F8EEF1]
-
-          text-brand
-        "
-            >
-              <PackageCheck size={20} />
-            </div>
-          </div>
-        </div>
-
-        {/* PROCESSING */}
-        <div
-          className="
-      rounded-3xl
-
-      border
-      border-border
-
-      bg-surface
-
-      p-6
-
-      shadow-sm
-    "
-        >
-          <div
-            className="
-        flex
-        items-start
-        justify-between
-      "
-          >
-            <div>
-              <p
-                className="
-            text-xs
-            font-medium
-            uppercase
-            tracking-wide
-
-            text-[#6B7280]
-          "
-              >
-                Processing
-              </p>
-
-              <h2
-                className="
-            mt-4
-
-            text-3xl
-            font-bold
-            tracking-tight
-
-            text-text-primary
-          "
-              >
-                {stats.processingOrders}
-              </h2>
-            </div>
-
-            <div
-              className="
-          flex
-          h-12
-          w-12
-
-          items-center
-          justify-center
-
-          rounded-2xl
-
-          bg-[#FFF5E8]
-
-          text-[#D97706]
-        "
-            >
-              <Clock3 size={20} />
-            </div>
-          </div>
-        </div>
-
-        {/* SHIPPED */}
-        <div
-          className="
-      rounded-3xl
-
-      border
-      border-border
-
-      bg-surface
-
-      p-6
-
-      shadow-sm
-    "
-        >
-          <div
-            className="
-        flex
-        items-start
-        justify-between
-      "
-          >
-            <div>
-              <p
-                className="
-            text-xs
-            font-medium
-            uppercase
-            tracking-wide
-
-            text-[#6B7280]
-          "
-              >
-                Shipped
-              </p>
-
-              <h2
-                className="
-            mt-4
-
-            text-3xl
-            font-bold
-            tracking-tight
-
-            text-text-primary
-          "
-              >
-                {stats.shippedOrders}
-              </h2>
-            </div>
-
-            <div
-              className="
-          flex
-          h-12
-          w-12
-
-          items-center
-          justify-center
-
-          rounded-2xl
-
-          bg-[#EEF6FF]
-
-          text-[#2563EB]
-        "
-            >
-              <Truck size={20} />
-            </div>
-          </div>
-        </div>
-
-        {/* CANCELLED */}
-        <div
-          className="
-      rounded-3xl
-
-      border
-      border-border
-
-      bg-surface
-
-      p-6
-
-      shadow-sm
-    "
-        >
-          <div
-            className="
-        flex
-        items-start
-        justify-between
-      "
-          >
-            <div>
-              <p
-                className="
-            text-xs
-            font-medium
-            uppercase
-            tracking-wide
-
-            text-[#6B7280]
-          "
-              >
-                Cancelled
-              </p>
-
-              <h2
-                className="
-            mt-4
-
-            text-3xl
-            font-bold
-            tracking-tight
-
-            text-text-primary
-          "
-              >
-                {stats.cancelledOrders}
-              </h2>
-            </div>
-
-            <div
-              className="
-          flex
-          h-12
-          w-12
-
-          items-center
-          justify-center
-
-          rounded-2xl
-
-          bg-[#FFF1F2]
-
-          text-[#E11D48]
-        "
-            >
-              <XCircle size={20} />
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* FILTER BAR */}
@@ -739,25 +522,15 @@ export default function Orders() {
             </thead>
 
             <tbody>
-              {loading ? (
+              {ordersLoading && orders.length === 0 ? (
+  <DataTableSkeleton
+    rows={10}
+    columns={6}
+  />
+) : orders.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={7}
-                    className="
-          px-6
-          py-16
-
-          text-center
-          text-text-secondary
-        "
-                  >
-                    Loading orders...
-                  </td>
-                </tr>
-              ) : orders.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={7}
+                    colSpan={6}
                     className="
           px-6
           py-16
@@ -960,151 +733,181 @@ export default function Orders() {
           </table>
         </div>
 
-        {/* PAGINATION */}
-        <div
-          className="
-    flex
-    flex-col
-    gap-4
-
-    dark:border-white/[0.06]
-
-
-    bg-surface-secondary
-
-    px-6
-    py-5
-
-    md:flex-row
-    md:items-center
-    md:justify-between
-  "
-        >
-          <p
-            className="
-      text-sm
-      text-text-secondary
-    "
-          >
-            Showing {(page - 1) * 10 + 1}-
-            {Math.min(page * 10, pagination?.totalOrders || 0)} of{" "}
-            {pagination?.totalOrders || 0} orders
-          </p>
-
-          <div
-            className="
+       {/* PAGINATION */}
+{pagination && (
+  <div
+    className="
       flex
-      items-center
-      gap-2
+      flex-col
+      gap-4
+
+      bg-surface-secondary
+
+      px-6
+      py-5
+
+      md:flex-row
+      md:items-center
+      md:justify-between
     "
-          >
-            {/* PREVIOUS */}
+  >
+    {/* LEFT */}
+    <div>
+      <p
+        className="
+          text-sm
+          font-medium
+          text-text-secondary
+        "
+      >
+        Showing{" "}
+        <span className="font-semibold text-text-primary">
+          {(page - 1) * 10 + 1}
+        </span>
+        –
+        <span className="font-semibold text-text-primary">
+          {Math.min(page * 10, pagination.totalOrders)}
+        </span>{" "}
+        of{" "}
+        <span className="font-semibold text-text-primary">
+          {pagination.totalOrders}
+        </span>{" "}
+        orders
+      </p>
+    </div>
 
-            <button
-              disabled={page === 1}
-              onClick={() => setPage((prev) => prev - 1)}
-              className={`
-        rounded-2xl
+    {/* RIGHT */}
+    <div
+      className="
+        flex
+        items-center
+        gap-2
+      "
+    >
+      {/* PREVIOUS */}
+      <Button
+        variant="outline"
+        disabled={page === 1 || ordersLoading}
+        onClick={() => setPage((prev) => prev - 1)}
+        className="
+          rounded-2xl
 
-        border
-        border-border
+          border-border
 
-        px-4
-        py-2.5
+          bg-surface
 
-        text-sm
-        font-medium
+          px-4
+          py-2.5
 
-        transition
+          text-sm
+          font-semibold
 
-        ${
-          page === 1
-            ? "cursor-not-allowed bg-[#F5F5F5] text-[#A1A1AA]"
-            : "bg-surface text-text-primary hover:bg-[#FAFAFA]"
+          text-text-primary
+
+          shadow-sm
+
+          hover:bg-[#FAFAFA]
+
+          disabled:cursor-not-allowed
+          disabled:opacity-40
+        "
+      >
+        {ordersLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          "Previous"
+        )}
+      </Button>
+
+      {/* CURRENT PAGE */}
+      <div
+        className="
+          flex
+          h-[42px]
+          min-w-[42px]
+
+          items-center
+          justify-center
+
+          rounded-2xl
+
+          bg-brand
+
+          px-4
+
+          text-sm
+          font-semibold
+          text-white
+
+          shadow-lg
+          shadow-[#6B1A2A]/15
+        "
+      >
+        {page}
+      </div>
+
+      {/* TOTAL PAGES */}
+      <div
+        className="
+          rounded-2xl
+
+          border
+          border-border
+
+          bg-surface
+
+          px-4
+          py-2.5
+
+          text-sm
+          font-medium
+
+          text-text-secondary
+        "
+      >
+        / {pagination.totalPages}
+      </div>
+
+      {/* NEXT */}
+      <Button
+        variant="outline"
+        disabled={
+          page === pagination.totalPages ||
+          ordersLoading
         }
-      `}
-            >
-              Previous
-            </button>
+        onClick={() => setPage((prev) => prev + 1)}
+        className="
+          rounded-2xl
 
-            {/* PAGE BUTTONS */}
+          border-border
 
-            {Array.from({
-              length: pagination?.totalPages || 1,
-            }).map((_, index) => {
-              const pageNumber = index + 1;
+          bg-surface
 
-              return (
-                <button
-                  key={pageNumber}
-                  onClick={() => setPage(pageNumber)}
-                  className={`
-            rounded-2xl
+          px-4
+          py-2.5
 
-            px-4
-            py-2.5
+          text-sm
+          font-semibold
 
-            text-sm
-            font-semibold
+          text-text-primary
 
-            transition
+          shadow-sm
 
-            ${
-              page === pageNumber
-                ? `
-                  bg-brand
-                  text-white
+          hover:bg-[#FAFAFA]
 
-                  shadow-lg
-                  shadow-[#6B1A2A]/15
-                `
-                : `
-                  border
-                  border-border
-
-                  bg-surface
-                 text-text-primary
-
-                  hover:bg-[#FAFAFA]
-                `
-            }
-          `}
-                >
-                  {pageNumber}
-                </button>
-              );
-            })}
-
-            {/* NEXT */}
-
-            <button
-              disabled={page === pagination?.totalPages}
-              onClick={() => setPage((prev) => prev + 1)}
-              className={`
-        rounded-2xl
-
-        border
-        border-border
-
-        px-4
-        py-2.5
-
-        text-sm
-        font-medium
-
-        transition
-
-        ${
-          page === pagination?.totalPages
-            ? "cursor-not-allowed bg-[#F5F5F5] text-[#A1A1AA]"
-            : "bg-surface text-text-primary hover:bg-[#FAFAFA]"
-        }
-      `}
-            >
-              Next
-            </button>
-          </div>
-        </div>
+          disabled:cursor-not-allowed
+          disabled:opacity-40
+        "
+      >
+        {ordersLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          "Next"
+        )}
+      </Button>
+    </div>
+  </div>
+)}
       </div>
     </div>
   );

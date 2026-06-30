@@ -10,7 +10,7 @@ import {
 
 import {
   ArrowLeft,
-  User,
+
   Mail,
   Phone,
   ShoppingBag,
@@ -19,6 +19,8 @@ import {
   Crown,
   MapPin,
 } from "lucide-react";
+
+import StatCard from "@/components/StatCard";
 
 
 import { getCustomerDetails } from "../services/customerService";
@@ -385,22 +387,38 @@ const mostPurchasedMaterial =
               }
 
               className="
-                mb-5
+      group
+      inline-flex
+      items-center
+      gap-2
 
-                inline-flex
-                items-center
-                gap-2
+      rounded-2xl
 
-                text-sm
-                font-medium
+      border
+      border-border
 
-                text-text-secondary
+      bg-surface
 
-                transition
+      px-4
+      py-2.5
 
-                hover:text-text-primary
-              "
-            >
+      m-4
+
+      text-sm
+      font-medium
+
+      text-text-secondary
+
+      shadow-sm
+
+      transition-all
+      duration-200
+
+
+      hover:border-[#6B1A2A]/20
+      hover:text-brand
+      hover:shadow-md
+    "            >
 
               <ArrowLeft size={16} />
 
@@ -541,278 +559,60 @@ const mostPurchasedMaterial =
 
 
 
-        {/* STATS */}
 
-        <div
-          className="
-            grid
-            grid-cols-1
-
-            gap-4
-
-            md:grid-cols-2
-            xl:grid-cols-4
-          "
-        >
-
-          {/* TOTAL SPENT */}
-
-          <div
-            className="
-              rounded-3xl
-
-              border
-              border-border
-
-              bg-surface
-
-              p-6
-            "
-          >
-
-            <div
-              className="
-                mb-4
-
-                flex
-                items-center
-                justify-between
-              "
-            >
-
-              <p
-                className="
-                  text-sm
-                  font-medium
-
-                  text-text-secondary
-                "
-              >
-                Lifetime Value
-              </p>
-
-              <IndianRupee size={18} />
-
-            </div>
-
-
-
-            <h2
-              className="
-                text-3xl
-                font-bold
-
-                text-text-primary
-              "
-            >
-              ₹
-              {
-                Math.round(customer.totalSpent)
-                  ?.toLocaleString()
-              }
-            </h2>
-
-          </div>
-
-
-
-          {/* ORDERS */}
-
-          <div
-            className="
-              rounded-3xl
-
-              border
-              border-border
-
-              bg-surface
-
-              p-6
-            "
-          >
-
-            <div
-              className="
-                mb-4
-
-                flex
-                items-center
-                justify-between
-              "
-            >
-
-              <p
-                className="
-                  text-sm
-                  font-medium
-
-                  text-text-secondary
-                "
-              >
-                Total Orders
-              </p>
-
-              <ShoppingBag size={18} />
-
-            </div>
-
-
-
-            <h2
-              className="
-                text-3xl
-                font-bold
-
-                text-text-primary
-              "
-            >
-              {
-                customer.totalOrders
-              }
-            </h2>
-
-          </div>
-
-
-
-          {/* AOV */}
-
-          <div
-            className="
-              rounded-3xl
-
-              border
-              border-border
-
-              bg-surface
-
-              p-6
-            "
-          >
-
-            <div
-              className="
-                mb-4
-
-                flex
-                items-center
-                justify-between
-              "
-            >
-
-              <p
-                className="
-                  text-sm
-                  font-medium
-
-                  text-text-secondary
-                "
-              >
-                Avg Order Value
-              </p>
-
-              <IndianRupee size={18} />
-
-            </div>
-
-
-
-            <h2
-              className="
-                text-3xl
-                font-bold
-
-                text-text-primary
-              "
-            >
-              ₹
-              {
-                Math.floor(
-                  customer.totalSpent /
-
-                  customer.totalOrders
-                ).toLocaleString()
-              }
-            </h2>
-
-          </div>
-
-
-
-          {/* LAST ACTIVE */}
-
-          <div
-            className="
-              rounded-3xl
-
-              border
-              border-border
-
-              bg-surface
-
-              p-6
-            "
-          >
-
-            <div
-              className="
-                mb-4
-
-                flex
-                items-center
-                justify-between
-              "
-            >
-
-              <p
-                className="
-                  text-sm
-                  font-medium
-
-                  text-text-secondary
-                "
-              >
-                Last Activity
-              </p>
-
-              <Clock3 size={18} />
-
-            </div>
-
-
-
-            <h2
-              className="
-                text-2xl
-                font-bold
-
-                text-text-primary
-              "
-            >
-              {
-
-                Math.floor(
-
-                  (
-                    new Date() -
-
-                    new Date(
-                      customer.lastOrderDate
-                    )
-
-                  ) /
-
-                  (1000 * 60 * 60 * 24)
-
-                )
-
-              }
-              d ago
-            </h2>
-
-          </div>
-
-        </div>
+{/* STATS */}
+<div
+  className="
+    grid
+    grid-cols-1
+
+    gap-4
+
+    md:grid-cols-2
+    xl:grid-cols-4
+  "
+>
+  <StatCard
+    title="Lifetime Value"
+    value={`₹${Math.round(customer.totalSpent).toLocaleString()}`}
+    icon={IndianRupee}
+    iconBg="#EEF6FF"
+    iconColor="#2563EB"
+  />
+
+  <StatCard
+    title="Total Orders"
+    value={customer.totalOrders}
+    icon={ShoppingBag}
+    iconBg="#F8EEF1"
+    iconColor="#6B1A2A"
+  />
+
+  <StatCard
+    title="Avg Order Value"
+    value={customer.totalOrders
+  ? `₹${Math.floor(
+      customer.totalSpent / customer.totalOrders
+    ).toLocaleString()}`
+  : "₹0"}
+    icon={IndianRupee}
+    iconBg="#ECFDF5"
+    iconColor="#059669"
+  />
+
+  <StatCard
+    title="Last Activity"
+    value={`${
+      Math.floor(
+        (new Date() - new Date(customer.lastOrderDate)) /
+          (1000 * 60 * 60 * 24)
+      )
+    }d ago`}
+    icon={Clock3}
+    iconBg="#FFF5E8"
+    iconColor="#D97706"
+  />
+</div>
 
 
 
@@ -838,6 +638,289 @@ const mostPurchasedMaterial =
               xl:col-span-2
             "
           >
+
+
+
+                        {/* CUSTOMER TIMELINE */}
+
+<div
+  className="
+    rounded-3xl
+
+    border
+    border-border
+
+    bg-surface
+
+    p-6
+  "
+>
+
+  {/* HEADER */}
+
+  <div
+    className="
+      mb-8
+
+      flex
+      items-center
+      gap-3
+    "
+  >
+
+    <div
+      className="
+        flex
+        h-10
+        w-10
+
+        items-center
+        justify-center
+
+        rounded-2xl
+
+        bg-surface-secondary
+      "
+    >
+
+      <Clock3 size={18} />
+
+    </div>
+
+
+
+    <div>
+
+      <h2
+        className="
+          text-lg
+          font-semibold
+
+          text-text-primary
+        "
+      >
+        Customer Timeline
+      </h2>
+
+      <p
+        className="
+          text-sm
+
+          text-text-secondary
+        "
+      >
+        Lifecycle activity & milestones
+      </p>
+
+    </div>
+
+  </div>
+
+
+
+  {/* TIMELINE */}
+
+  <div
+    className="
+      relative
+
+      space-y-8
+    "
+  >
+
+    {
+      timeline.map(
+        (
+          event,
+          index
+        ) => {
+
+          const isLast =
+            index ===
+            timeline.length - 1;
+
+
+
+          return (
+
+            <div
+              key={index}
+
+              className="
+                relative
+
+                flex
+                gap-4
+              "
+            >
+
+              {/* LEFT */}
+
+              <div
+                className="
+                  relative
+
+                  flex
+                  flex-col
+                  items-center
+                "
+              >
+
+                {/* DOT */}
+
+                <div
+                  className="
+                    z-10
+
+                    h-4
+                    w-4
+
+                    rounded-full
+
+                    bg-brand
+
+                    ring-4
+                    ring-surface
+                  "
+                />
+
+
+
+                {/* LINE */}
+
+                {
+                  !isLast && (
+
+                    <div
+                      className="
+                        mt-1
+
+                        h-full
+                        w-[2px]
+
+                        bg-border
+                      "
+                    />
+
+                  )
+                }
+
+              </div>
+
+
+
+              {/* CONTENT */}
+
+              <div
+                className="
+                  flex-1
+
+                  rounded-2xl
+
+                  border
+                  border-border
+
+                  bg-surface-secondary
+
+                  px-4
+                  py-4
+                "
+              >
+
+                <div
+                  className="
+                    flex
+                    items-start
+                    justify-between
+                    gap-4
+                    flex-wrap
+                  "
+                >
+
+                  <div>
+
+                    <p
+                      className="
+                        text-sm
+                        font-semibold
+
+                        text-text-primary
+                      "
+                    >
+                      {event.title}
+                    </p>
+
+
+
+                    <p
+                      className="
+                        mt-1
+
+                        text-sm
+
+                        text-text-secondary
+                      "
+                    >
+                      {
+                        event.description
+                      }
+                    </p>
+
+                  </div>
+
+
+
+                  <div
+                    className="
+                      text-right
+                    "
+                  >
+
+                    <p
+                      className="
+                        text-sm
+                        font-medium
+
+                        text-text-primary
+                      "
+                    >
+                      {
+
+                        new Date(
+                          event.date
+                        ).toLocaleDateString(
+                          "en-IN",
+                          {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          }
+                        )
+
+                      }
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          );
+
+        }
+      )
+    }
+
+  </div>
+
+</div>
+
+
+
+
 
             {/* ORDER HISTORY */}
 
@@ -1511,282 +1594,7 @@ const mostPurchasedMaterial =
             </div>
 
 
-            {/* CUSTOMER TIMELINE */}
 
-<div
-  className="
-    rounded-3xl
-
-    border
-    border-border
-
-    bg-surface
-
-    p-6
-  "
->
-
-  {/* HEADER */}
-
-  <div
-    className="
-      mb-8
-
-      flex
-      items-center
-      gap-3
-    "
-  >
-
-    <div
-      className="
-        flex
-        h-10
-        w-10
-
-        items-center
-        justify-center
-
-        rounded-2xl
-
-        bg-surface-secondary
-      "
-    >
-
-      <Clock3 size={18} />
-
-    </div>
-
-
-
-    <div>
-
-      <h2
-        className="
-          text-lg
-          font-semibold
-
-          text-text-primary
-        "
-      >
-        Customer Timeline
-      </h2>
-
-      <p
-        className="
-          text-sm
-
-          text-text-secondary
-        "
-      >
-        Lifecycle activity & milestones
-      </p>
-
-    </div>
-
-  </div>
-
-
-
-  {/* TIMELINE */}
-
-  <div
-    className="
-      relative
-
-      space-y-8
-    "
-  >
-
-    {
-      timeline.map(
-        (
-          event,
-          index
-        ) => {
-
-          const isLast =
-            index ===
-            timeline.length - 1;
-
-
-
-          return (
-
-            <div
-              key={index}
-
-              className="
-                relative
-
-                flex
-                gap-4
-              "
-            >
-
-              {/* LEFT */}
-
-              <div
-                className="
-                  relative
-
-                  flex
-                  flex-col
-                  items-center
-                "
-              >
-
-                {/* DOT */}
-
-                <div
-                  className="
-                    z-10
-
-                    h-4
-                    w-4
-
-                    rounded-full
-
-                    bg-brand
-
-                    ring-4
-                    ring-surface
-                  "
-                />
-
-
-
-                {/* LINE */}
-
-                {
-                  !isLast && (
-
-                    <div
-                      className="
-                        mt-1
-
-                        h-full
-                        w-[2px]
-
-                        bg-border
-                      "
-                    />
-
-                  )
-                }
-
-              </div>
-
-
-
-              {/* CONTENT */}
-
-              <div
-                className="
-                  flex-1
-
-                  rounded-2xl
-
-                  border
-                  border-border
-
-                  bg-surface-secondary
-
-                  px-4
-                  py-4
-                "
-              >
-
-                <div
-                  className="
-                    flex
-                    items-start
-                    justify-between
-                    gap-4
-                    flex-wrap
-                  "
-                >
-
-                  <div>
-
-                    <p
-                      className="
-                        text-sm
-                        font-semibold
-
-                        text-text-primary
-                      "
-                    >
-                      {event.title}
-                    </p>
-
-
-
-                    <p
-                      className="
-                        mt-1
-
-                        text-sm
-
-                        text-text-secondary
-                      "
-                    >
-                      {
-                        event.description
-                      }
-                    </p>
-
-                  </div>
-
-
-
-                  <div
-                    className="
-                      text-right
-                    "
-                  >
-
-                    <p
-                      className="
-                        text-sm
-                        font-medium
-
-                        text-text-primary
-                      "
-                    >
-                      {
-
-                        new Date(
-                          event.date
-                        ).toLocaleDateString(
-                          "en-IN",
-                          {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          }
-                        )
-
-                      }
-                    </p>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          );
-
-        }
-      )
-    }
-
-  </div>
-
-</div>
 
           </div>
 
@@ -1796,8 +1604,15 @@ const mostPurchasedMaterial =
 
           <div
             className="
-              space-y-6
-            "
+    space-y-6
+
+    lg:sticky
+    lg:top-20
+
+     max-h-[calc(100vh-2rem)]
+    overflow-y-auto
+    no-scrollbar
+  "
           >
 
       {/* CUSTOMER INFO */}

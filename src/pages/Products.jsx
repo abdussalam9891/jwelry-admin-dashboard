@@ -19,10 +19,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 import { Button } from "@/components/ui/button";
+ 
 
-import { Skeleton } from "@/components/ui/skeleton";
-
-import StatCard from "@/components/products/StatCard";
+import StatCard from "@/components/StatCard";
+import StatsCardsSkeleton from "@/components/loaders/StatsCardsSkeleton";
+import DataTableSkeleton from "@/components/loaders/DataTableSkeleton";
+import TableOverlayLoader from "@/components/loaders/TableOverlayLoader"
 
 import { CATEGORIES, PRODUCT_TYPES } from "@/constants/productMeta";
 
@@ -33,6 +35,7 @@ import {
   LayoutGrid,
   Layers,
   PackageCheck,
+  Loader2,
 
   Search
 } from "lucide-react";
@@ -57,11 +60,15 @@ export default function Products() {
 
   const [status, setStatus] = useState("");
 
-  const [loading, setLoading] = useState(false);
+
 
   const [page, setPage] = useState(1);
 
   const [pagination, setPagination] = useState(null);
+
+  const [productsLoading, setProductsLoading] = useState(false);
+const [statsLoading, setStatsLoading] = useState(false);
+const [exportLoading, setExportLoading] = useState(false);
 
  const [stats, setStats] = useState({
   totalProducts: 0,
@@ -90,68 +97,74 @@ useEffect(() => {
   return () => clearTimeout(timer);
 }, [search]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-
-          const [productsData, statsData] = await Promise.all([
-  getProducts({
-    page,
-    limit: 10,
-    search: debouncedSearch,
-    category,
-    productType,
-    status,
-    sort,
-  }),
-
-  getProductStats(),
-]);
-
-setProducts(productsData.products);
-
-setPagination(productsData.pagination);
-
-setStats(statsData);
-
-
-
-
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [page, debouncedSearch, category, productType, status, sort]);
-
-
-
-
-  const handleExport = async () => {
+useEffect(() => {
+  const fetchProducts = async () => {
     try {
-      const data = await exportProductsReport();
+      setProductsLoading(true);
 
-      const url = window.URL.createObjectURL(new Blob([data]));
+      const productsData = await getProducts({
+        page,
+        limit: 10,
+        search: debouncedSearch,
+        category,
+        productType,
+        status,
+        sort,
+      });
 
-      const link = document.createElement("a");
-
-      link.href = url;
-
-      link.setAttribute("download", "products-report.xlsx");
-
-      document.body.appendChild(link);
-
-      link.click();
-
-      link.remove();
+      setProducts(productsData.products);
+      setPagination(productsData.pagination);
     } catch (error) {
       console.error(error);
+    } finally {
+      setProductsLoading(false);
     }
   };
+
+  fetchProducts();
+}, [page, debouncedSearch, category, productType, status, sort]);
+
+useEffect(() => {
+  const fetchStats = async () => {
+    try {
+      setStatsLoading(true);
+
+      const statsData = await getProductStats();
+
+      setStats(statsData);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
+  fetchStats();
+}, []);
+
+const handleExport = async () => {
+  try {
+    setExportLoading(true);
+
+    const data = await exportProductsReport();
+
+    const url = window.URL.createObjectURL(new Blob([data]));
+
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "products-report.xlsx";
+
+    document.body.appendChild(link);
+
+    link.click();
+    link.remove();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setExportLoading(false);
+  }
+};
 
   const availableTypes = category
     ? PRODUCT_TYPES[category] || []
@@ -218,32 +231,48 @@ setStats(statsData);
         >
           {/* secondary */}
 
-          <button
-            onClick={handleExport}
-            className="
-        rounded-2xl
+       <button
+  onClick={handleExport}
+  disabled={exportLoading}
+  className="
+    inline-flex
+    items-center
+    justify-center
+    gap-2
 
-        border
-        border-border
+    rounded-2xl
 
-        bg-surface
+    border
+    border-border
 
-        px-5
-        py-3
+    bg-surface
 
-        text-sm
-        font-semibold
+    px-5
+    py-3
 
-        text-text-primary
+    text-sm
+    font-semibold
 
-        shadow-sm
+    text-text-primary
 
-        transition
-         hover:bg-surface-secondary
-      "
-          >
-            Export
-          </button>
+    shadow-sm
+
+    transition
+    hover:bg-surface-secondary
+
+    disabled:cursor-not-allowed
+    disabled:opacity-70
+  "
+>
+  {exportLoading ? (
+    <>
+      <Loader2 className="h-4 w-4 animate-spin" />
+      Exporting...
+    </>
+  ) : (
+    "Export"
+  )}
+</button>
 
           {/* primary */}
 
@@ -284,61 +313,65 @@ setStats(statsData);
     xl:grid-cols-4
   "
 >
-  <StatCard
-    title="Total Products"
-    value={stats.totalProducts}
-    icon={Package}
-    glowColor="#F8EEF1"
-    iconBg="#F8EEF1"
-    iconColor="#6B1A2A"
-  />
+  {statsLoading ? (
+    <StatsCardsSkeleton count={6} />
+  ) : (
+    <>
+      <StatCard
+        title="Total Products"
+        value={stats.totalProducts}
+        icon={Package}
+        glowColor="#F8EEF1"
+        iconBg="#F8EEF1"
+        iconColor="#6B1A2A"
+      />
 
-  <StatCard
-    title="Categories"
-    value={stats.totalCategories}
-    icon={Layers}
-    glowColor="#F3F4F6"
-    iconBg="#F3F4F6"
-    iconColor="#4B5563"
-  />
+      <StatCard
+        title="Categories"
+        value={stats.totalCategories}
+        icon={Layers}
+        glowColor="#F3F4F6"
+        iconBg="#F3F4F6"
+        iconColor="#4B5563"
+      />
 
-  <StatCard
-    title="Product Types"
-    value={stats.totalProductTypes}
-    icon={LayoutGrid}
-    glowColor="#EEF6FF"
-    iconBg="#EEF6FF"
-    iconColor="#2563EB"
-  />
+      <StatCard
+        title="Product Types"
+        value={stats.totalProductTypes}
+        icon={LayoutGrid}
+        glowColor="#EEF6FF"
+        iconBg="#EEF6FF"
+        iconColor="#2563EB"
+      />
 
-  <StatCard
-    title="In Stock"
-    value={stats.inStockProducts}
-    icon={PackageCheck}
-    glowColor="#ECFDF5"
-    iconBg="#ECFDF5"
-    iconColor="#059669"
-  />
+      <StatCard
+        title="In Stock"
+        value={stats.inStockProducts}
+        icon={PackageCheck}
+        glowColor="#ECFDF5"
+        iconBg="#ECFDF5"
+        iconColor="#059669"
+      />
 
-  <StatCard
-    title="Low Stock"
-    value={stats.lowStockProducts}
-    icon={AlertTriangle}
-    glowColor="#FFF5E8"
-    iconBg="#FFF5E8"
-    iconColor="#D97706"
-  />
+      <StatCard
+        title="Low Stock"
+        value={stats.lowStockProducts}
+        icon={AlertTriangle}
+        glowColor="#FFF5E8"
+        iconBg="#FFF5E8"
+        iconColor="#D97706"
+      />
 
-  <StatCard
-    title="Out of Stock"
-    value={stats.outOfStockProducts}
-    icon={PackageX}
-    glowColor="#FFF1F2"
-    iconBg="#FFF1F2"
-    iconColor="#E11D48"
-  />
-
-
+      <StatCard
+        title="Out of Stock"
+        value={stats.outOfStockProducts}
+        icon={PackageX}
+        glowColor="#FFF1F2"
+        iconBg="#FFF1F2"
+        iconColor="#E11D48"
+      />
+    </>
+  )}
 </div>
 
       {/*FILTER BAR*/}
@@ -617,14 +650,22 @@ setStats(statsData);
     shadow-[0_10px_40px_rgba(0,0,0,0.04)]
   "
       >
+
+        <TableOverlayLoader
+    loading={
+        productsLoading &&
+        products.length > 0
+    }
+/>
+
+
         <div className="overflow-x-auto">
-          {loading ? (
-            <div className="space-y-4 p-6">
-              {[...Array(6)].map((_, index) => (
-                <Skeleton key={index} className="h-16 w-full rounded-2xl" />
-              ))}
-            </div>
-          ) : (
+          {productsLoading && products.length === 0 ? (
+    <DataTableSkeleton
+        rows={10}
+        columns={7}
+    />
+) : (
             <Table>
               {/* HEAD */}
               <TableHeader>

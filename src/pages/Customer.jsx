@@ -6,6 +6,10 @@ import {
 } from "../services/customerService";
 
 
+import DataTableSkeleton from "@/components/loaders/DataTableSkeleton";
+import TableOverlayLoader from "@/components/loaders/TableOverlayLoader";
+import StatsCardsSkeleton from "@/components/loaders/StatsCardsSkeleton";
+
 
 import {
   Select,
@@ -17,6 +21,7 @@ import {
 
 import {
   Search,
+  Loader2
 } from "lucide-react";
 
 export default function CustomersPage() {
@@ -32,7 +37,11 @@ export default function CustomersPage() {
 
   const [customers, setCustomers] = useState([]);
 
-  const [loading, setLoading] = useState(true);
+
+
+  const [customersLoading, setCustomersLoading] = useState(false);
+
+const [exportLoading, setExportLoading] = useState(false);
 
   const [search, setSearch] = useState("");
 const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -45,35 +54,42 @@ useEffect(() => {
   return () => clearTimeout(timer);
 }, [search]);
 
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        setLoading(true);
+useEffect(() => {
+  let ignore = false;
 
-        const data = await getCustomers({
-          search: debouncedSearch,
+  const fetchCustomers = async () => {
+    try {
+      setCustomersLoading(true);
 
-          tier,
+      const data = await getCustomers({
+        search: debouncedSearch,
+        tier,
+        sort,
+        page,
+        limit: 8,
+      });
 
-          sort,
+      if (ignore) return;
 
-          page,
-
-          limit: 8,
-        });
-
-        setCustomers(data.customers);
-
-        setPagination(data.pagination);
-      } catch (error) {
+      setCustomers(data.customers);
+      setPagination(data.pagination);
+    } catch (error) {
+      if (!ignore) {
         console.error(error);
-      } finally {
-        setLoading(false);
       }
-    };
+    } finally {
+      if (!ignore) {
+        setCustomersLoading(false);
+      }
+    }
+  };
 
-    fetchCustomers();
-  }, [debouncedSearch, tier, sort, page]);
+  fetchCustomers();
+
+  return () => {
+    ignore = true;
+  };
+}, [debouncedSearch, tier, sort, page]);
 
   const stats = [
     {
@@ -103,37 +119,35 @@ useEffect(() => {
 }
   ];
 
-  const handleExport = async () => {
-    try {
-      const data = await exportCustomersReport();
+ const handleExport = async () => {
+  try {
+    setExportLoading(true);
 
-      const url = window.URL.createObjectURL(new Blob([data]));
+    const data = await exportCustomersReport();
 
-      const link = document.createElement("a");
+    const url = window.URL.createObjectURL(new Blob([data]));
 
-      link.href = url;
+    const link = document.createElement("a");
 
-      link.setAttribute("download", "customers-report.xlsx");
+    link.href = url;
+    link.download = "customers-report.xlsx";
 
-      document.body.appendChild(link);
+    document.body.appendChild(link);
 
-      link.click();
+    link.click();
 
-      link.remove();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    link.remove();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setExportLoading(false);
+  }
+};
 
 
 
-  if (loading) {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      Loading customers...
-    </div>
-  );
-}
+
+
 
   return (
     <div className="min-h-screen  p-4 md:p-8">
@@ -154,9 +168,15 @@ useEffect(() => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={handleExport}
-              className="
+           <button
+  onClick={handleExport}
+  disabled={exportLoading}
+  className="
+    inline-flex
+    items-center
+    justify-center
+    gap-2
+
     h-12
     px-6
 
@@ -168,20 +188,35 @@ useEffect(() => {
     bg-surface
 
     font-medium
+    text-text-primary
+
+    shadow-sm
 
     transition
 
     hover:bg-surface-secondary
+
+    disabled:cursor-not-allowed
+    disabled:opacity-60
   "
-            >
-              Export
-            </button>
+>
+  {exportLoading ? (
+    <>
+      <Loader2 className="h-4 w-4 animate-spin" />
+      Exporting...
+    </>
+  ) : (
+    "Export"
+  )}
+</button>
           </div>
         </div>
 
         {/* STATS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          {stats.map((item) => (
+          { customersLoading && customers.length === 0 ? (
+    <StatsCardsSkeleton count={4} />
+  ) : ( stats.map((item) => (
             <div
               key={item.title}
               className="bg-surface rounded-3xl border border-border p-6 shadow-sm"
@@ -194,7 +229,7 @@ useEffect(() => {
                 {item.value}
               </h2>
             </div>
-          ))}
+          )))}
         </div>
 
         {/* SEARCH + FILTERS */}
@@ -366,6 +401,14 @@ useEffect(() => {
     shadow-sm
   "
         >
+
+           <TableOverlayLoader
+    loading={
+      customersLoading &&
+      customers.length > 0
+    }
+  />
+
           {/* TABLE HEADER */}
 
           <div
@@ -408,52 +451,49 @@ useEffect(() => {
           {/* TABLE BODY */}
 
           <div>
-            {customers?.length === 0 && (
-              <div
-                className="
+            {customersLoading && customers.length === 0 ? (
+    <DataTableSkeleton
+      rows={8}
+      columns={7}
+    />
+  ) : customers.length === 0 ? (
+    <div
+      className="
         flex
         items-center
         justify-center
 
         py-20
       "
-              >
-                <div
-                  className="
-          text-center
-        "
-                >
-                  <p
-                    className="
+    >
+      <div className="text-center">
+        <p
+          className="
             text-lg
             font-semibold
-
             text-text-primary
           "
-                  >
-                    No customers found
-                  </p>
+        >
+          No customers found
+        </p>
 
-                  <p
-                    className="
+        <p
+          className="
             mt-2
-
             text-sm
-
             text-text-secondary
           "
-                  >
-                    Try adjusting filters or search query
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {customers?.map((customer) => {
+        >
+          Try adjusting filters or search query
+        </p>
+      </div>
+    </div>
+  ) : (
+    customers?.map((customer) => {
               const daysAgo = Math.floor(
                 (new Date() - new Date(customer.lastOrderDate)) /
                   (1000 * 60 * 60 * 24),
-              );
+              )
 
               return (
                 <div
@@ -727,7 +767,11 @@ useEffect(() => {
                   </div>
                 </div>
               );
-            })}
+})
+            )
+          }
+
+
           </div>
         </div>
 
